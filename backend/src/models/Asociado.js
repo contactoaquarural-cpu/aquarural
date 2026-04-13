@@ -45,10 +45,20 @@ const asociadoSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    ultimoAcceso: {
+      type: Date,
+      default: null, // Se actualiza en cada login
+    },
   },
   {
     timestamps: true,
   }
 );
+
+asociadoSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
 
 module.exports = mongoose.model('Asociado', asociadoSchema);

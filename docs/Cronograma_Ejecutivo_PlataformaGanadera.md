@@ -37,6 +37,474 @@ BLOQUE 2: CONSTRUCCIÓN (10-12 semanas)
 
 ---
 
+## 🌿 ESTRATEGIA GIT DEL PROYECTO
+
+### Estructura de Ramas
+
+```
+main                    → Producción (solo merges desde develop)
+develop                 → Rama base de integración
+├── fase-1-backend      → Modelos + Autenticación (Semana 1-2)
+├── fase-2-pagos        → Módulo de Pagos Wompi (Semana 1-2)
+├── fase-3-qr           → Sistema QR + Convenios (Semana 1-2)
+├── fase-4-mobile       → App Móvil Completa (Semana 3-5)
+├── fase-4.5-web-admin  → Panel Web Admin (Semana 6-7)
+├── fase-5-noticias     → Noticias + Notificaciones (Semana 8)
+└── fase-6-deploy       → Testing + Deploy (Semana 9-10)
+```
+
+### Flujo de Trabajo por Fase
+
+**Al INICIAR una fase:**
+```bash
+# Cambia a la rama de la fase
+git checkout fase-X-nombre
+
+# Asegúrate de tener lo último (si trabajas en múltiples máquinas)
+git pull origin fase-X-nombre
+```
+
+**DURANTE el día (cada 1-2 horas):**
+```bash
+# Commits WIP frecuentes
+git add .
+git commit -m "wip: [descripción breve de lo que hiciste]"
+
+# Ejemplos:
+# git commit -m "wip: crear modelo Asociado"
+# git commit -m "wip: agregar validaciones a Finca"
+```
+
+**Al TERMINAR el día:**
+```bash
+# Commit final descriptivo
+git add .
+git commit -m "feat: [logro principal del día] - día X"
+
+# Ejemplos:
+# git commit -m "feat: crear todos los modelos Mongoose - día 1"
+# git commit -m "feat: implementar autenticación JWT - día 2"
+
+# Push al servidor
+git push origin fase-X-nombre
+```
+
+**Al COMPLETAR la fase:**
+```bash
+# Cambiar a develop
+git checkout develop
+
+# Actualizar develop
+git pull origin develop
+
+# Merge de la fase completada
+git merge fase-X-nombre
+
+# Push a develop
+git push origin develop
+
+# Opcional: Crear tag de milestone
+git tag fase-X-completada
+git push origin fase-X-completada
+```
+
+**Al FINALIZAR el MVP (Semana 10):**
+```bash
+# Merge de develop a main
+git checkout main
+git merge develop
+git tag v1.0.0
+git push origin main --tags
+```
+
+### Tipos de Commits (Conventional Commits)
+
+| Prefijo | Cuándo Usarlo | Ejemplo |
+|---------|---------------|---------|
+| `feat:` | Nueva funcionalidad completa | `feat: implementar CRUD de asociados` |
+| `fix:` | Corrección de bug | `fix: corregir validación de cédula` |
+| `refactor:` | Mejorar código sin cambiar funcionalidad | `refactor: extraer lógica de estado a servicio` |
+| `docs:` | Cambios en documentación | `docs: actualizar README con endpoints` |
+| `test:` | Agregar o modificar tests | `test: agregar tests de autenticación` |
+| `chore:` | Tareas de mantenimiento | `chore: actualizar dependencias` |
+| `wip:` | Trabajo en progreso (commits intermedios) | `wip: avance en HomeScreen` |
+
+### Reglas de Oro de Git
+
+1. **Commit frecuente** — Cada 1-2 horas de trabajo
+2. **Push diario** — Al final de cada día de trabajo
+3. **Mensajes descriptivos** — Que expliquen QUÉ hiciste, no CÓMO
+4. **Un commit = una cosa** — No mezcles múltiples cambios
+5. **Nunca hacer push a main directamente** — Siempre desde develop
+6. **Probar antes de commit** — Que no haya errores de sintaxis
+7. **Revisar antes de merge** — Verifica que todo funciona
+
+---
+
+## 🔄 SISTEMA DE SINCRONIZACIÓN DE ESTADO
+
+### El Problema: Pérdida de Memoria de Claude
+
+```
+Claude pierde memoria entre sesiones
+        ↓
+No sabe qué fase estás trabajando
+        ↓
+No sabe qué archivos ya existen
+        ↓
+Tienes que re-explicar contexto cada día
+```
+
+### La Solución: Sistema de Estado Multi-Capa
+
+```
+CAPA 1: CLAUDE.md actualizado (Estado general)
+CAPA 2: Checklist Diario en /daily-logs/ (Estado detallado)
+CAPA 3: Prompt de Inicio Estandarizado (Recordatorio explícito)
+```
+
+---
+
+### 📝 CAPA 1: Actualizar CLAUDE.md al Completar Cada Fase
+
+#### Regla de Oro:
+```
+Actualiza SOLO:
+1. /CLAUDE.md (raíz) ← SIEMPRE
+2. El CLAUDE.md de la carpeta donde trabajaste ← SOLO ESE
+```
+
+#### Tabla de Qué Actualizar:
+
+| Fase Completada | Archivos a Actualizar |
+|-----------------|----------------------|
+| Fase 1-3 (Backend) | `/CLAUDE.md` + `/backend/CLAUDE.md` |
+| Fase 4 (App Móvil) | `/CLAUDE.md` + `/mobile-app/CLAUDE.md` |
+| Fase 4.5 (Panel Web) | `/CLAUDE.md` + `/web-admin/CLAUDE.md` |
+| Fase 5 (Noticias) | `/CLAUDE.md` + `/backend/CLAUDE.md` + `/mobile-app/CLAUDE.md` |
+| Fase 6 (Deploy) | `/CLAUDE.md` solamente |
+
+#### Sección a Agregar en Cada CLAUDE.md:
+
+**En `/CLAUDE.md` (raíz):**
+
+```markdown
+## 🚦 Estado Actual del Proyecto
+
+> **Última actualización:** [FECHA]
+> **Fase activa:** [Número y nombre]
+> **Rama Git activa:** [nombre-rama]
+
+| Fase | Descripción | Estado | Fecha |
+|------|-------------|--------|-------|
+| Fase 1 | Modelos + Auth | ✅ Completado | 20/04/2026 |
+| Fase 2 | Pagos Wompi | 🔄 En progreso | - |
+| Fase 3 | QR + Convenios | ⬜ Pendiente | - |
+| Fase 4 | App Móvil | ⬜ Pendiente | - |
+| Fase 4.5 | Panel Web | ⬜ Pendiente | - |
+| Fase 5 | Noticias | ⬜ Pendiente | - |
+| Fase 6 | Deploy | ⬜ Pendiente | - |
+```
+
+**En `/backend/CLAUDE.md`:**
+
+```markdown
+## 🚦 Estado del Backend
+
+> **Última actualización:** [FECHA]
+> **Progreso:** 35% completado
+
+### Modelos Implementados:
+- ✅ Asociado.js (100%)
+- ✅ Finca.js (100%)
+- ✅ Aporte.js (100%)
+- ⬜ Convenio.js
+- ⬜ Noticia.js
+- ⬜ Notificacion.js
+
+### Endpoints Funcionando:
+- ✅ POST /auth/login
+- ✅ POST /auth/refresh
+- ✅ GET /asociados
+- ✅ POST /asociados
+- 🔄 POST /pagos/iniciar (en desarrollo)
+
+### Próximos Pasos:
+1. Completar integración Wompi
+2. Implementar webhook
+3. Crear cron job de estado
+```
+
+**En `/mobile-app/CLAUDE.md`:**
+
+```markdown
+## 🚦 Estado de la App Móvil
+
+> **Última actualización:** [FECHA]
+> **Progreso:** 0% (no iniciada)
+
+### Pantallas Implementadas:
+- ⬜ LoginScreen
+- ⬜ RegisterScreen
+- ⬜ HomeScreen
+- ⬜ EstadoFinancieroScreen
+- ⬜ PagoScreen
+- ⬜ MiCarneScreen
+- ⬜ ConveniosScreen
+- ⬜ PerfilScreen
+
+### Navegación:
+- ⬜ Auth Stack
+- ⬜ Main Tabs
+- ⬜ Integración con backend
+
+### Próximos Pasos:
+1. Inicializar proyecto Expo
+2. Configurar navegación
+3. Crear stores de Zustand
+```
+
+**En `/web-admin/CLAUDE.md`:**
+
+```markdown
+## 🚦 Estado del Panel Web
+
+> **Última actualización:** [FECHA]
+> **Progreso:** 0% (no iniciado)
+
+### Páginas Implementadas:
+- ⬜ Dashboard
+- ⬜ AsociadosPage
+- ⬜ PagosPage
+- ⬜ ConveniosPage
+- ⬜ NoticiasPage
+- ⬜ NotificacionesPage
+- ⬜ EstadisticasPage
+
+### Componentes Base:
+- ⬜ Layout principal
+- ⬜ Sidebar
+- ⬜ Header
+
+### Próximos Pasos:
+1. Inicializar Vite + React
+2. Configurar Ant Design
+3. Crear layout principal
+```
+
+---
+
+### 📝 CAPA 2: Checklist Diario como Memoria Persistente
+
+#### Crear Carpeta de Logs:
+
+```bash
+mkdir -p daily-logs/semana-01
+mkdir -p daily-logs/semana-02
+# ... (hasta semana-10)
+```
+
+#### Guardar Checklist al Final del Día:
+
+**Cada día, guarda el checklist completado:**
+
+```
+daily-logs/
+├── semana-01/
+│   ├── 2026-04-15-dia-01.md
+│   ├── 2026-04-16-dia-02.md
+│   ├── 2026-04-17-dia-03.md
+│   ├── 2026-04-18-dia-04.md
+│   └── 2026-04-19-dia-05.md
+├── semana-02/
+│   └── ...
+```
+
+---
+
+### 📝 CAPA 3: Prompts Estandarizados
+
+#### 🌅 PROMPT DE INICIO DEL DÍA (Ejecutar cada mañana)
+
+```
+@/CLAUDE.md @backend/CLAUDE.md @daily-logs/semana-X/YYYY-MM-DD-dia-anterior.md
+
+Hola Claude. Hoy es el Día X del proyecto - Semana Y.
+
+Contexto rápido:
+- Ayer completamos: [logro principal del día anterior]
+- Hoy trabajaremos en: [objetivo del día según cronograma]
+- Rama Git activa: fase-X-nombre
+
+Lee los archivos CLAUDE.md y el checklist de ayer para conocer el estado actual.
+¿Listo para empezar?
+```
+
+#### 🏁 PROMPT DE ACTUALIZACIÓN DE ESTADO (Al completar fase)
+
+**Para Fases 1-3 (Backend):**
+
+```
+@/CLAUDE.md @backend/CLAUDE.md
+
+Acabamos de completar la Fase X: [nombre de la fase].
+
+Actualiza SOLO estos 2 archivos:
+
+1. /CLAUDE.md (raíz):
+   - Marca Fase X como ✅ Completado con fecha de hoy
+   - Cambia Fase X+1 a 🔄 En progreso
+   - Actualiza "Fase activa" y "Rama Git activa"
+
+2. backend/CLAUDE.md:
+   - Actualiza porcentaje de progreso
+   - Marca como ✅ los modelos/controllers/endpoints creados esta fase
+   - Actualiza "Próximos Pasos"
+
+NO toques mobile-app/CLAUDE.md ni web-admin/CLAUDE.md.
+
+Muéstrame los cambios antes de aplicarlos.
+```
+
+**Para Fase 4 (App Móvil):**
+
+```
+@/CLAUDE.md @mobile-app/CLAUDE.md
+
+Acabamos de completar la Fase 4: App Móvil Completa.
+
+Actualiza SOLO estos 2 archivos:
+
+1. /CLAUDE.md (raíz):
+   - Marca Fase 4 como ✅ Completado con fecha de hoy
+   - Cambia Fase 4.5 a 🔄 En progreso
+
+2. mobile-app/CLAUDE.md:
+   - Actualiza progreso a 100%
+   - Marca todas las pantallas como ✅
+   - Marca navegación como ✅
+   - Actualiza "Próximos Pasos" (integración, testing)
+
+NO toques backend/CLAUDE.md ni web-admin/CLAUDE.md.
+```
+
+**Para Fase 4.5 (Panel Web):**
+
+```
+@/CLAUDE.md @web-admin/CLAUDE.md
+
+Acabamos de completar la Fase 4.5: Panel Web Administrativo.
+
+Actualiza SOLO estos 2 archivos:
+
+1. /CLAUDE.md (raíz):
+   - Marca Fase 4.5 como ✅ Completado con fecha de hoy
+   - Cambia Fase 5 a 🔄 En progreso
+
+2. web-admin/CLAUDE.md:
+   - Actualiza progreso a 100%
+   - Marca todas las páginas como ✅
+   - Marca componentes base como ✅
+
+NO toques backend/CLAUDE.md ni mobile-app/CLAUDE.md.
+```
+
+---
+
+### 🔄 FLUJO COMPLETO DÍA A DÍA
+
+```
+🌅 INICIO DEL DÍA (8:00 AM):
+1. git checkout fase-X-nombre
+2. git pull origin fase-X-nombre
+3. Ejecutar "Prompt de Inicio del Día"
+4. Claude confirma que leyó el estado
+
+💻 DURANTE EL DÍA (8:30 AM - 2:00 PM):
+5. Trabajar en las tareas del cronograma
+6. Commits WIP cada 1-2 horas
+7. Actualizar checklist conforme avanzas
+
+🌆 FIN DEL DÍA (2:00 PM):
+8. Completar checklist del día
+9. Guardar checklist en /daily-logs/semana-X/
+10. git add . && git commit -m "feat: [logro del día]"
+11. git push origin fase-X-nombre
+
+🏁 AL COMPLETAR FASE (Viernes o día final):
+12. Ejecutar "Prompt de Actualización de Estado"
+13. Claude actualiza los CLAUDE.md correspondientes
+14. Verificar cambios y confirmar
+15. git add . && git commit -m "docs: actualizar estado - fase X completada"
+16. git checkout develop && git merge fase-X-nombre
+17. git tag fase-X-completada && git push --all && git push --tags
+```
+
+---
+
+### 📊 EJEMPLO COMPLETO: Día 5 (Final de Semana 1)
+
+**Al Terminar el Día 5:**
+
+```bash
+# 1. Guardar checklist
+cp checklist-dia-5.md daily-logs/semana-01/2026-04-19-dia-05.md
+
+# 2. Commit final del día
+git add .
+git commit -m "feat: implementar sistema QR y convenios - día 5"
+git push origin fase-1-backend
+
+# 3. Actualizar estado (porque se completó la fase)
+```
+
+**Ejecutar en Claude Code:**
+
+```
+@/CLAUDE.md @backend/CLAUDE.md
+
+Acabamos de completar la Fase 1: Backend Fundamentos.
+
+Actualiza estos 2 archivos:
+
+1. /CLAUDE.md:
+   - Fase 1 → ✅ Completado (19/04/2026)
+   - Fase 2 → 🔄 En progreso
+   - Fase activa: Fase 2 - Módulo de Pagos
+   - Rama Git: fase-2-pagos
+
+2. backend/CLAUDE.md:
+   - Progreso: 35% → 40%
+   - Modelos: Marcar Asociado, Finca, Aporte como ✅
+   - Endpoints: Marcar auth y asociados como ✅
+   - Próximos pasos: Integración Wompi
+
+Muéstrame los cambios.
+```
+
+**Claude responde mostrando los diffs. Tú confirmas. Claude aplica cambios.**
+
+```bash
+# 4. Commit de actualización de estado
+git add CLAUDE.md backend/CLAUDE.md
+git commit -m "docs: actualizar estado del proyecto - fase 1 completada"
+git push origin fase-1-backend
+
+# 5. Merge a develop
+git checkout develop
+git pull origin develop
+git merge fase-1-backend
+git push origin develop
+
+# 6. Tag de milestone
+git tag backend-semana-1-completado
+git push origin backend-semana-1-completado
+```
+
+**Listo. El lunes inicias Semana 2 con estado sincronizado.**
+
+---
+
 # BLOQUE 1: ENTRENAMIENTO (Pre-Construcción)
 
 ## 📅 Semana 0: Preparación y Entrenamiento
@@ -260,6 +728,21 @@ Construir la API REST completa con:
 ### DÍA 1: Modelos Mongoose (Lunes)
 **Tiempo:** 4-6 horas
 
+#### 🔄 PROMPT DE INICIO DEL DÍA
+
+```
+@/CLAUDE.md @backend/CLAUDE.md
+
+Hola Claude. Hoy es el Día 1 del proyecto - Semana 1.
+
+Es el primer día de construcción. Hoy inicializaremos el backend 
+y crearemos los primeros modelos Mongoose.
+
+Rama Git activa: fase-1-backend
+
+¿Listo para empezar?
+```
+
 #### Mañana (2-3 horas)
 
 **Tarea 1.1: Inicializar Proyecto Backend**
@@ -326,12 +809,30 @@ Crea el script de seed en backend/src/utils/seed.js:
 - [ ] Datos de prueba cargados
 - [ ] Verificación en MongoDB Atlas
 
-**Commit del día:**
+**Flujo Git del día:**
 ```bash
+# Al iniciar (ya deberías estar en develop)
+git checkout fase-1-backend
+
+# Durante el día (cada 1-2 horas)
+git add .
+git commit -m "wip: inicializar proyecto backend"
+git commit -m "wip: crear modelo Asociado"
+git commit -m "wip: crear modelos Finca y Aporte"
+
+# Al terminar el día
 git add .
 git commit -m "feat: crear modelos Mongoose y seed de datos - día 1"
 git push origin fase-1-backend
+
+# Verificar
+git log --oneline -5
 ```
+
+**Estado esperado:**
+- ✅ Rama fase-1-backend tiene commits del día
+- ✅ Código subido a GitHub
+- ✅ develop aún sin cambios (harás merge al completar Semana 1)
 
 ---
 
@@ -384,8 +885,18 @@ Incluye validación con Zod.
 - [ ] Middleware protege rutas
 - [ ] Tokens válidos por el tiempo correcto
 
-**Commit del día:**
+**Flujo Git del día:**
 ```bash
+# Al iniciar (continúas en fase-1-backend)
+git status  # Verificar que estás en la rama correcta
+
+# Durante el día
+git add .
+git commit -m "wip: crear middleware de autenticación"
+git commit -m "wip: implementar JWT utils"
+git commit -m "wip: crear controller de auth"
+
+# Al terminar el día
 git add .
 git commit -m "feat: implementar autenticación JWT completa - día 2"
 git push origin fase-1-backend
@@ -447,8 +958,15 @@ Las fincas están vinculadas a asociados por asociadoId.
 - [ ] Relación asociado-finca correcta
 - [ ] Formato de respuesta estándar
 
-**Commit del día:**
+**Flujo Git del día:**
 ```bash
+# Durante el día
+git add .
+git commit -m "wip: crear controller de asociados"
+git commit -m "wip: implementar validación Zod"
+git commit -m "wip: crear CRUD de fincas"
+
+# Al terminar
 git add .
 git commit -m "feat: implementar CRUD asociados y fincas - día 3"
 git push origin fase-1-backend
@@ -507,8 +1025,15 @@ Implementa el cron job de control de estado:
 - [ ] Cron job implementado
 - [ ] Estados se actualizan automáticamente
 
-**Commit del día:**
+**Flujo Git del día:**
 ```bash
+# Durante el día
+git add .
+git commit -m "wip: crear servicio Wompi"
+git commit -m "wip: implementar webhook"
+git commit -m "wip: agregar cron job de estado"
+
+# Al terminar
 git add .
 git commit -m "feat: implementar módulo de pagos Wompi y cron de estado - día 4"
 git push origin fase-1-backend
@@ -569,8 +1094,14 @@ actualizar, toggleActivo
 - [ ] CRUD convenios completo
 - [ ] Toggle activo/inactivo funciona
 
-**Commit del día:**
+**Flujo Git del día:**
 ```bash
+# Durante el día
+git add .
+git commit -m "wip: implementar sistema QR"
+git commit -m "wip: crear CRUD de convenios"
+
+# Al terminar
 git add .
 git commit -m "feat: implementar sistema QR y gestión de convenios - día 5"
 git push origin fase-1-backend
@@ -590,11 +1121,83 @@ git push origin fase-1-backend
 - [ ] Gestión de convenios
 - [ ] Todos los endpoints probados
 
-**Merge a develop:**
+#### 🔄 PROMPT DE ACTUALIZACIÓN DE ESTADO
+
+**Ejecuta este prompt al completar la Semana 1:**
+
+```
+@/CLAUDE.md @backend/CLAUDE.md
+
+Acabamos de completar las Fases 1, 2 y 3 del backend:
+- Fase 1: Modelos + Autenticación ✅
+- Fase 2: Pagos con Wompi ✅
+- Fase 3: Sistema QR + Convenios ✅
+
+Actualiza estos 2 archivos:
+
+1. /CLAUDE.md (raíz):
+   - Marca Fase 1, 2, 3 como ✅ Completado con fecha de hoy
+   - Cambia Fase 4 a 🔄 En progreso
+   - Fase activa: "Fase 4 - App Móvil"
+   - Rama Git activa: "fase-4-mobile"
+
+2. backend/CLAUDE.md:
+   - Actualiza progreso a 100%
+   - Marca TODOS los modelos como ✅
+   - Marca TODOS los endpoints como ✅
+   - Próximos pasos: "Backend completo. Esperando integración con frontends"
+
+Muéstrame los cambios antes de aplicarlos.
+```
+
+**Después de que Claude actualice los archivos:**
+
+**Merge a develop (IMPORTANTE - No olvidar):**
 ```bash
+# Commit de actualización de estado
+git add CLAUDE.md backend/CLAUDE.md
+git commit -m "docs: actualizar estado del proyecto - backend completo"
+git push origin fase-3-qr
+
+# Verificar que todo está committed
+git status
+
+# Cambiar a develop
 git checkout develop
+
+# Actualizar develop (por si acaso)
+git pull origin develop
+
+# Merge de las 3 fases del backend
 git merge fase-1-backend
+git merge fase-2-pagos
+git merge fase-3-qr
+
+# Si hay conflictos, resuélvelos y luego:
+# git add .
+# git commit -m "merge: integrar backend completo a develop"
+
+# Push a develop
 git push origin develop
+
+# Tags de milestone
+git tag backend-semana-1-completado
+git tag fase-1-completada
+git tag fase-2-completada
+git tag fase-3-completada
+git push origin --tags
+
+# Volver a develop para seguir trabajando
+git checkout develop
+```
+
+**Verificación post-merge:**
+```bash
+# Ver historial de commits
+git log --oneline --graph -15
+
+# Verificar que develop tiene todo
+git diff main..develop --stat
 ```
 
 ---
@@ -810,8 +1413,23 @@ Configura push notifications:
 git add .
 git commit -m "feat: app móvil completa con todas las pantallas - semana 3-5"
 git push origin fase-4-mobile
+```
+
+**Merge a develop:**
+```bash
+# Cambiar a develop
 git checkout develop
+git pull origin develop
+
+# Merge de la app móvil
 git merge fase-4-mobile
+
+# Push a develop
+git push origin develop
+
+# Tag de milestone
+git tag app-movil-completada
+git push origin app-movil-completada
 ```
 
 ---
@@ -1072,8 +1690,23 @@ Crea src/pages/Estadisticas/EstadisticasPage.jsx con Recharts:
 git add .
 git commit -m "feat: panel web admin completo - semana 6-7"
 git push origin fase-4.5-web-admin
+```
+
+**Merge a develop:**
+```bash
+# Cambiar a develop
 git checkout develop
+git pull origin develop
+
+# Merge del panel web
 git merge fase-4.5-web-admin
+
+# Push a develop
+git push origin develop
+
+# Tag de milestone
+git tag panel-web-completado
+git push origin panel-web-completado
 ```
 
 ---
