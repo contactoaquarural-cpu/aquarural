@@ -8,40 +8,33 @@
 
 ```
 plataforma-digital-ganadera/
-└── web-admin/          ← Estás aquí
+└── web-admin/
     ├── CLAUDE.md
-    ├── src/
-    │   ├── main.jsx            ← Punto de entrada de React
-    │   ├── App.jsx             ← Router principal
-    │   ├── pages/              ← Vistas completas (una por sección)
-    │   │   ├── Login/
-    │   │   ├── Dashboard/
-    │   │   ├── Asociados/
-    │   │   ├── Pagos/
-    │   │   ├── Convenios/
-    │   │   ├── Noticias/
-    │   │   ├── Notificaciones/
-    │   │   └── Estadisticas/
-    │   ├── components/         ← Componentes reutilizables
-    │   │   ├── Layout/         ← Sidebar, Header, MainLayout
-    │   │   ├── QRPreview/      ← Vista previa de QR de asociado
-    │   │   ├── EstadoBadge/    ← Badge de estado AL_DIA/EN_MORA/INACTIVO
-    │   │   └── charts/         ← Componentes de Recharts
-    │   ├── store/              ← Zustand stores
-    │   │   ├── auth.store.js
-    │   │   └── ui.store.js
-    │   ├── services/           ← Llamadas a la API
-    │   │   ├── api.service.js  ← Instancia de Axios configurada
-    │   │   ├── asociados.service.js
-    │   │   ├── pagos.service.js
-    │   │   ├── convenios.service.js
-    │   │   ├── noticias.service.js
-    │   │   └── estadisticas.service.js
-    │   ├── hooks/              ← Custom hooks de React Query
-    │   └── utils/              ← Helpers (formateo de fechas, moneda, etc.)
     ├── index.html
     ├── vite.config.js
-    └── package.json
+    ├── tailwind.config.js
+    ├── postcss.config.js
+    ├── package.json
+    └── src/
+        ├── main.jsx
+        ├── App.jsx
+        ├── index.css
+        ├── pages/
+        │   ├── Login/LoginPage.jsx
+        │   ├── Dashboard/DashboardPage.jsx
+        │   ├── Asociados/AsociadosPage.jsx
+        │   ├── Asociados/ExpedientePage.jsx
+        │   ├── Convenios/ConveniosPage.jsx
+        │   └── Reportes/ReportesPage.jsx
+        ├── components/
+        │   └── Layout/
+        │       ├── Sidebar.jsx
+        │       ├── TopBar.jsx
+        │       └── MainLayout.jsx
+        ├── store/
+        │   └── auth.store.js
+        └── services/
+            └── api.service.js
 ```
 
 ---
@@ -51,63 +44,66 @@ plataforma-digital-ganadera/
 | Tecnología | Versión | Uso |
 |---|---|---|
 | React.js | v18 | Framework UI |
-| Vite | latest | Bundler y servidor de desarrollo |
-| Ant Design (antd) | v5.x | Librería de componentes UI |
-| Zustand | v4.x | Estado global |
-| React Query | v5.x | Fetching y caché de datos del servidor |
+| Vite | v5.x | Bundler y servidor de desarrollo |
+| **Tailwind CSS** | v3.x | Estilos — NO usar Ant Design |
+| Material Symbols Outlined | Google Fonts | Iconografía |
+| Manrope + Inter | Google Fonts | Tipografía |
+| Zustand | v4.x | Estado global (auth) |
+| React Query | v5.x | Fetching y caché de datos |
 | Axios | v1.x | Cliente HTTP |
 | React Router | v6.x | Navegación entre páginas |
 | Recharts | v2.x | Gráficas de estadísticas |
-| xlsx | latest | Exportar reportes a Excel |
-| jsPDF | latest | Exportar reportes a PDF |
+
+---
+
+## 🎨 Design System (Dark Mode Editorial)
+
+### Paleta de colores (tokens Tailwind)
+```
+background / surface:          #111414
+surface-container-low:         #191c1c
+surface-container:             #1d2020
+surface-container-high:        #282a2a
+surface-container-highest:     #333535
+primary (texto/acento):        #a5d0b9
+primary-container (verde):     #1b4332
+on-surface (texto principal):  #e1e3e2
+on-surface-variant (gris):     #c1c8c2
+tertiary (tierra/urgente):     #f7ba8b
+tertiary-container:            #59320e
+error:                         #ffb4ab
+sidebar (emerald-950):         #022c22
+```
+
+### Reglas de diseño
+1. **Sin bordes 1px** — profundidad solo por cambio de color de fondo
+2. **Sin negro puro** — usar `#111414` como base más oscura
+3. **Botones CTA:** gradiente `from-primary-container to-primary-container/70` con texto `text-primary`
+4. **Cards:** `bg-surface-container-low rounded-2xl` o `rounded-3xl` — sin divisores
+5. **Sidebar:** siempre `bg-emerald-950` con texto `text-emerald-50/100`
+6. **TopBar:** `glass-effect` (80% opacidad + backdrop-blur)
+7. **Estados:** AL_DIA → `text-emerald-400`, EN_MORA → `text-error`, INACTIVO → `text-outline`
+
+### Tipografía
+- Títulos/Headlines: `font-headline` (Manrope)
+- Cuerpo/Labels: `font-body` o `font-label` (Inter)
+
+### Iconos
+- Usar siempre: `<span className="material-symbols-outlined">nombre_icono</span>`
+- Iconos con fill: agregar `style={{ fontVariationSettings: "'FILL' 1" }}`
 
 ---
 
 ## 🖥️ Páginas del Panel Web
 
-### Login (`/login`)
-- Formulario de cédula y contraseña
-- Llama a `POST /auth/login` de la API
-- Guarda token en Zustand + localStorage
-- Redirige a `/dashboard` si ya hay sesión
-
-### Dashboard (`/dashboard`)
-- Indicadores principales: total asociados, % AL_DIA, % EN_MORA, % INACTIVO
-- Últimos 5 pagos recibidos
-- Últimas 3 noticias publicadas
-- Accesos rápidos a las secciones principales
-
-### Asociados (`/asociados`)
-- Tabla con búsqueda por nombre/cédula, filtro por estado, paginación
-- Botón "Nuevo Asociado" abre modal con formulario
-- Acciones por fila: Ver detalle, Editar, Cambiar estado
-- Vista detalle incluye finca y historial de pagos
-
-### Pagos (`/pagos`)
-- Tabla global de aportes con filtros: mes, año, estado
-- Registro manual de pago en efectivo
-- Reporte de morosos exportable a Excel/PDF
-
-### Convenios (`/convenios`)
-- Tabla CRUD de convenios con toggle activo/inactivo
-- Formulario de creación y edición en modal
-- Filtro por tipo (AGROPECUARIO, VETERINARIA, INSUMOS, OTRO)
-
-### Noticias (`/noticias`)
-- Lista de noticias con estado publicado/borrador
-- Editor de contenido con campo de imagen
-- Acciones: publicar, despublicar, editar, eliminar
-
-### Notificaciones (`/notificaciones`)
-- Panel para enviar notificación masiva o individual
-- Selección de destinatarios: TODOS, EN_MORA, AL_DIA, específico
-- Historial de notificaciones enviadas
-
-### Estadísticas (`/estadisticas`)
-- Indicadores: total cabezas, total hectáreas, total asociados activos
-- Gráfica de torta: distribución por tipo de producción
-- Gráfica de barras: asociados por vereda
-- Gráfica de línea: recaudo mensual últimos 12 meses
+| Ruta | Archivo | Descripción |
+|---|---|---|
+| `/login` | `Login/LoginPage.jsx` | Login split-screen editorial |
+| `/dashboard` | `Dashboard/DashboardPage.jsx` | Métricas bento + últimos registros |
+| `/asociados` | `Asociados/AsociadosPage.jsx` | Tabla con filtros y paginación |
+| `/asociados/:id` | `Asociados/ExpedientePage.jsx` | Expediente completo del asociado |
+| `/convenios` | `Convenios/ConveniosPage.jsx` | Cards + drawer lateral CRUD |
+| `/reportes` | `Reportes/ReportesPage.jsx` | Analítica + tabla morosos |
 
 ---
 
@@ -115,190 +111,77 @@ plataforma-digital-ganadera/
 
 ```javascript
 // src/services/api.service.js
-import axios from 'axios';
-import { useAuthStore } from '../store/auth.store';
+// BaseURL: VITE_API_URL o http://localhost:3000
+// Interceptor request: agrega Bearer token automáticamente
+// Interceptor response: redirige a /login en 401
+```
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
-  timeout: 10000,
-});
-
-// Interceptor: agrega token automáticamente en cada request
-api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
-
-// Interceptor: maneja 401 (sesión expirada)
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      useAuthStore.getState().logout();
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
-
-export default api;
+Crear `.env` local copiando `.env.example`:
+```
+VITE_API_URL=http://localhost:3000
 ```
 
 ---
 
-## 🗃️ Store de Autenticación (Zustand)
+## 🗃️ Store de Autenticación
 
 ```javascript
-// src/store/auth.store.js
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-
-export const useAuthStore = create(
-  persist(
-    (set) => ({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      login: (user, token) => set({ user, token, isAuthenticated: true }),
-      logout: () => {
-        set({ user: null, token: null, isAuthenticated: false });
-        localStorage.removeItem('auth-storage');
-      },
-    }),
-    { name: 'auth-storage' }
-  )
-);
+// src/store/auth.store.js — Zustand con persist
+// Estado: { user, token, refreshToken, isAuthenticated }
+// Acciones: login(user, token, refreshToken), logout(), setUser(user)
+// Persistido en localStorage con clave 'asoga-auth'
 ```
 
 ---
 
-## 🎨 Sistema de Diseño
-
-### Colores principales
-```javascript
-// Paleta de colores de MetaDevelopment
-const colors = {
-  primary:     '#1A7A3C',  // Verde principal
-  primaryDark: '#155C2E',  // Verde oscuro
-  primaryLight:'#E8F5EE',  // Verde claro (fondos)
-  white:       '#FFFFFF',
-  grayText:    '#444444',
-  grayLight:   '#F5F5F5',
-  grayBorder:  '#CCCCCC',
-  success:     '#52c41a',  // AL_DIA
-  warning:     '#faad14',  // EN_MORA
-  error:       '#ff4d4f',  // INACTIVO
-};
-```
-
-### Configuración de tema Ant Design
-```javascript
-// En main.jsx — siempre usar este tema
-import { ConfigProvider } from 'antd';
-import esES from 'antd/locale/es_ES';
-
-<ConfigProvider
-  locale={esES}
-  theme={{
-    token: {
-      colorPrimary: '#1A7A3C',
-      colorSuccess: '#52c41a',
-      colorWarning: '#faad14',
-      colorError: '#ff4d4f',
-      borderRadius: 6,
-      fontFamily: 'Arial, sans-serif',
-    },
-  }}
->
-```
-
-### Badge de estado (componente reutilizable)
-```javascript
-// Siempre usar este componente para mostrar el estado de un asociado
-// Estados: AL_DIA → green, EN_MORA → orange, INACTIVO → red
-<Tag color={estado === 'AL_DIA' ? 'green' : estado === 'EN_MORA' ? 'orange' : 'red'}>
-  {estado}
-</Tag>
-```
-
----
-
-## 📐 Convenciones del Panel Web
+## 📐 Convenciones
 
 ### Estructura de una página
 ```javascript
-// Todas las páginas siguen este patrón
 import { useQuery } from '@tanstack/react-query';
-import { Table, Button, Space } from 'antd';
 import api from '../../services/api.service';
 
-const AsociadosPage = () => {
-  // 1. Fetching de datos con React Query
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['asociados'],
-    queryFn: () => api.get('/asociados').then(r => r.data),
+const MiPagina = () => {
+  const { data, isLoading } = useQuery({
+    queryKey: ['clave-unica'],
+    queryFn: () => api.get('/endpoint').then((r) => r.data),
   });
 
-  // 2. Columnas de la tabla Ant Design
-  const columns = [...];
+  if (isLoading) return <LoadingState />;
 
-  // 3. Render
-  return (
-    <div>
-      <Space style={{ marginBottom: 16 }}>
-        <Button type="primary">Nuevo Asociado</Button>
-      </Space>
-      <Table
-        columns={columns}
-        dataSource={data?.data}
-        loading={isLoading}
-        rowKey="_id"
-        pagination={{ pageSize: 10 }}
-      />
-    </div>
-  );
+  return <div className="pt-8 pb-12 px-8 max-w-7xl mx-auto">...</div>;
 };
-
-export default AsociadosPage;
 ```
 
-### Manejo de errores en formularios Ant Design
+### Patrón de mutación (crear/editar)
 ```javascript
-// Siempre usar Form de Ant Design para formularios
-import { Form, Input, Button, message } from 'antd';
-
-const [form] = Form.useForm();
-
-const onFinish = async (values) => {
-  try {
-    await api.post('/asociados', values);
-    message.success('Asociado creado exitosamente');
-    form.resetFields();
-  } catch (error) {
-    message.error(error.response?.data?.message || 'Error al crear el asociado');
-  }
-};
+const mutation = useMutation({
+  mutationFn: (payload) => api.post('/endpoint', payload),
+  onSuccess: () => queryClient.invalidateQueries(['clave']),
+  onError: (err) => setError(err.response?.data?.message || 'Error'),
+});
 ```
 
 ---
 
-## 🧪 Comandos del Panel Web
+## 🧪 Comandos
 
 ```bash
+# Desde web-admin/
+npm install       # Instalar dependencias
 npm run dev       # Servidor de desarrollo (puerto 5173)
 npm run build     # Build de producción
-npm run preview   # Preview del build de producción
+npm run preview   # Preview del build
 ```
 
 ---
 
 ## ⛔ Reglas específicas del Panel Web
 
-1. **Siempre usar componentes de Ant Design** — no crear estilos desde cero
+1. **Nunca usar Ant Design** — el design system es Tailwind CSS puro
 2. **Todo el texto en español** — botones, labels, mensajes, tooltips
-3. **Siempre confirmar acciones destructivas** con `Modal.confirm()` de Ant Design
-4. **Nunca guardar datos sensibles** en localStorage excepto el token JWT
-5. **Siempre mostrar feedback** al usuario: `message.success()` o `message.error()`
-6. **React Query para todos los fetches** — no usar `useEffect` con `fetch` directamente
-7. **El token expira** — el interceptor de Axios maneja el 401 automáticamente
+3. **Siempre usar React Query** para fetches — no `useEffect` con `fetch`
+4. **Respetar los tokens de color** del tailwind.config.js — no hardcodear colores
+5. **El token expira** — el interceptor de Axios maneja el 401 automáticamente
+6. **Confirmar acciones destructivas** con `window.confirm()` o modal propio
+7. **Nunca guardar datos sensibles** en localStorage excepto el token JWT (vía Zustand persist)

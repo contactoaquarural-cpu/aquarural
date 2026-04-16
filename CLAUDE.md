@@ -36,7 +36,7 @@ plataforma-digital-ganadera/
 ├── backend/                ← API REST Node.js + Express + MongoDB
 │   ├── CLAUDE.md           ← Contexto específico del backend
 │   └── src/
-├── web-admin/              ← Panel web React.js + Vite + Ant Design
+├── web-admin/              ← Panel web React.js + Vite + Tailwind CSS
 │   ├── CLAUDE.md           ← Contexto específico del panel web
 │   └── src/
 ├── mobile-app/             ← App React Native + Expo
@@ -83,7 +83,7 @@ plataforma-digital-ganadera/
 | Capa | Tecnología | Versión |
 |---|---|---|
 | Framework | React.js + Vite | React 18 |
-| UI | Ant Design (antd) | v5.x |
+| UI | Tailwind CSS | v3.x |
 | Estado | Zustand | v4.x |
 | Data fetching | Axios + React Query | v5.x |
 | Gráficas | Recharts | v2.x |
@@ -126,7 +126,7 @@ plataforma-digital-ganadera/
 | Fase 1 | Configuración, registro y autenticación (backend) | ✅ Completado |
 | Fase 2 | Módulo de pagos y control de estado (backend) | ✅ Completado |
 | Fase 3 | QR carné digital y convenios (backend) | ✅ Completado |
-| Fase 4 | Panel web administrativo (React + Ant Design) | ⬜ Pendiente |
+| Fase 4 | Panel web administrativo (React + Tailwind CSS) | ✅ Completado |
 | Fase 5 | App móvil completa (React Native + Expo) | ⬜ Pendiente |
 | Fase 6 | Noticias y notificaciones (backend + frontend) | ⬜ Pendiente |
 | Fase 7 | Estadísticas, pruebas y despliegue | ⬜ Pendiente |

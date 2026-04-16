@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Noticias Ganaderas - ASOGACENTRO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed-variant": "#274e3d",
+                    "primary-container": "#a5d0b9",
+                    "surface-container": "#1d2020",
+                    "inverse-surface": "#e1e3e2",
+                    "on-surface-variant": "#c1c8c2",
+                    "on-tertiary-container": "#744823",
+                    "outline-variant": "#414844",
+                    "primary-fixed-dim": "#a5d0b9",
+                    "on-primary-fixed": "#002114",
+                    "error": "#ffb4ab",
+                    "on-tertiary": "#4c2704",
+                    "background": "#111414",
+                    "primary": "#c0ecd4",
+                    "surface-container-lowest": "#0c0f0f",
+                    "on-primary-container": "#335a48",
+                    "primary-fixed": "#c1ecd5",
+                    "outline": "#8b938d",
+                    "error-container": "#93000a",
+                    "on-secondary-container": "#97c2ab",
+                    "on-primary": "#0e3727",
+                    "inverse-primary": "#3f6654",
+                    "tertiary-container": "#f7ba8b",
+                    "surface-container-high": "#282a2a",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#663d18",
+                    "surface-container-highest": "#323535",
+                    "tertiary-fixed-dim": "#f7ba8b",
+                    "on-background": "#e1e3e2",
+                    "secondary-fixed": "#c1ecd4",
+                    "inverse-on-surface": "#2e3131",
+                    "tertiary": "#ffdcc4",
+                    "on-tertiary-fixed": "#2f1500",
+                    "surface-dim": "#111414",
+                    "secondary": "#a5d0b9",
+                    "surface-tint": "#a5d0b9",
+                    "surface": "#111414",
+                    "on-error": "#690005",
+                    "on-secondary-fixed-variant": "#274e3d",
+                    "secondary-container": "#29513f",
+                    "surface-bright": "#373a3a",
+                    "on-secondary-fixed": "#002114",
+                    "on-surface": "#e1e3e2",
+                    "surface-variant": "#323535",
+                    "secondary-fixed-dim": "#a5d0b9",
+                    "tertiary-fixed": "#ffdcc3",
+                    "surface-container-low": "#191c1c",
+                    "on-secondary": "#0e3727"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "2.0rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+        .glass-nav { background: rgba(2, 44, 34, 0.85); backdrop-filter: blur(12px); }
+        .hero-gradient { background: linear-gradient(135deg, rgba(27, 67, 50, 0.8) 0%, rgba(17, 20, 20, 0.2) 100%); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-[#111414] text-[#a5d0b9] flex justify-between items-center px-6 py-4 w-full sticky top-0 z-40">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional farmer with a weathered face and warm smile in soft evening light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIv_MIKtV8ZEqYkAH2jirOv6QEriIr1wllrBABG7yNpVKvggBNbqn_e7yGbBHE7B-frleomHmGTptTQbmZwyZWV8kSf8budhhXysKtqCr5NA1oyMXTs8Kegypw2wzYPsUxA3iWMfRHrJoz61qwXd9FXB_0Ot2fHbREHvJ9A5pOmdr8XWpCNiVlccdI_ZdtBZ_EnAZvCt7mklXEXsXuUFtzYVLjMMgt0u6iUW6DnBz8RBbV02F4uDUfEDIHM5iNotF5phYxqs5-C7Y"/>
+</div>
+<span class="text-xl font-bold tracking-tight text-[#e1e3e2] font-headline">ASOGACENTRO</span>
+</div>
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+</header>
+<main class="px-6 pt-4">
+<!-- Section Header -->
+<div class="mb-8 mt-2">
+<p class="text-primary font-label text-[10px] tracking-[0.2em] uppercase font-semibold mb-1">Editorial</p>
+<h1 class="text-4xl font-extrabold tracking-tight text-on-surface leading-tight">Noticias Ganaderas</h1>
+</div>
+<!-- Featured News Card (Bento Style) -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container-low mb-6 aspect-[4/5] flex flex-col justify-end group">
+<img alt="Cattle" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Panoramic view of majestic Brahman cattle grazing in a lush green valley during a dramatic misty sunrise" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCM-IXm2i0riVfbg4MVCQsyKTWHg8BztG0q5CJAAMhKh9Osj4Fyu9bQlIwV_MP2azLZnRm3xzlEig0ju87FFMPX09z0JJWgpJh6OeBY0kmL1VxwI-VbKr1dZuMTCi58b0Z8Nw9tbbcIQt4n92-KiHoMymEw92aCu7DW-6VB9o84ci47ZotznPJARuVC28wzrSktUEAlnBzRY57CHCtOymMfnup5J12LdIbGtdCVen7uhwvPuUr5N95JsC82jBUEGyg5rxcr5oPtRVY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent"></div>
+<div class="relative p-6 z-10">
+<span class="inline-block px-3 py-1 rounded bg-primary-container text-on-primary-container font-label text-[10px] font-bold tracking-widest uppercase mb-4">Eventos</span>
+<h2 class="text-3xl font-bold text-on-surface mb-3 leading-snug">Gran Subasta en Garzón - 15 de Noviembre</h2>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<p class="text-xs font-medium">Hace 2 horas</p>
+</div>
+</div>
+</div>
+<!-- News Feed Grid -->
+<div class="grid grid-cols-1 gap-8">
+<!-- Article 1 -->
+<article class="flex flex-col gap-4">
+<div class="rounded-2xl overflow-hidden bg-surface-container-low aspect-video">
+<img alt="Farm" class="w-full h-full object-cover" data-alt="Minimalist landscape of a modern organic farm with straight furrows and golden hour lighting on the horizon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8f5XqWl4OHON3pIDO8CnljvXhtX7bJ74nM6szFLY07tdbDL6hjf9NNiP0_O7DoFw5nMSC75jXDXY002UkNY1BMpxX2mmimwUEPiBEWv-mSWdbu8ZW5LTyTdRuVH90top9PNIHO3z0wqNnY3ap3-FsOcXjddb42u2gDbW-ilYZyoqJIhmwvZ_B7XAw9U0hvYZbqJ0DvBqUYrslT2Zbbfly2WQbIE55NgUPCk8m3KwsLwO7qHHyR9ZP6cTOwMIbKZelvqLhomfM97w"/>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<span class="text-tertiary font-label text-[10px] font-bold tracking-widest uppercase">Tecnología</span>
+<p class="text-on-surface-variant text-[10px] font-medium">12 Oct, 2023</p>
+</div>
+<h3 class="text-xl font-bold text-on-surface leading-tight">Implementación de trazabilidad digital en el Huila</h3>
+<p class="text-on-surface-variant text-sm line-clamp-2 leading-relaxed">Nuevas herramientas tecnológicas permitirán a los asociados monitorear el crecimiento y salud de su ganado en tiempo real desde el móvil.</p>
+</div>
+</article>
+<!-- Article 2 (Asymmetric Layout Shift) -->
+<article class="flex gap-4 items-start py-6 border-t border-outline-variant/10">
+<div class="w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-surface-container-low">
+<img alt="Cattle detail" class="w-full h-full object-cover" data-alt="Macro detail of a high-quality leather saddle on a dark wooden background with moody dramatic shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI_1dgDYyqwGefPXYeTVX0DmppcxSQTGZqR2XmQlJ-WR3r2_Zs2edZy_5_F-eFtlVfRd-8pI9QLj8mGdbIiHZ5BZrKRvJ_XhHqnfH1hyWs6dVe1J4Dbo0LpsqAvoaLeG7faQLwESS0g0ZzUHEwjRYKlVqsl5zeztHXRqm13HngCXEzhNKKCgVYToRHmiTuVw4B1FoLOQ6K7fhENIYlqkYFcaDf3AA2GMJDYs5BEnD87UzysMH4MfCyIIPO8uM-vir-BzK0bTi-nVw"/>
+</div>
+<div class="flex-1 space-y-1">
+<span class="text-primary font-label text-[10px] font-bold tracking-widest uppercase">Mercados</span>
+<h3 class="text-lg font-bold text-on-surface leading-tight">Precio del ganado en pie registra alza del 4.5%</h3>
+<div class="flex items-center gap-2 text-on-surface-variant/60">
+<span class="material-symbols-outlined text-[14px]">history</span>
+<p class="text-[10px] font-medium tracking-wide">Hace 5 horas</p>
+</div>
+</div>
+</article>
+<!-- Article 3 -->
+<article class="flex flex-col gap-4">
+<div class="rounded-2xl overflow-hidden bg-surface-container-low aspect-square">
+<img alt="Green field" class="w-full h-full object-cover" data-alt="Lush rolling hills of a pastoral countryside under a soft blue sky with scattered white clouds" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIVZR7Ylrg_PxtDfmLnKcW0ZJw5OzpXMJxDDd8qpQWCq_A-3Cc7SB1OZuGJfVUa-KxdKyMBhvOIAH3oSIEQvSjDK3naYeFjpiLs8Mautu0I7Kv_bTQeq1lm9xrwEsQ-GXqJoD-xWlTL5-UJzfv3bPMzFnoxYfdx0aqa3cSQHNqce_yuKXZCksR0Kn4ZiNf8-eqvqRs8a_nHR5OoXCNbnY1C-dOdXEnbvTwCR-ELShJ4V7unXmB1RcCdpzHTTf5n8AUbWeyUiNZ6M0"/>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<span class="text-secondary font-label text-[10px] font-bold tracking-widest uppercase">Sostenibilidad</span>
+<p class="text-on-surface-variant text-[10px] font-medium">Hace 1 día</p>
+</div>
+<h3 class="text-2xl font-bold text-on-surface leading-tight">Pastoreo rotativo: El secreto de la eficiencia en climas secos</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Expertos comparten técnicas avanzadas para mantener la calidad del suelo y el forraje durante la temporada de sequía extrema.</p>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-[#022c22]/85 backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.4)]">
+<a class="flex flex-col items-center justify-center text-[#e1e3e2]/60 px-4 py-2 hover:text-[#a5d0b9] transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">dashboard</span>
+<span class="font-label font-semibold text-[10px] tracking-wide uppercase">Inicio</span>
+</a>
+<!-- Active Tab: Noticias usually falls under 'Inicio' or is a top-level context, assuming 'Inicio' for this layout as a dashboard landing -->
+<a class="flex flex-col items-center justify-center bg-[#1b4332] text-[#c0ecd4] rounded-2xl px-4 py-2 scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1">newspaper</span>
+<span class="font-label font-semibold text-[10px] tracking-wide uppercase">Noticias</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#e1e3e2]/60 px-4 py-2 hover:text-[#a5d0b9] transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">qr_code_2</span>
+<span class="font-label font-semibold text-[10px] tracking-wide uppercase">Carné</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#e1e3e2]/60 px-4 py-2 hover:text-[#a5d0b9] transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">payments</span>
+<span class="font-label font-semibold text-[10px] tracking-wide uppercase">Pagos</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#e1e3e2]/60 px-4 py-2 hover:text-[#a5d0b9] transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">handshake</span>
+<span class="font-label font-semibold text-[10px] tracking-wide uppercase">Convenios</span>
+</a>
+</nav>
+</body></html>

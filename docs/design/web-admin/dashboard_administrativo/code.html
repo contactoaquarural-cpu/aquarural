@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ASOGACENTRO - Dashboard Administrativo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#414844",
+                    "primary": "#a5d0b9",
+                    "inverse-primary": "#3f6653",
+                    "surface-tint": "#a5d0b9",
+                    "tertiary-fixed-dim": "#f7ba8b",
+                    "on-tertiary": "#4c2704",
+                    "surface-container-lowest": "#0c0f0e",
+                    "tertiary-fixed": "#ffdcc3",
+                    "surface-container-highest": "#333535",
+                    "outline": "#8b938d",
+                    "surface-container-high": "#282a2a",
+                    "primary-container": "#1b4332",
+                    "tertiary-container": "#59320e",
+                    "secondary-container": "#444937",
+                    "surface-bright": "#373a39",
+                    "on-error-container": "#ffdad6",
+                    "secondary-fixed": "#e0e5cc",
+                    "on-tertiary-fixed-variant": "#663d18",
+                    "on-secondary-container": "#b3b8a1",
+                    "on-primary-fixed": "#002114",
+                    "surface-variant": "#333535",
+                    "on-secondary-fixed-variant": "#444937",
+                    "error": "#ffb4ab",
+                    "secondary-fixed-dim": "#c4c9b1",
+                    "on-surface-variant": "#c1c8c2",
+                    "tertiary": "#f7ba8b",
+                    "primary-fixed": "#c1ecd4",
+                    "on-primary": "#0e3727",
+                    "on-error": "#690005",
+                    "background": "#111414",
+                    "on-primary-container": "#86af99",
+                    "secondary": "#c4c9b1",
+                    "on-surface": "#e1e3e2",
+                    "inverse-on-surface": "#2e3131",
+                    "on-tertiary-fixed": "#2f1500",
+                    "on-tertiary-container": "#d39a6e",
+                    "on-secondary": "#2e3222",
+                    "surface-container": "#1d2020",
+                    "surface": "#111414",
+                    "on-primary-fixed-variant": "#274e3d",
+                    "surface-container-low": "#191c1c",
+                    "on-background": "#e1e3e2",
+                    "surface-dim": "#111414",
+                    "on-secondary-fixed": "#191d0e",
+                    "error-container": "#93000a",
+                    "inverse-surface": "#e1e3e2",
+                    "primary-fixed-dim": "#a5d0b9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #111414;
+            color: #e1e3e2;
+        }
+        .glass-effect {
+            background: rgba(17, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        .asymmetric-grid {
+            grid-template-columns: 1fr 1fr 1fr 1.5fr;
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-primary selection:text-on-primary">
+<!-- SideNavBar Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-emerald-950 dark:bg-neutral-950 shadow-2xl shadow-emerald-900/20 flex flex-col h-full py-6 z-[60]">
+<div class="px-6 mb-8">
+<h1 class="text-2xl font-bold tracking-tighter text-emerald-50 dark:text-emerald-400 font-headline">ASOGACENTRO</h1>
+<p class="text-xs text-emerald-500/60 font-medium tracking-widest uppercase mt-1">Administración Central</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-emerald-900/50 text-emerald-100 rounded-lg mx-2 my-1 transition-transform scale-95 active:scale-100 font-headline font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-emerald-400/60 hover:text-emerald-200 transition-all duration-300 hover:bg-emerald-800/30 mx-2 my-1 font-headline font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span>Asociados</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-emerald-400/60 hover:text-emerald-200 transition-all duration-300 hover:bg-emerald-800/30 mx-2 my-1 font-headline font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Pagos</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-emerald-400/60 hover:text-emerald-200 transition-all duration-300 hover:bg-emerald-800/30 mx-2 my-1 font-headline font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined" data-icon="handshake">handshake</span>
+<span>Convenios</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-emerald-400/60 hover:text-emerald-200 transition-all duration-300 hover:bg-emerald-800/30 mx-2 my-1 font-headline font-semibold tracking-tight" href="#">
+<span class="material-symbols-outlined" data-icon="newspaper">newspaper</span>
+<span>Noticias</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<div class="flex items-center gap-3 p-3 bg-emerald-900/20 rounded-xl">
+<img alt="Admin Profile Image" class="w-10 h-10 rounded-full border border-emerald-500/30" data-alt="professional portrait of a senior agricultural administrator in a dark office setting with soft green backlighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUj2mtKwCdo0inGriWKJoPf9ulRIaxq_5mH-popfYWfXHciGO8ObUoRVSlEyfffF-VX3ABzKr6ViM7hI5Wv61fN-6zSfel6TNlPLntdJCMZppkEawiE66T-z-Vkr4TZu8TpozF61x85rhO1yHkeROT4quemEqy5GyauEYs5pvdqmNR-5MKOgROoojmz4mO78EP8hZaCLj7N6m-CftFS2kh9TlZpGdfdy86Fd3QDSEPuSpWVaUlDXTA9XFnUjTiKRRAWGiTJsHo27M"/>
+<div class="overflow-hidden">
+<p class="text-sm font-bold text-emerald-50 truncate">Junta Directiva</p>
+<p class="text-xs text-emerald-500/60 truncate">Admin Principal</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="ml-64 min-h-screen">
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 z-50 bg-neutral-900/80 backdrop-blur-xl flex justify-between items-center px-8 border-b border-emerald-900/20">
+<div class="flex items-center gap-4">
+<span class="text-lg font-bold text-neutral-100 font-headline">Panel Administrativo</span>
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 text-sm">search</span>
+<input class="bg-neutral-800/40 border-none rounded-full pl-10 pr-4 py-1.5 text-xs text-on-surface-variant focus:ring-1 focus:ring-emerald-500/50 w-64" placeholder="Buscar asociado o predio..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-4">
+<button class="text-neutral-400 hover:text-emerald-300 hover:bg-neutral-800/50 rounded-full p-2 transition-all cursor-pointer active:opacity-70">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-neutral-400 hover:text-emerald-300 hover:bg-neutral-800/50 rounded-full p-2 transition-all cursor-pointer active:opacity-70">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-neutral-800"></div>
+<div class="flex items-center gap-3">
+<span class="text-sm font-inter font-medium text-neutral-100">Estado: <span class="text-emerald-400">En Línea</span></span>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<div class="pt-24 pb-12 px-8 max-w-7xl mx-auto space-y-8">
+<!-- Hero Metrics: Bento Grid Layout -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Metric 1: Asociados -->
+<div class="bg-surface-container-low p-6 rounded-2xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl" data-icon="groups">groups</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium mb-1">Total de asociados</p>
+<h3 class="text-3xl font-bold font-headline text-on-surface">1,248</h3>
+<div class="mt-4 flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-xs font-semibold">+12% este mes</span>
+</div>
+</div>
+<!-- Metric 2: Recaudación -->
+<div class="bg-surface-container-low p-6 rounded-2xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl" data-icon="payments">payments</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium mb-1">Recaudación del mes</p>
+<h3 class="text-3xl font-bold font-headline text-on-surface">$45.8M <span class="text-sm font-normal text-on-surface-variant">COP</span></h3>
+<div class="mt-4 flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span class="text-xs font-semibold">85% Meta lograda</span>
+</div>
+</div>
+<!-- Metric 3: Mora -->
+<div class="bg-surface-container-low p-6 rounded-2xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-error">
+<span class="material-symbols-outlined text-6xl" data-icon="warning">warning</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium mb-1">Estado de mora</p>
+<h3 class="text-3xl font-bold font-headline text-on-surface">4.2%</h3>
+<div class="mt-4 flex items-center gap-2 text-error">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-xs font-semibold">+0.5% vs anterior</span>
+</div>
+</div>
+<!-- Metric 4: Convenios -->
+<div class="bg-surface-container-low p-6 rounded-2xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-tertiary">
+<span class="material-symbols-outlined text-6xl" data-icon="handshake">handshake</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium mb-1">Convenios activos</p>
+<h3 class="text-3xl font-bold font-headline text-on-surface">24</h3>
+<div class="mt-4 flex items-center gap-2 text-tertiary">
+<span class="material-symbols-outlined text-sm">sync</span>
+<span class="text-xs font-semibold">3 en proceso</span>
+</div>
+</div>
+</section>
+<!-- Middle Section: Chart and Visual Identity -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Chart Area: Line Graph of Growth -->
+<div class="lg:col-span-2 bg-surface-container-low p-8 rounded-2xl">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h2 class="text-xl font-bold font-headline text-on-surface">Crecimiento de Asociados</h2>
+<p class="text-sm text-on-surface-variant">Análisis comparativo - Últimos 6 meses</p>
+</div>
+<div class="flex gap-2">
+<span class="bg-primary-container px-3 py-1 rounded text-xs text-on-primary-container font-medium">Exportar PDF</span>
+</div>
+</div>
+<!-- Simplified Visual Representation of a Bar/Line Chart -->
+<div class="relative h-64 flex items-end justify-between gap-4 pt-4 border-l border-b border-outline-variant/30">
+<!-- Chart Bar 1 (Month 1) -->
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-primary/20 rounded-t-lg transition-all group-hover:bg-primary/40 h-[40%]"></div>
+<span class="mt-4 text-[10px] text-on-surface-variant font-medium">ENE</span>
+</div>
+<!-- Chart Bar 2 -->
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-primary/20 rounded-t-lg transition-all group-hover:bg-primary/40 h-[55%]"></div>
+<span class="mt-4 text-[10px] text-on-surface-variant font-medium">FEB</span>
+</div>
+<!-- Chart Bar 3 -->
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-primary/30 rounded-t-lg transition-all group-hover:bg-primary/50 h-[65%]"></div>
+<span class="mt-4 text-[10px] text-on-surface-variant font-medium">MAR</span>
+</div>
+<!-- Chart Bar 4 -->
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-primary/40 rounded-t-lg transition-all group-hover:bg-primary/60 h-[80%]"></div>
+<span class="mt-4 text-[10px] text-on-surface-variant font-medium">ABR</span>
+</div>
+<!-- Chart Bar 5 -->
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-primary/60 rounded-t-lg transition-all group-hover:bg-primary/80 h-[85%]"></div>
+<span class="mt-4 text-[10px] text-on-surface-variant font-medium">MAY</span>
+</div>
+<!-- Chart Bar 6 -->
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-primary rounded-t-lg h-[95%]"></div>
+<span class="mt-4 text-[10px] text-on-surface font-bold">JUN</span>
+</div>
+</div>
+</div>
+<!-- Featured Card: Agriculture Aesthetics -->
+<div class="bg-primary-container rounded-2xl p-8 flex flex-col justify-end relative overflow-hidden min-h-[400px]">
+<img class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay" data-alt="high contrast artistic photo of a herd of cattle in a lush tropical pasture during sunrise with cinematic fog" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgdgcVuAkBz52WkNHe7MSXZh0BxY7CrjYJd_lMjuk2x1VTJYN5H_m5eZtOLK1sXT3ASQnMJ7OlUTaveC_vsTkHkUEbxeQqr8VE8rkTzh9288dp6q-QfmrAttZ_nvvrw9q1NGbV3cC8W1A8G90IBvfgAV6pfOBgXAyOFD0yva_Nlvq3pW-jKt2YlyO-G5uGsYcGvEjXiiR4-b5rXmvwuMKs0SZewpVEnGVStN42JvzREoQI2lXWsOz4xrgqWFg44HcVUXXRmE-Kb_I"/>
+<div class="relative z-10">
+<span class="material-symbols-outlined text-primary mb-4" style="font-variation-settings: 'FILL' 1;">eco</span>
+<h3 class="text-2xl font-bold font-headline text-primary mb-2">Excelencia Ganadera</h3>
+<p class="text-on-primary-container text-sm leading-relaxed opacity-90">
+                            Impulsamos la productividad y el bienestar de nuestros asociados a través de tecnología y convenios estratégicos.
+                        </p>
+<button class="mt-6 bg-primary text-on-primary px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
+                            Ver Reporte Regional
+                        </button>
+</div>
+</div>
+</section>
+<!-- Bottom Section: Latest Registers -->
+<section class="bg-surface-container-low rounded-2xl overflow-hidden">
+<div class="p-8 border-b border-outline-variant/10 flex justify-between items-center">
+<div>
+<h2 class="text-xl font-bold font-headline text-on-surface">Últimos Registros</h2>
+<p class="text-sm text-on-surface-variant">Ingresos recientes a la asociación</p>
+</div>
+<button class="text-primary text-sm font-semibold hover:underline">Ver todos los asociados</button>
+</div>
+<div class="divide-y divide-outline-variant/10">
+<!-- Ganadero 1 -->
+<div class="p-6 flex items-center justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div>
+<h4 class="text-on-surface font-bold">Ricardo Alarcón Castro</h4>
+<p class="text-xs text-on-surface-variant font-inter">Hacienda El Porvenir • Puerto Boyacá</p>
+</div>
+</div>
+<div class="text-right hidden md:block">
+<p class="text-xs text-on-surface-variant mb-1 uppercase tracking-wider">Fecha Registro</p>
+<p class="text-sm font-medium text-on-surface">14 Jun, 2024</p>
+</div>
+<div class="flex items-center gap-6">
+<span class="px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 text-[10px] font-bold border border-emerald-900/50">ACTIVO</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">more_vert</span>
+</div>
+</div>
+<!-- Ganadero 2 -->
+<div class="p-6 flex items-center justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div>
+<h4 class="text-on-surface font-bold">Beatriz Elena Martínez</h4>
+<p class="text-xs text-on-surface-variant font-inter">Finca La Esmeralda • La Dorada</p>
+</div>
+</div>
+<div class="text-right hidden md:block">
+<p class="text-xs text-on-surface-variant mb-1 uppercase tracking-wider">Fecha Registro</p>
+<p class="text-sm font-medium text-on-surface">12 Jun, 2024</p>
+</div>
+<div class="flex items-center gap-6">
+<span class="px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 text-[10px] font-bold border border-emerald-900/50">ACTIVO</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">more_vert</span>
+</div>
+</div>
+<!-- Ganadero 3 -->
+<div class="p-6 flex items-center justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div>
+<h4 class="text-on-surface font-bold">Fernando Giraldo Ruiz</h4>
+<p class="text-xs text-on-surface-variant font-inter">Rancho Los Lagos • Chinchiná</p>
+</div>
+</div>
+<div class="text-right hidden md:block">
+<p class="text-xs text-on-surface-variant mb-1 uppercase tracking-wider">Fecha Registro</p>
+<p class="text-sm font-medium text-on-surface">10 Jun, 2024</p>
+</div>
+<div class="flex items-center gap-6">
+<span class="px-3 py-1 rounded-full bg-tertiary-container text-tertiary text-[10px] font-bold border border-tertiary-container">PENDIENTE</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">more_vert</span>
+</div>
+</div>
+<!-- Ganadero 4 -->
+<div class="p-6 flex items-center justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div>
+<h4 class="text-on-surface font-bold">Juliana Ospina</h4>
+<p class="text-xs text-on-surface-variant font-inter">Hacienda Santa Fe • Manizales</p>
+</div>
+</div>
+<div class="text-right hidden md:block">
+<p class="text-xs text-on-surface-variant mb-1 uppercase tracking-wider">Fecha Registro</p>
+<p class="text-sm font-medium text-on-surface">08 Jun, 2024</p>
+</div>
+<div class="flex items-center gap-6">
+<span class="px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 text-[10px] font-bold border border-emerald-900/50">ACTIVO</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">more_vert</span>
+</div>
+</div>
+<!-- Ganadero 5 -->
+<div class="p-6 flex items-center justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div>
+<h4 class="text-on-surface font-bold">Carlos Alberto Duque</h4>
+<p class="text-xs text-on-surface-variant font-inter">Predio El Oasis • Fresno</p>
+</div>
+</div>
+<div class="text-right hidden md:block">
+<p class="text-xs text-on-surface-variant mb-1 uppercase tracking-wider">Fecha Registro</p>
+<p class="text-sm font-medium text-on-surface">05 Jun, 2024</p>
+</div>
+<div class="flex items-center gap-6">
+<span class="px-3 py-1 rounded-full bg-emerald-950 text-emerald-400 text-[10px] font-bold border border-emerald-900/50">ACTIVO</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">more_vert</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Contextual FAB for quick action -->
+<button class="fixed bottom-8 right-8 bg-primary text-on-primary w-14 h-14 rounded-full flex items-center justify-center shadow-2xl shadow-primary/20 hover:scale-110 active:scale-95 transition-all z-40 group">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span class="absolute right-full mr-4 bg-surface-container px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Nuevo Registro</span>
+</button>
+</body></html>

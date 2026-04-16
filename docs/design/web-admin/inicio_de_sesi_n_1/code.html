@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed-variant": "#274e3d",
+                    "on-primary-container": "#86af99",
+                    "outline": "#717973",
+                    "primary-fixed": "#c1ecd4",
+                    "on-secondary-container": "#626753",
+                    "background": "#f9f9f8",
+                    "primary-fixed-dim": "#a5d0b9",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#191d0e",
+                    "surface-variant": "#e1e3e2",
+                    "tertiary": "#3e1d00",
+                    "on-secondary-fixed-variant": "#444937",
+                    "surface-container-high": "#e7e8e7",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#2f1500",
+                    "on-error": "#ffffff",
+                    "surface": "#f9f9f8",
+                    "outline-variant": "#c1c8c2",
+                    "secondary-fixed-dim": "#c4c9b1",
+                    "surface-dim": "#d9dad9",
+                    "on-surface-variant": "#414844",
+                    "tertiary-fixed": "#ffdcc3",
+                    "surface-tint": "#3f6653",
+                    "surface-container-highest": "#e1e3e2",
+                    "tertiary-fixed-dim": "#f7ba8b",
+                    "inverse-surface": "#2e3131",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f0f1f0",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#002114",
+                    "on-tertiary-fixed-variant": "#663d18",
+                    "on-surface": "#191c1c",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#e0e5cc",
+                    "inverse-primary": "#a5d0b9",
+                    "primary": "#012d1d",
+                    "error": "#ba1a1a",
+                    "secondary": "#5c614d",
+                    "surface-container-low": "#f3f4f3",
+                    "tertiary-container": "#59320e",
+                    "surface-bright": "#f9f9f8",
+                    "on-background": "#191c1c",
+                    "surface-container": "#edeeed",
+                    "secondary-fixed": "#e0e5cc",
+                    "on-tertiary-container": "#d39a6e",
+                    "primary-container": "#1b4332"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3 {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col items-center justify-center">
+<!-- TopAppBar Suppressed per Suppression Rules: Login Screen -->
+<main class="w-full max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center min-h-[751px]">
+<!-- Left Column: Editorial Visual (Asymmetric Layout) -->
+<div class="hidden md:flex flex-col relative">
+<div class="absolute -top-12 -left-12 w-64 h-64 bg-primary-fixed/20 rounded-full blur-3xl"></div>
+<div class="relative z-10 space-y-8">
+<div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary-container rounded-full text-on-secondary-container font-medium text-sm tracking-wide">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">security</span>
+                    Gestión Segura
+                </div>
+<h1 class="text-6xl font-extrabold text-primary leading-[1.1] tracking-tighter">
+                    El futuro de la <br/>
+<span class="text-on-primary-container">ganadería digital.</span>
+</h1>
+<div class="aspect-[4/5] w-full rounded-xl overflow-hidden bg-surface-container-low shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="Premium close-up portrait of a majestic bull in a misty highland pasture, editorial lighting, soft earthy tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClTQmH0go1egMKHIIJpE4_OyP3PurcRXAP1dtQUc7XfDhU9RLYeW1WXZq_HGsbsWmc_T841X3-nR7IhyKnT1StPyTNM_pxoVHD5JJExpwCstYLjN0a7Wm-MzNOrVXnluZNPG24SjvmadS2ClS91lGtzYPS4bnAaNvmWTTMlhwfYmb4w4skpc50pZm3rZmPpR9H1S19MMg-y8YAh9zrjPawRjaLznuW8z27_W6AFnSURdBChn7eMXeTutYQU4C5iQpAqwdNPqmowQw"/>
+</div>
+<div class="flex gap-12 pt-4">
+<div>
+<p class="text-primary font-extrabold text-3xl">12k+</p>
+<p class="text-on-surface-variant text-sm font-medium">Productores</p>
+</div>
+<div>
+<p class="text-primary font-extrabold text-3xl">98%</p>
+<p class="text-on-surface-variant text-sm font-medium">Precisión de Datos</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Focused Login Canvas -->
+<div class="w-full flex justify-center lg:justify-end">
+<div class="w-full max-w-md bg-surface-container-lowest md:bg-transparent rounded-xl md:rounded-none p-8 md:p-0">
+<!-- Brand Anchor -->
+<div class="flex flex-col items-center md:items-start mb-12">
+<div class="w-16 h-16 bg-gradient-to-br from-primary to-primary-container rounded-xl flex items-center justify-center mb-6 shadow-lg rotate-3">
+<span class="material-symbols-outlined text-white text-4xl" style="font-variation-settings: 'FILL' 1;">agriculture</span>
+</div>
+<div class="text-center md:text-left">
+<h2 class="text-3xl font-extrabold text-primary tracking-tight mb-2">Plataforma Digital Ganadera</h2>
+<p class="text-on-surface-variant font-medium">Bienvenido al ecosistema del Digital Agronomist.</p>
+</div>
+</div>
+<!-- Login Form -->
+<form class="space-y-6">
+<div class="space-y-2">
+<label class="block text-sm font-bold text-primary ml-1" for="username">Email o Cédula</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">person</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:ring-0 focus:bg-surface-container-lowest transition-all text-on-surface placeholder:text-outline-variant" id="username" placeholder="ejemplo@asociacion.co" type="text"/>
+<div class="absolute bottom-0 left-0 h-0.5 w-0 bg-surface-tint transition-all group-focus-within:w-full"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center px-1">
+<label class="text-sm font-bold text-primary" for="password">Contraseña</label>
+<a class="text-xs font-semibold text-on-primary-container hover:text-primary transition-colors" href="#">¿Olvidaste tu contraseña?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">lock</span>
+<input class="w-full pl-12 pr-12 py-4 bg-surface-container-low border-none rounded-xl focus:ring-0 focus:bg-surface-container-lowest transition-all text-on-surface placeholder:text-outline-variant" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-outline-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<div class="pt-4">
+<button class="w-full py-4 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-3" type="submit">
+<span>Ingresar</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</form>
+<div class="mt-12 pt-8 border-t border-surface-container text-center md:text-left">
+<p class="text-on-surface-variant text-sm">
+                        ¿No tienes una cuenta? 
+                        <a class="text-primary font-bold hover:underline ml-1" href="#">Regístrate como productor</a>
+</p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Suppressed per Suppression Rules: Login Screen -->
+<!-- Global Footer Branding (Static) -->
+<footer class="fixed bottom-6 text-center w-full pointer-events-none opacity-40">
+<p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">Asociación Ganadera • Seguridad Certificada</p>
+</footer>
+</body></html>

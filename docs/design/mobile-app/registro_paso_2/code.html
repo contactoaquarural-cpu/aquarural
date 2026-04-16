@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#274e3d",
+                        "primary-container": "#a5d0b9",
+                        "surface-container": "#1d2020",
+                        "inverse-surface": "#e1e3e2",
+                        "on-surface-variant": "#c1c8c2",
+                        "on-tertiary-container": "#744823",
+                        "outline-variant": "#414844",
+                        "primary-fixed-dim": "#a5d0b9",
+                        "on-primary-fixed": "#002114",
+                        "error": "#ffb4ab",
+                        "on-tertiary": "#4c2704",
+                        "background": "#111414",
+                        "primary": "#c0ecd4",
+                        "surface-container-lowest": "#0c0f0f",
+                        "on-primary-container": "#335a48",
+                        "primary-fixed": "#c1ecd5",
+                        "outline": "#8b938d",
+                        "error-container": "#93000a",
+                        "on-secondary-container": "#97c2ab",
+                        "on-primary": "#0e3727",
+                        "inverse-primary": "#3f6654",
+                        "tertiary-container": "#f7ba8b",
+                        "surface-container-high": "#282a2a",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#663d18",
+                        "surface-container-highest": "#323535",
+                        "tertiary-fixed-dim": "#f7ba8b",
+                        "on-background": "#e1e3e2",
+                        "secondary-fixed": "#c1ecd4",
+                        "inverse-on-surface": "#2e3131",
+                        "tertiary": "#ffdcc4",
+                        "on-tertiary-fixed": "#2f1500",
+                        "surface-dim": "#111414",
+                        "secondary": "#a5d0b9",
+                        "surface-tint": "#a5d0b9",
+                        "surface": "#111414",
+                        "on-error": "#690005",
+                        "on-secondary-fixed-variant": "#274e3d",
+                        "secondary-container": "#29513f",
+                        "surface-bright": "#373a3a",
+                        "on-secondary-fixed": "#002114",
+                        "on-surface": "#e1e3e2",
+                        "surface-variant": "#323535",
+                        "secondary-fixed-dim": "#a5d0b9",
+                        "tertiary-fixed": "#ffdcc3",
+                        "surface-container-low": "#191c1c",
+                        "on-secondary": "#0e3727"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "2.0rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #1b4332 0%, #335a48 100%);
+        }
+        .text-shadow-sm {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body min-h-screen flex flex-col overflow-x-hidden">
+<!-- TopAppBar Fragment (Supressed Nav, kept Brand Identity) -->
+<header class="bg-[#111414] text-[#a5d0b9] flex justify-between items-center px-6 py-6 w-full z-10 sticky top-0">
+<div class="flex items-center gap-3">
+<button class="hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-on-surface">arrow_back_ios</span>
+</button>
+<span class="text-xl font-bold tracking-tight text-[#e1e3e2] font-headline">ASOGACENTRO</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a modern farmer with a soft blur background of green pastures" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3f0fQdhFfMIlM_WPeEW7PVqFrKh5N96xNJFwgIxM1JZ5U8G7qAZMdfzyNfN39-HxK_c4AUQqjn7Saf29Dv1MiZlwiPvgK6yNVqJeip5_M4pjEzzJ4mS9lNzZbR6jldLOdi3uqHgUcfjx7Iz81wHZE25mptjg5Wqpvnxl_7HrIns3-B8hwLJZKN-VE26rWNGLRYLulEWp_lvYwJdX5mGFucPs1Debbwf-HCxPmnT_RPKGlONDrSOJymRtpS3t8jCfT2KJ3UhEzZnw"/>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow px-6 pb-12">
+<!-- Hero Section Asymmetry -->
+<section class="mt-4 mb-8">
+<div class="label-md font-label uppercase tracking-[0.2em] text-primary-container mb-2">Registro</div>
+<h1 class="text-3xl font-headline font-bold text-on-surface leading-tight">Detalles de tu <span class="text-primary italic">Producción</span></h1>
+</section>
+<!-- Progress Indicator -->
+<div class="mb-10">
+<div class="flex justify-between items-end mb-3">
+<span class="font-label text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Paso 2 de 2</span>
+<span class="font-headline font-bold text-lg text-primary">100%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-full"></div>
+</div>
+</div>
+<!-- Bento Inspired Form Layout -->
+<form class="space-y-6">
+<!-- Group 1: General Info -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-6 rounded-2xl flex flex-col justify-end min-h-[120px] relative overflow-hidden group">
+<span class="material-symbols-outlined absolute -right-4 -top-4 text-7xl text-surface-container-highest opacity-20 transform -rotate-12 group-focus-within:rotate-0 transition-transform">landscape</span>
+<label class="font-label text-xs font-bold text-primary-container uppercase tracking-widest mb-2">Nombre de la finca</label>
+<input class="bg-transparent border-none p-0 focus:ring-0 text-on-surface text-lg font-headline font-semibold placeholder:text-outline-variant" placeholder="Ej: La Esperanza" type="text"/>
+<div class="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full mt-1"></div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl flex flex-col justify-end min-h-[120px] relative overflow-hidden group">
+<span class="material-symbols-outlined absolute -right-4 -top-4 text-7xl text-surface-container-highest opacity-20 transform -rotate-12 group-focus-within:rotate-0 transition-transform">map</span>
+<label class="font-label text-xs font-bold text-primary-container uppercase tracking-widest mb-2">Hectáreas</label>
+<input class="bg-transparent border-none p-0 focus:ring-0 text-on-surface text-lg font-headline font-semibold placeholder:text-outline-variant" placeholder="0.0" type="number"/>
+<div class="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full mt-1"></div>
+</div>
+</div>
+<!-- Group 2: Specific Data (Tonal Shift) -->
+<div class="bg-surface-container-high p-6 rounded-2xl relative overflow-hidden">
+<div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD8e4c5aVEgZoXYcKhtpJYQNN_JbvQb9Jzq_SIcHJy47dG7LnUEojCGk-Fpq3-uwZ-uFKCWNckhq7eUdF0uNHnRByikRUAufP5TvaNsKq4hUEpjagWpBY7X47g6xGIsX0Ul1jA31-rL8RFCYVB0a4VtZeCk3vnOPuYIOClrYXkCXm0o0fFGwGA5hxA9l7rm4-MNpMwhscS6xW-FK0Rtr5FJZU4RFGb5NFkvH4NvKQYlHcWm1hRVfEGHIUWNg2s7DwoMVGodHxbSDIE');"></div>
+<div class="flex items-center gap-4 mb-6">
+<div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">pets</span>
+</div>
+<div>
+<h3 class="font-headline font-bold text-on-surface">Población Bovina</h3>
+<p class="font-body text-xs text-on-surface-variant">Inventario actual estimado</p>
+</div>
+</div>
+<div class="flex flex-col group">
+<label class="font-label text-xs font-bold text-primary-container uppercase tracking-widest mb-2">Número de cabezas</label>
+<input class="bg-transparent border-none p-0 focus:ring-0 text-on-surface text-2xl font-headline font-bold placeholder:text-outline-variant" placeholder="Total animales" type="number"/>
+<div class="h-0.5 w-full bg-outline-variant/30 mt-1"></div>
+</div>
+</div>
+<!-- Group 3: Type Selection (Horizontal Scroll/Chips) -->
+<div class="bg-surface-container-low p-6 rounded-2xl">
+<label class="font-label text-xs font-bold text-primary-container uppercase tracking-widest mb-4 block">Tipo de producción</label>
+<div class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+<label class="flex-shrink-0 cursor-pointer">
+<input class="hidden peer" name="type" type="radio"/>
+<div class="px-6 py-3 rounded-full border border-outline-variant peer-checked:bg-primary-container peer-checked:border-primary-container peer-checked:text-on-primary-container transition-all text-sm font-semibold text-on-surface-variant">
+                            Ceba
+                        </div>
+</label>
+<label class="flex-shrink-0 cursor-pointer">
+<input checked="" class="hidden peer" name="type" type="radio"/>
+<div class="px-6 py-3 rounded-full border border-outline-variant peer-checked:bg-primary-container peer-checked:border-primary-container peer-checked:text-on-primary-container transition-all text-sm font-semibold text-on-surface-variant">
+                            Leche
+                        </div>
+</label>
+<label class="flex-shrink-0 cursor-pointer">
+<input class="hidden peer" name="type" type="radio"/>
+<div class="px-6 py-3 rounded-full border border-outline-variant peer-checked:bg-primary-container peer-checked:border-primary-container peer-checked:text-on-primary-container transition-all text-sm font-semibold text-on-surface-variant">
+                            Doble Propósito
+                        </div>
+</label>
+</div>
+</div>
+<!-- Group 4: Location -->
+<div class="bg-surface-container-low p-6 rounded-2xl flex flex-col group">
+<label class="font-label text-xs font-bold text-primary-container uppercase tracking-widest mb-2">Vereda / Ubicación</label>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline">location_on</span>
+<input class="bg-transparent border-none p-0 focus:ring-0 text-on-surface text-lg font-headline font-semibold flex-grow placeholder:text-outline-variant" placeholder="Ubicación geográfica" type="text"/>
+</div>
+<div class="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full mt-1"></div>
+</div>
+<!-- Action Area -->
+<div class="pt-6">
+<button class="w-full py-5 rounded-2xl btn-gradient text-on-primary font-headline font-extrabold text-lg flex items-center justify-center gap-3 shadow-lg scale-95 active:scale-90 transition-all duration-200" type="submit">
+                    Finalizar Registro
+                    <span class="material-symbols-outlined">chevron_right</span>
+</button>
+<p class="text-center text-[10px] text-on-surface-variant/50 uppercase tracking-[0.15em] mt-6 font-label">
+                    Al finalizar, declaras que la información es verídica.
+                </p>
+</div>
+</form>
+<!-- Decorative Floating Element -->
+<div class="mt-12 flex justify-center opacity-10 grayscale">
+<img class="w-48 h-48 rounded-full object-cover" data-alt="Minimalist artistic close-up of a cow's eye and texture of dark hide with high contrast lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnQ64PZJaxIiguIuJ4mKAXIeiXkK8li2T54Lf3r6WE15oNgDWYE4kXAqs1a40CVkfeWp9DqF697EfpbJMUdyLrS_kXuYlEjPvRYntoXbagsCtjF8OEouAKYkFKPmFV6v7NU4hmYTfhyL3_0-5voA-kUVO5NJgX7RT1-L1kJUG2Eq1iuMdFajsm9ZMehw5P7NyE57zQfBvrCX2d2uo3Yez5d386StIOUJr4YeUAOCc6uDBM_3PBUFR-2YXm7hEf-SZGGvzRwCFEEuw"/>
+</div>
+</main>
+<!-- Visual Texture Overlay (Soil/Organic) -->
+<div class="fixed inset-0 pointer-events-none z-[-1] opacity-[0.03]">
+<img class="w-full h-full object-cover" data-alt="Aesthetic overhead view of plowed fertile soil texture with deep furrows and organic shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQK69fYk_rswADRzpuLu_hPQi7it1ACvh-RiOFG7G9dEpzhmZcH28Nk31i_R7xzrD4VHSc2K_3gKnb2mKfPSywPVDJJHkAIOO3D4sHpxeQIba-bwlJOmjbDm6avmNGj2khlDO7oUOtbpUPitQn7DyWSgqLOpQ8hnWkCHZS4HSuNCZv2vrLIu0_AsGO78YWyUVCaoPgOpbME-JfYyyqrRDGL7sc1ZtsZjC6-iF3xJ5Wc4SREgZ6JlWt4vdfSTpLym9GDE7pLr1Hwtg"/>
+</div>
+</body></html>

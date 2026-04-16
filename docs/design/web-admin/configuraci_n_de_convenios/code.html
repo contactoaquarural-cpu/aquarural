@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Configuración de Convenios | ASOGACENTRO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#414844",
+                        "primary": "#a5d0b9",
+                        "inverse-primary": "#3f6653",
+                        "surface-tint": "#a5d0b9",
+                        "tertiary-fixed-dim": "#f7ba8b",
+                        "on-tertiary": "#4c2704",
+                        "surface-container-lowest": "#0c0f0e",
+                        "tertiary-fixed": "#ffdcc3",
+                        "surface-container-highest": "#333535",
+                        "outline": "#8b938d",
+                        "surface-container-high": "#282a2a",
+                        "primary-container": "#1b4332",
+                        "tertiary-container": "#59320e",
+                        "secondary-container": "#444937",
+                        "surface-bright": "#373a39",
+                        "on-error-container": "#ffdad6",
+                        "secondary-fixed": "#e0e5cc",
+                        "on-tertiary-fixed-variant": "#663d18",
+                        "on-secondary-container": "#b3b8a1",
+                        "on-primary-fixed": "#002114",
+                        "surface-variant": "#333535",
+                        "on-secondary-fixed-variant": "#444937",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#c4c9b1",
+                        "on-surface-variant": "#c1c8c2",
+                        "tertiary": "#f7ba8b",
+                        "primary-fixed": "#c1ecd4",
+                        "on-primary": "#0e3727",
+                        "on-error": "#690005",
+                        "background": "#111414",
+                        "on-primary-container": "#86af99",
+                        "secondary": "#c4c9b1",
+                        "on-surface": "#e1e3e2",
+                        "inverse-on-surface": "#2e3131",
+                        "on-tertiary-fixed": "#2f1500",
+                        "on-tertiary-container": "#d39a6e",
+                        "on-secondary": "#2e3222",
+                        "surface-container": "#1d2020",
+                        "surface": "#111414",
+                        "on-primary-fixed-variant": "#274e3d",
+                        "surface-container-low": "#191c1c",
+                        "on-background": "#e1e3e2",
+                        "surface-dim": "#111414",
+                        "on-secondary-fixed": "#191d0e",
+                        "error-container": "#93000a",
+                        "inverse-surface": "#e1e3e2",
+                        "primary-fixed-dim": "#a5d0b9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111414;
+        }
+        h1, h2, h3, .font-headline {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background selection:bg-primary selection:text-on-primary">
+<!-- SideNavBar (Shared Component) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-emerald-950 dark:bg-neutral-950 shadow-2xl shadow-emerald-900/20 flex flex-col py-6 font-manrope font-semibold tracking-tight z-50">
+<div class="px-6 mb-8">
+<h1 class="text-2xl font-bold tracking-tighter text-emerald-50 dark:text-emerald-400">ASOGACENTRO</h1>
+<p class="text-[10px] uppercase tracking-widest text-emerald-500/60 font-bold">Administración Central</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-emerald-400/60 hover:text-emerald-200 hover:bg-emerald-800/30 transition-all duration-300 mx-2 my-1" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-emerald-400/60 hover:text-emerald-200 hover:bg-emerald-800/30 transition-all duration-300 mx-2 my-1" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span>Asociados</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-emerald-400/60 hover:text-emerald-200 hover:bg-emerald-800/30 transition-all duration-300 mx-2 my-1" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span>Pagos</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-emerald-900/50 text-emerald-100 rounded-lg mx-2 my-1" href="#">
+<span class="material-symbols-outlined" data-icon="handshake">handshake</span>
+<span>Convenios</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-emerald-400/60 hover:text-emerald-200 hover:bg-emerald-800/30 transition-all duration-300 mx-2 my-1" href="#">
+<span class="material-symbols-outlined" data-icon="newspaper">newspaper</span>
+<span>Noticias</span>
+</a>
+</nav>
+<div class="mt-auto px-4">
+<div class="bg-emerald-900/20 rounded-xl p-4 flex items-center gap-3">
+<img alt="Admin Profile Image" class="w-10 h-10 rounded-full bg-emerald-800" data-alt="close-up portrait of a professional administrator in a modern office with soft cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxRosOuRyZwYWKTxtF7monV0lSW47Qie0rRJ9M-aU60GlhgPcyKNdmYFXWpi5hiJHxi6f9itk6PewlNmV6L_ZZX8tmctbHkNoCcdb9tvCPbFsa6r_ZTNzBhT2OTii1prELO5AwLzWvYT-k8kFJid7w5g9zdNUEY7oZfbycYFkoOBm8f8CgZAkAYiEyXa0DoIxz7oXU0VMPVCP-O-rvatZgfMcNLoM8QNWPufno3iL-Qai-LASVvsVWFUChSICogwLcCCwJBx8cGJo"/>
+<div>
+<p class="text-sm text-emerald-50 font-bold">Admin Panel</p>
+<p class="text-xs text-emerald-500/70">Gestión General</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopNavBar (Shared Component) -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-neutral-900/80 backdrop-blur-xl flex justify-between items-center px-8 border-b border-emerald-900/20 z-40">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 text-lg" data-icon="search">search</span>
+<input class="bg-neutral-800/40 border-none rounded-full py-2 pl-10 pr-4 text-sm text-on-surface focus:ring-1 focus:ring-primary w-64 font-inter" placeholder="Buscar convenios..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="text-lg font-bold text-neutral-100 font-inter">Panel Administrativo</span>
+<div class="flex items-center gap-2">
+<button class="hover:text-emerald-300 hover:bg-neutral-800/50 rounded-full p-2 transition-all cursor-pointer active:opacity-70">
+<span class="material-symbols-outlined text-neutral-400" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:text-emerald-300 hover:bg-neutral-800/50 rounded-full p-2 transition-all cursor-pointer active:opacity-70">
+<span class="material-symbols-outlined text-neutral-400" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 pb-12 px-10 min-h-screen bg-background">
+<!-- Header Section -->
+<header class="flex justify-between items-end mb-12">
+<div class="max-w-2xl">
+<h2 class="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Configuración de Convenios</h2>
+<p class="text-on-surface-variant text-lg font-light leading-relaxed">Gestiona las alianzas estratégicas y beneficios exclusivos para los asociados de ASOGACENTRO.</p>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary font-headline font-bold py-3 px-8 rounded-lg flex items-center gap-2 shadow-lg shadow-primary/10 hover:scale-[1.02] active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+                Crear Nuevo Convenio
+            </button>
+</header>
+<!-- Stats Overview (Asymmetric Layout) -->
+<div class="grid grid-cols-12 gap-6 mb-12">
+<div class="col-span-12 md:col-span-7 bg-surface-container-low p-8 rounded-xl flex flex-col justify-between">
+<div>
+<span class="text-primary text-xs font-bold uppercase tracking-widest mb-4 block">Resumen del Programa</span>
+<h3 class="text-2xl font-bold text-on-surface">Convenios Activos</h3>
+</div>
+<div class="flex items-baseline gap-4 mt-8">
+<span class="text-6xl font-extrabold text-primary tracking-tighter">42</span>
+<span class="text-on-surface-variant font-medium">+12% este trimestre</span>
+</div>
+</div>
+<div class="col-span-12 md:col-span-5 grid grid-rows-2 gap-6">
+<div class="bg-surface-container-low p-6 rounded-xl flex items-center justify-between">
+<div>
+<p class="text-on-surface-variant text-sm font-medium">Categoría Líder</p>
+<p class="text-xl font-bold text-on-surface">Veterinaria</p>
+</div>
+<span class="material-symbols-outlined text-4xl text-tertiary" data-icon="pets">pets</span>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl flex items-center justify-between">
+<div>
+<p class="text-on-surface-variant text-sm font-medium">Ahorro Estimado</p>
+<p class="text-xl font-bold text-on-surface">15.4M COP / Mes</p>
+</div>
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+</div>
+<!-- Filters & Search -->
+<div class="flex items-center gap-4 mb-8">
+<button class="bg-surface-container-high px-5 py-2 rounded-full text-primary text-sm font-bold">Todos</button>
+<button class="hover:bg-surface-container-high px-5 py-2 rounded-full text-on-surface-variant text-sm font-medium transition-colors">Veterinaria</button>
+<button class="hover:bg-surface-container-high px-5 py-2 rounded-full text-on-surface-variant text-sm font-medium transition-colors">Almacén</button>
+<button class="hover:bg-surface-container-high px-5 py-2 rounded-full text-on-surface-variant text-sm font-medium transition-colors">Laboratorio</button>
+<button class="hover:bg-surface-container-high px-5 py-2 rounded-full text-on-surface-variant text-sm font-medium transition-colors">Maquinaria</button>
+<div class="ml-auto flex items-center gap-3">
+<span class="text-sm text-on-surface-variant">Ordenar por:</span>
+<select class="bg-transparent border-none text-sm font-bold text-primary focus:ring-0 cursor-pointer">
+<option>Recientes</option>
+<option>Descuento (%)</option>
+<option>Nombre A-Z</option>
+</select>
+</div>
+</div>
+<!-- Agreements Grid (Editorial Cards) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden hover:translate-y-[-4px] transition-all duration-300">
+<div class="h-32 w-full bg-gradient-to-r from-emerald-900/40 to-emerald-800/20 relative">
+<div class="absolute -bottom-6 left-6 w-16 h-16 bg-surface-container-lowest rounded-lg flex items-center justify-center shadow-xl border border-outline-variant/10">
+<img alt="Logo Veterinaria San José" class="w-12 h-12 object-contain" data-alt="minimalist professional logo of a veterinary clinic featuring a clean green medical cross and leaf icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4lTiti4ydSSuD-bAZ223xE8ss05dOmUxbeQEm-obuZDp40SoULEnATH_GAzOFb_ke44Koi-VX9HXenhE0KxZqZ_R7vb8o1L1dTl82y9kXgk_g9_94hf0K71v0KOmfX7I7nthj4drz75CW5Majlr4GlR29zUUWyHFov9t8rnxQRXH-SmTwE9N1Nxbxy6i28TciKvNwDhOMl_tVDUa_69FtQjsRnwGPNxkdwdygIptttBO-KWSFqrL2rDo3xr6tKcxCAGSk_qIjx1E"/>
+</div>
+</div>
+<div class="pt-10 pb-6 px-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="text-xl font-bold text-on-surface">Veterinaria San José</h4>
+<span class="inline-block mt-1 px-2 py-0.5 rounded bg-tertiary-container/30 text-tertiary text-[10px] font-bold uppercase tracking-widest">Veterinaria</span>
+</div>
+<div class="text-right">
+<span class="text-3xl font-extrabold text-primary">20%</span>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Descuento</p>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Descuentos exclusivos en cirugías, vacunación y consultas domiciliarias para ganado bovino.</p>
+<div class="flex items-center justify-between border-t border-outline-variant/10 pt-4">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">JS</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-tertiary/20 flex items-center justify-center text-[10px] font-bold text-tertiary">LM</div>
+</div>
+<button class="text-primary hover:text-primary-container text-sm font-bold flex items-center gap-1 transition-colors">
+                            Editar
+                            <span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden hover:translate-y-[-4px] transition-all duration-300">
+<div class="h-32 w-full bg-gradient-to-r from-tertiary-container/20 to-tertiary-container/10 relative">
+<div class="absolute -bottom-6 left-6 w-16 h-16 bg-surface-container-lowest rounded-lg flex items-center justify-center shadow-xl border border-outline-variant/10">
+<img alt="Logo AgroAlmacén Central" class="w-12 h-12 object-contain" data-alt="clean vector logo for an agricultural supply store with a stylized grain silhouette in earthy tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-50aRNYynuC0dKQk5a7Kq-ZgLahx7iCIY3jPE95Tpp2wv5VFLOz4aeCXP0CO8O2d4CCz0KSI0cw8T4D3wnC2N24zCoXvgZAYHNEeIqnN0L41jvwclkhWuNJt1zpIUIP33ta7BGuLQFNJ9kXxORT83vnhcMnI_nEq0l5PEXs6ozV77Z8squoi47GufqRxYKdDRnWO6hoWephHKtiDijWNjgwIrAG2mxJOXWwbqkbc-fI4ADsgtEHB1qzjDr2_lvfO1A0mYBhMGBI0"/>
+</div>
+</div>
+<div class="pt-10 pb-6 px-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="text-xl font-bold text-on-surface">AgroAlmacén Central</h4>
+<span class="inline-block mt-1 px-2 py-0.5 rounded bg-secondary-container/30 text-on-secondary-container text-[10px] font-bold uppercase tracking-widest">Almacén</span>
+</div>
+<div class="text-right">
+<span class="text-3xl font-extrabold text-primary">15%</span>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Descuento</p>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Insumos, herramientas y suplementos vitamínicos con tarifa diferencial por volumen.</p>
+<div class="flex items-center justify-between border-t border-outline-variant/10 pt-4">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-neutral-700 flex items-center justify-center text-[10px] font-bold text-on-surface">+5</div>
+</div>
+<button class="text-primary hover:text-primary-container text-sm font-bold flex items-center gap-1 transition-colors">
+                            Editar
+                            <span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden hover:translate-y-[-4px] transition-all duration-300">
+<div class="h-32 w-full bg-gradient-to-r from-blue-900/20 to-blue-800/10 relative">
+<div class="absolute -bottom-6 left-6 w-16 h-16 bg-surface-container-lowest rounded-lg flex items-center justify-center shadow-xl border border-outline-variant/10">
+<img alt="Logo Laboratorios BioMilk" class="w-12 h-12 object-contain" data-alt="modern pharmaceutical lab logo featuring a stylized DNA strand merged with a water drop in blue and silver colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADPmxg7r_3GF8szW1FzsP0CmLT4oDNMAP7_rxLCXuH8gV0IDaTHnU2e_5utvkSnCiAHeuRicxq5HEscuvaVdlFEEC1YuZtS7jvK7ZemJ6ZGGmEwPsTqF3REgwUeIESdvZq9ZwEmXLzlHu26t9mjLdGPWJpe8un-u-trPnRBlB0jV1-59CocooXjI452WWbiiLlsM-fq6kh768cLZ5BbqEMDPc9KfEtnF6J2pBTeunnTKN8FUDDjl1zm7uqvRc5iLqM9XORcfLJG_k"/>
+</div>
+</div>
+<div class="pt-10 pb-6 px-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="text-xl font-bold text-on-surface">Laboratorios BioMilk</h4>
+<span class="inline-block mt-1 px-2 py-0.5 rounded bg-blue-900/30 text-blue-400 text-[10px] font-bold uppercase tracking-widest">Laboratorio</span>
+</div>
+<div class="text-right">
+<span class="text-3xl font-extrabold text-primary">10%</span>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Descuento</p>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Análisis de calidad de leche y suelos con reporte digital en menos de 24 horas.</p>
+<div class="flex items-center justify-between border-t border-outline-variant/10 pt-4">
+<span class="text-[10px] text-error font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="warning">warning</span>
+                            Vence en 12 días
+                        </span>
+<button class="text-primary hover:text-primary-container text-sm font-bold flex items-center gap-1 transition-colors">
+                            Editar
+                            <span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group relative bg-surface-container-low rounded-xl overflow-hidden hover:translate-y-[-4px] transition-all duration-300">
+<div class="h-32 w-full bg-gradient-to-r from-orange-900/20 to-orange-800/10 relative">
+<div class="absolute -bottom-6 left-6 w-16 h-16 bg-surface-container-lowest rounded-lg flex items-center justify-center shadow-xl border border-outline-variant/10">
+<img alt="Logo TractoSur" class="w-12 h-12 object-contain" data-alt="heavy equipment company logo with a bold geometric tractor silhouette in dark orange and black" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqU3Hy0YfqxM_UL__6ZpS_rVq1qnTJTsKL0uNs-UZ4zkBg32qz90FQx8i8CNRHXbNKjAND2SaAwb-Zd-inkc_0u_dUj8ylzGz72hu-Cr_e6qdSOCP3wFNcy_1XjQKjPdtZiLNwdjHYR3GUFaxyHyt4-gI1lZfTtr7VQvXVpe6Y06EhCSlIb422TB7LN6lJo3QOCfa9Du7C6xwif-JiRNQHdrvZkPlShKXpvlF4za0qgUAnvzJEC2kJaK8rmi68V4fv9QA62DqA8GU"/>
+</div>
+</div>
+<div class="pt-10 pb-6 px-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="text-xl font-bold text-on-surface">TractoSur Equipos</h4>
+<span class="inline-block mt-1 px-2 py-0.5 rounded bg-orange-900/30 text-orange-400 text-[10px] font-bold uppercase tracking-widest">Maquinaria</span>
+</div>
+<div class="text-right">
+<span class="text-3xl font-extrabold text-primary">5%</span>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Descuento</p>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-6">Alquiler de maquinaria pesada para adecuación de terrenos y mantenimiento de vías.</p>
+<div class="flex items-center justify-between border-t border-outline-variant/10 pt-4">
+<span class="text-[10px] text-on-surface-variant font-bold">Activo desde 2021</span>
+<button class="text-primary hover:text-primary-container text-sm font-bold flex items-center gap-1 transition-colors">
+                            Editar
+                            <span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Empty State / Add New Placeholder -->
+<div class="border-2 border-dashed border-outline-variant/30 rounded-xl flex flex-col items-center justify-center p-8 min-h-[360px] group cursor-pointer hover:bg-surface-container-low/50 transition-colors">
+<div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="add">add</span>
+</div>
+<p class="font-headline font-bold text-on-surface">Añadir Aliado</p>
+<p class="text-on-surface-variant text-xs text-center mt-2 max-w-[160px]">Registra una nueva empresa al programa de convenios</p>
+</div>
+</div>
+</main>
+<!-- Side Panel Form (Modal Layout) -->
+<!-- This represents the 'lateral drawer' mentioned in the prompt -->
+<div class="fixed inset-0 bg-background/60 backdrop-blur-sm z-[60] flex justify-end">
+<div class="w-full max-w-lg bg-surface shadow-2xl h-full p-10 flex flex-col border-l border-outline-variant/20">
+<div class="flex justify-between items-center mb-10">
+<h3 class="text-2xl font-extrabold tracking-tight text-on-surface">Nuevo Convenio</h3>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<form class="space-y-8 flex-1 overflow-y-auto pr-2 custom-scrollbar">
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-widest text-primary">Información General</label>
+<div class="space-y-4 pt-2">
+<div class="bg-surface-container-low rounded-lg p-1">
+<input class="w-full bg-transparent border-none focus:ring-0 text-on-surface p-3 font-medium placeholder:text-outline/50" placeholder="Nombre de la Empresa" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low rounded-lg p-1">
+<select class="w-full bg-transparent border-none focus:ring-0 text-on-surface p-3 font-medium cursor-pointer">
+<option disabled="" selected="">Categoría</option>
+<option>Veterinaria</option>
+<option>Almacén</option>
+<option>Laboratorio</option>
+<option>Otros</option>
+</select>
+</div>
+<div class="bg-surface-container-low rounded-lg p-1 relative">
+<input class="w-full bg-transparent border-none focus:ring-0 text-on-surface p-3 font-medium placeholder:text-outline/50" placeholder="Descuento" type="number"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">%</span>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-widest text-primary">Branding</label>
+<div class="mt-2 border-2 border-dashed border-outline-variant/30 rounded-xl h-32 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-outline" data-icon="upload_file">upload_file</span>
+<span class="text-xs text-on-surface-variant font-medium">Subir logo de la empresa (SVG, PNG)</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-widest text-primary">Detalles del Beneficio</label>
+<div class="bg-surface-container-low rounded-lg p-1 mt-2">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-on-surface p-3 font-medium placeholder:text-outline/50 resize-none" placeholder="Describe los términos y condiciones del convenio para los asociados..." rows="4"></textarea>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-widest text-primary">Contacto de Enlace</label>
+<div class="space-y-4 pt-2">
+<div class="bg-surface-container-low rounded-lg p-1">
+<input class="w-full bg-transparent border-none focus:ring-0 text-on-surface p-3 font-medium placeholder:text-outline/50" placeholder="Nombre completo" type="text"/>
+</div>
+<div class="bg-surface-container-low rounded-lg p-1">
+<input class="w-full bg-transparent border-none focus:ring-0 text-on-surface p-3 font-medium placeholder:text-outline/50" placeholder="Correo electrónico corporativo" type="email"/>
+</div>
+</div>
+</div>
+</form>
+<div class="pt-8 mt-auto flex gap-4 border-t border-outline-variant/10">
+<button class="flex-1 py-4 px-6 rounded-lg text-on-surface font-bold hover:bg-surface-container-high transition-colors">Cancelar</button>
+<button class="flex-[2] py-4 px-6 rounded-lg bg-primary text-on-primary font-headline font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">Guardar Convenio</button>
+</div>
+</div>
+</div>
+</body></html>
