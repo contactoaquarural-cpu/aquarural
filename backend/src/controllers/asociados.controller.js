@@ -3,6 +3,8 @@ const { z } = require('zod');
 const Asociado = require('../models/Asociado');
 const Aporte = require('../models/Aporte');
 const Notificacion = require('../models/Notificacion');
+const { subirImagen } = require('../services/cloudinary.service');
+const { generarQRBase64 } = require('../services/qr.service');
 const logger = require('../utils/logger');
 
 // ─── Schemas de validación ───────────────────────────────────────────────────
@@ -243,6 +245,70 @@ exports.historialNotificaciones = async (req, res) => {
     });
   } catch (error) {
     logger.error('Error al obtener notificaciones', { error: error.message });
+    res.status(500).json({ success: false, data: null, message: 'Error interno del servidor' });
+  }
+};
+
+// ─── POST /asociados/:id/foto ─────────────────────────────────────────────────
+
+exports.subirFoto = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, data: null, message: 'No se recibió ninguna imagen' });
+    }
+
+    const asociado = await Asociado.findById(req.params.id);
+    if (!asociado) {
+      return res.status(404).json({ success: false, data: null, message: 'Asociado no encontrado' });
+    }
+
+    const fotoUrl = await subirImagen(
+      req.file.buffer,
+      'asociados/fotos',
+      `asociado-${asociado._id}`
+    );
+
+    asociado.foto = fotoUrl;
+    await asociado.save();
+
+    res.status(200).json({
+      success: true,
+      data: { foto: fotoUrl },
+      message: 'Foto de perfil actualizada exitosamente',
+    });
+  } catch (error) {
+    logger.error('Error al subir foto del asociado', { error: error.message });
+    res.status(500).json({ success: false, data: null, message: 'Error interno del servidor' });
+  }
+};
+
+// ─── GET /asociados/:id/qr ────────────────────────────────────────────────────
+
+exports.obtenerQR = async (req, res) => {
+  try {
+    const asociado = await Asociado.findById(req.params.id).select('-password');
+
+    if (!asociado) {
+      return res.status(404).json({ success: false, data: null, message: 'Asociado no encontrado' });
+    }
+
+    if (asociado.estado === 'INACTIVO') {
+      return res.status(403).json({
+        success: false,
+        data: null,
+        message: 'Cuenta inactiva. No se puede generar el carné QR.',
+      });
+    }
+
+    const { qrBase64, expiresAt } = await generarQRBase64(asociado);
+
+    res.status(200).json({
+      success: true,
+      data: { qrBase64, expiresAt },
+      message: 'Carné QR generado exitosamente',
+    });
+  } catch (error) {
+    logger.error('Error al generar QR del asociado', { error: error.message });
     res.status(500).json({ success: false, data: null, message: 'Error interno del servidor' });
   }
 };

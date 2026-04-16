@@ -7,6 +7,9 @@ const authRoutes = require('./routes/auth.routes');
 const asociadosRoutes = require('./routes/asociados.routes');
 const pagosRoutes = require('./routes/pagos.routes');
 const adminRoutes = require('./routes/admin.routes');
+const qrRoutes = require('./routes/qr.routes');
+const conveniosRoutes = require('./routes/convenios.routes');
+const fincasRoutes = require('./routes/fincas.routes');
 
 const app = express();
 
@@ -47,6 +50,9 @@ app.use('/auth', authRoutes);
 app.use('/asociados', asociadosRoutes);
 app.use('/pagos', pagosRoutes);
 app.use('/admin', adminRoutes);
+app.use('/qr', qrRoutes);
+app.use('/convenios', conveniosRoutes);
+app.use('/fincas', fincasRoutes);
 
 // 404 — ruta no encontrada
 app.use((req, res) => {

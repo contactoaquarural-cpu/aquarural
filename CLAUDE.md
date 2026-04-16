@@ -125,7 +125,7 @@ plataforma-digital-ganadera/
 |---|---|---|
 | Fase 1 | Configuración, registro y autenticación (backend) | ✅ Completado |
 | Fase 2 | Módulo de pagos y control de estado (backend) | ✅ Completado |
-| Fase 3 | QR carné digital y convenios (backend) | ⬜ Pendiente |
+| Fase 3 | QR carné digital y convenios (backend) | ✅ Completado |
 | Fase 4 | Panel web administrativo (React + Ant Design) | ⬜ Pendiente |
 | Fase 5 | App móvil completa (React Native + Expo) | ⬜ Pendiente |
 | Fase 6 | Noticias y notificaciones (backend + frontend) | ⬜ Pendiente |
