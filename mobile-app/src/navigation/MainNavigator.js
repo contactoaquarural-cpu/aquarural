@@ -16,6 +16,8 @@ import PerfilScreen              from '../screens/perfil/PerfilScreen';
 import EditarPerfilScreen        from '../screens/perfil/EditarPerfilScreen';
 import DatosFincaScreen          from '../screens/perfil/DatosFincaScreen';
 import NotificacionesScreen      from '../screens/notificaciones/NotificacionesScreen';
+import NoticiasScreen           from '../screens/noticias/NoticiasScreen';
+import DetalleNoticiaScreen     from '../screens/noticias/DetalleNoticiaScreen';
 
 const Tab   = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -38,6 +40,14 @@ const PagosStack = () => (
     <Stack.Screen name="EstadoFinanciero" component={EstadoFinancieroScreen} />
     <Stack.Screen name="HistorialPagos"   component={HistorialPagosScreen} />
     <Stack.Screen name="Pago"             component={PagoScreen} />
+  </Stack.Navigator>
+);
+
+// Stack de Noticias
+const NoticiasStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="NoticiasList"    component={NoticiasScreen} />
+    <Stack.Screen name="DetalleNoticia"  component={DetalleNoticiaScreen} />
   </Stack.Navigator>
 );
 
@@ -100,6 +110,15 @@ const MainNavigator = () => (
       options={{
         tabBarIcon: ({ focused }) => (
           <TabIcon symbol="storefront" label="Beneficios" focused={focused} />
+        ),
+      }}
+    />
+    <Tab.Screen
+      name="Noticias"
+      component={NoticiasStack}
+      options={{
+        tabBarIcon: ({ focused }) => (
+          <TabIcon symbol="newspaper" label="Noticias" focused={focused} />
         ),
       }}
     />

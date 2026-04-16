@@ -5,6 +5,7 @@ const NAV_ITEMS = [
   { to: '/dashboard', icon: 'dashboard',    label: 'Dashboard' },
   { to: '/asociados', icon: 'groups',       label: 'Asociados' },
   { to: '/convenios', icon: 'handshake',    label: 'Convenios' },
+  { to: '/noticias',  icon: 'newspaper',    label: 'Noticias' },
   { to: '/reportes',  icon: 'query_stats',  label: 'Reportes' },
 ];
 

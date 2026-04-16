@@ -10,6 +10,7 @@ const adminRoutes = require('./routes/admin.routes');
 const qrRoutes = require('./routes/qr.routes');
 const conveniosRoutes = require('./routes/convenios.routes');
 const fincasRoutes = require('./routes/fincas.routes');
+const noticiasRoutes = require('./routes/noticias.routes');
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use('/admin', adminRoutes);
 app.use('/qr', qrRoutes);
 app.use('/convenios', conveniosRoutes);
 app.use('/fincas', fincasRoutes);
+app.use('/noticias', noticiasRoutes);
 
 // 404 — ruta no encontrada
 app.use((req, res) => {
