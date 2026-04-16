@@ -123,12 +123,13 @@ plataforma-digital-ganadera/
 
 | Fase | Descripción | Estado |
 |---|---|---|
-| Fase 1 | Configuración, registro y autenticación | ⬜ Pendiente |
-| Fase 2 | Módulo de pagos y control de estado | ⬜ Pendiente |
-| Fase 3 | QR carné digital y convenios | ⬜ Pendiente |
-| Fase 4 | App móvil completa | ⬜ Pendiente |
-| Fase 5 | Noticias y notificaciones | ⬜ Pendiente |
-| Fase 6 | Estadísticas, pruebas y despliegue | ⬜ Pendiente |
+| Fase 1 | Configuración, registro y autenticación (backend) | ✅ Completado |
+| Fase 2 | Módulo de pagos y control de estado (backend) | ✅ Completado |
+| Fase 3 | QR carné digital y convenios (backend) | ⬜ Pendiente |
+| Fase 4 | Panel web administrativo (React + Ant Design) | ⬜ Pendiente |
+| Fase 5 | App móvil completa (React Native + Expo) | ⬜ Pendiente |
+| Fase 6 | Noticias y notificaciones (backend + frontend) | ⬜ Pendiente |
+| Fase 7 | Estadísticas, pruebas y despliegue | ⬜ Pendiente |
 
 **Leyenda:** ⬜ Pendiente — 🔄 En progreso — ✅ Completado
 
@@ -167,12 +168,13 @@ NODE_ENV
 ```
 main          → Producción (solo merges desde develop cuando hay release)
 develop       → Desarrollo activo (rama base para trabajar)
-fase-1-base   → Rama de trabajo para Fase 1
-fase-2-pagos  → Rama de trabajo para Fase 2
-fase-3-qr     → Rama de trabajo para Fase 3
-fase-4-movil  → Rama de trabajo para Fase 4
-fase-5-noticias → Rama de trabajo para Fase 5
-fase-6-deploy → Rama de trabajo para Fase 6
+fase-1-backend    → Rama de trabajo para Fase 1
+fase-2-pagos      → Rama de trabajo para Fase 2
+fase-3-qr         → Rama de trabajo para Fase 3
+fase-4.5-web-admin → Rama de trabajo para Fase 4
+fase-4-mobile     → Rama de trabajo para Fase 5
+fase-5-noticias   → Rama de trabajo para Fase 6
+fase-6-deploy     → Rama de trabajo para Fase 7
 ```
 
 **Flujo de trabajo:**

@@ -41,6 +41,10 @@ const asociadoSchema = new mongoose.Schema(
     fcmToken: {
       type: String, // Token de Firebase para push notifications
     },
+    esAdmin: {
+      type: Boolean,
+      default: false, // true para miembros de la junta directiva
+    },
     fechaIngreso: {
       type: Date,
       default: Date.now,
