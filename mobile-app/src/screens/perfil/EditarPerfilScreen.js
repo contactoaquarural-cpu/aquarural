@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  StyleSheet, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform,
+  StyleSheet, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthStore }     from '../../store/auth.store';
 import { useAsociadoStore } from '../../store/asociado.store';
+import { Toast, useToast } from '../../components/AppToast';
 import { colors, spacing, radius, typography } from '../../utils/theme';
 
 const EditarPerfilScreen = () => {
   const navigation = useNavigation();
   const user       = useAuthStore((s) => s.user);
   const { asociado, actualizarPerfil } = useAsociadoStore();
+  const { show, toastProps } = useToast();
 
   const datos = asociado || user;
 
@@ -23,7 +26,7 @@ const EditarPerfilScreen = () => {
 
   const handleGuardar = async () => {
     if (!nombre.trim()) {
-      Alert.alert('Requerido', 'El nombre no puede estar vacío.');
+      show('warning', 'Campo requerido', 'El nombre no puede estar vacío.');
       return;
     }
     setLoading(true);
@@ -33,11 +36,10 @@ const EditarPerfilScreen = () => {
         telefono: telefono.trim() || undefined,
         correo:   correo.trim()   || undefined,
       });
-      Alert.alert('✅ Perfil actualizado', 'Tus datos fueron guardados correctamente.', [
-        { text: 'Aceptar', onPress: () => navigation.goBack() },
-      ]);
+      show('success', 'Perfil actualizado', 'Tus datos fueron guardados correctamente.');
+      setTimeout(() => navigation.goBack(), 1800);
     } catch (err) {
-      Alert.alert('Error', err.response?.data?.message || 'No se pudo actualizar el perfil.');
+      show('error', 'Error', err.response?.data?.message || 'No se pudo actualizar el perfil.');
     } finally {
       setLoading(false);
     }
@@ -45,13 +47,15 @@ const EditarPerfilScreen = () => {
 
   return (
     <SafeAreaView style={styles.safe}>
+      <Toast {...toastProps} />
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.backIcon}>←</Text>
+          <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+            <MaterialIcons name="arrow-back-ios" size={20} color={colors.primary} />
+            <Text style={styles.backText}>Volver</Text>
           </TouchableOpacity>
           <Text style={styles.title}>Editar Perfil</Text>
-          <View style={{ width: 32 }} />
+          <View style={{ width: 80 }} />
         </View>
 
         <ScrollView
@@ -59,7 +63,7 @@ const EditarPerfilScreen = () => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Field label="Nombre completo" value={nombre} onChangeText={setNombre} />
+          <Field label="Nombre completo" value={nombre} onChangeText={setNombre} autoCapitalize="words" />
           <Field label="Teléfono" value={telefono} onChangeText={setTelefono} keyboardType="phone-pad" />
           <Field label="Correo electrónico" value={correo} onChangeText={setCorreo} keyboardType="email-address" />
 
@@ -107,7 +111,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical:   spacing.md,
   },
-  backIcon: { ...typography.h2, color: colors.primary, paddingHorizontal: spacing.sm },
+  backBtn:  { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: spacing.xs, paddingHorizontal: spacing.xs },
+  backText: { ...typography.body, color: colors.primary, fontWeight: '600' },
   title:    { ...typography.h2 },
   scroll:   { padding: spacing.xl, gap: spacing.md },
 

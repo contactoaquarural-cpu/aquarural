@@ -1,27 +1,30 @@
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  StyleSheet, Alert, ActivityIndicator, ScrollView,
+  StyleSheet, ActivityIndicator, ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAsociadoStore } from '../../store/asociado.store';
+import { Toast, useToast } from '../../components/AppToast';
 import { colors, spacing, radius, typography } from '../../utils/theme';
 
 const DatosFincaScreen = () => {
   const navigation = useNavigation();
   const { finca, actualizarFinca } = useAsociadoStore();
+  const { show, toastProps } = useToast();
 
-  const [nombre,      setNombre]      = useState(finca?.nombre          || '');
-  const [hectareas,   setHectareas]   = useState(String(finca?.hectareas    || ''));
-  const [cabezas,     setCabezas]     = useState(String(finca?.cabezasGanado || ''));
-  const [produccion,  setProduccion]  = useState(finca?.tipoProduccion  || 'CARNE');
-  const [vereda,      setVereda]      = useState(finca?.vereda          || '');
-  const [loading,     setLoading]     = useState(false);
+  const [nombre,     setNombre]     = useState(finca?.nombre           || '');
+  const [hectareas,  setHectareas]  = useState(String(finca?.hectareas    || ''));
+  const [cabezas,    setCabezas]    = useState(String(finca?.cabezasGanado || ''));
+  const [produccion, setProduccion] = useState(finca?.tipoProduccion   || 'CARNE');
+  const [vereda,     setVereda]     = useState(finca?.vereda           || '');
+  const [loading,    setLoading]    = useState(false);
 
   const handleGuardar = async () => {
     if (!nombre.trim()) {
-      Alert.alert('Requerido', 'El nombre de la finca es obligatorio.');
+      show('warning', 'Campo requerido', 'El nombre de la finca es obligatorio.');
       return;
     }
     setLoading(true);
@@ -33,11 +36,10 @@ const DatosFincaScreen = () => {
         tipoProduccion: produccion,
         vereda:         vereda.trim() || undefined,
       });
-      Alert.alert('✅ Finca actualizada', 'Los datos de tu finca fueron guardados.', [
-        { text: 'Aceptar', onPress: () => navigation.goBack() },
-      ]);
+      show('success', 'Finca actualizada', 'Los datos de tu finca fueron guardados.');
+      setTimeout(() => navigation.goBack(), 1800);
     } catch (err) {
-      Alert.alert('Error', err.response?.data?.message || 'No se pudo actualizar la finca.');
+      show('error', 'Error', err.response?.data?.message || 'No se pudo actualizar la finca.');
     } finally {
       setLoading(false);
     }
@@ -45,12 +47,14 @@ const DatosFincaScreen = () => {
 
   return (
     <SafeAreaView style={styles.safe}>
+      <Toast {...toastProps} />
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backIcon}>←</Text>
+        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+          <MaterialIcons name="arrow-back-ios" size={20} color={colors.primary} />
+          <Text style={styles.backText}>Volver</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Datos de la Finca</Text>
-        <View style={{ width: 32 }} />
+        <View style={{ width: 80 }} />
       </View>
 
       <ScrollView
@@ -58,10 +62,10 @@ const DatosFincaScreen = () => {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <Field label="Nombre de la finca" value={nombre} onChangeText={setNombre} />
+        <Field label="Nombre de la finca" value={nombre} onChangeText={setNombre} autoCapitalize="words" />
         <Field label="Hectáreas" value={hectareas} onChangeText={setHectareas} keyboardType="numeric" />
         <Field label="Cabezas de ganado" value={cabezas} onChangeText={setCabezas} keyboardType="numeric" />
-        <Field label="Vereda" value={vereda} onChangeText={setVereda} />
+        <Field label="Vereda" value={vereda} onChangeText={setVereda} autoCapitalize="words" />
 
         <View style={styles.fieldGroup}>
           <Text style={styles.fieldLabel}>Tipo de producción</Text>
@@ -117,7 +121,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical:   spacing.md,
   },
-  backIcon: { ...typography.h2, color: colors.primary, paddingHorizontal: spacing.sm },
+  backBtn:  { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: spacing.xs, paddingHorizontal: spacing.xs },
+  backText: { ...typography.body, color: colors.primary, fontWeight: '600' },
   title:    { ...typography.h2 },
   scroll:   { padding: spacing.xl, gap: spacing.md },
 

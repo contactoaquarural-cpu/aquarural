@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
-  StyleSheet, Alert, Image,
+  StyleSheet, Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -10,6 +10,7 @@ import api from '../../services/api.service';
 import { useAuthStore }     from '../../store/auth.store';
 import { useAsociadoStore } from '../../store/asociado.store';
 import EstadoBadge from '../../components/EstadoBadge';
+import { Toast, ConfirmModal, useToast } from '../../components/AppToast';
 import { colors, spacing, radius, typography } from '../../utils/theme';
 
 const MenuRow = ({ icon, label, sublabel, onPress, danger }) => (
@@ -30,6 +31,8 @@ const PerfilScreen = () => {
   const logout     = useAuthStore((s) => s.logout);
   const user       = useAuthStore((s) => s.user);
   const { asociado, cargarDatos } = useAsociadoStore();
+  const { show, toastProps } = useToast();
+  const [confirmLogout, setConfirmLogout] = useState(false);
 
   const datos  = asociado || user;
   const nombre = datos?.nombre || '';
@@ -46,7 +49,7 @@ const PerfilScreen = () => {
   const handleCambiarFoto = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('Permiso requerido', 'Necesitamos acceso a tu galería para cambiar la foto.');
+      show('warning', 'Permiso requerido', 'Necesitamos acceso a tu galería para cambiar la foto.');
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -68,25 +71,27 @@ const PerfilScreen = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       await cargarDatos();
-      Alert.alert('✅ Foto actualizada', 'Tu foto de perfil fue guardada.');
+      show('success', 'Foto actualizada', 'Tu foto de perfil fue guardada.');
     } catch {
-      Alert.alert('Error', 'No se pudo subir la foto. Inténtalo de nuevo.');
+      show('error', 'Error', 'No se pudo subir la foto. Inténtalo de nuevo.');
     }
   };
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Cerrar sesión',
-      '¿Estás seguro de que quieres salir?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Salir', style: 'destructive', onPress: () => logout() },
-      ]
-    );
-  };
+  const handleLogout = () => setConfirmLogout(true);
 
   return (
     <SafeAreaView style={styles.safe}>
+      <Toast {...toastProps} />
+      <ConfirmModal
+        visible={confirmLogout}
+        title="Cerrar sesión"
+        message="¿Estás seguro de que quieres salir?"
+        confirmText="Salir"
+        cancelText="Cancelar"
+        danger
+        onConfirm={() => { setConfirmLogout(false); logout(); }}
+        onCancel={() => setConfirmLogout(false)}
+      />
       <ScrollView showsVerticalScrollIndicator={false}>
 
         {/* Header / avatar */}
@@ -123,6 +128,12 @@ const PerfilScreen = () => {
               label="Datos de la finca"
               sublabel="Hectáreas, ganado, producción"
               onPress={() => navigation.navigate('DatosFinca')}
+            />
+            <MenuRow
+              icon="📍"
+              label="Ubicación de la finca"
+              sublabel="Tomar coordenadas GPS"
+              onPress={() => navigation.navigate('UbicacionFinca')}
             />
             <MenuRow
               icon="🔔"

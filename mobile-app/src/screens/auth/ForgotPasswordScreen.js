@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  StyleSheet, Alert, ActivityIndicator,
+  StyleSheet, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
 import api from '../../services/api.service';
+import { Toast, useToast } from '../../components/AppToast';
 import { colors, spacing, radius, typography } from '../../utils/theme';
 
 const ForgotPasswordScreen = ({ navigation }) => {
   const [correo,  setCorreo]  = useState('');
   const [loading, setLoading] = useState(false);
   const [sent,    setSent]    = useState(false);
+  const { show, toastProps } = useToast();
 
   const handleSubmit = async () => {
     if (!correo.trim()) {
-      Alert.alert('Requerido', 'Ingresa tu correo electrónico.');
+      show('warning', 'Campo requerido', 'Ingresa tu correo electrónico.');
       return;
     }
     setLoading(true);
@@ -22,7 +25,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
       await api.post('/auth/recuperar', { correo: correo.trim() });
       setSent(true);
     } catch (err) {
-      Alert.alert('Error', err.response?.data?.message || 'No se pudo procesar la solicitud.');
+      show('error', 'Error', err.response?.data?.message || 'No se pudo procesar la solicitud.');
     } finally {
       setLoading(false);
     }
@@ -30,8 +33,10 @@ const ForgotPasswordScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safe}>
+      <Toast {...toastProps} />
       <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-        <Text style={styles.backIcon}>←</Text>
+        <MaterialIcons name="arrow-back-ios" size={20} color={colors.primary} />
+        <Text style={styles.backText}>Volver</Text>
       </TouchableOpacity>
 
       <View style={styles.container}>
@@ -86,8 +91,8 @@ const ForgotPasswordScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   safe:      { flex: 1, backgroundColor: colors.background },
-  backBtn:   { padding: spacing.md },
-  backIcon:  { ...typography.h2, color: colors.primary },
+  backBtn:   { flexDirection: 'row', alignItems: 'center', gap: 4, padding: spacing.md },
+  backText:  { ...typography.body, color: colors.primary, fontWeight: '600' },
   container: { flex: 1, padding: spacing.xl, paddingTop: spacing.lg },
 
   title:    { ...typography.h1, marginBottom: spacing.sm },
@@ -113,10 +118,10 @@ const styles = StyleSheet.create({
   btnText: { ...typography.h3, color: colors.primary },
 
   successCard: {
-    flex:            1,
-    alignItems:      'center',
-    justifyContent:  'center',
-    gap:             spacing.md,
+    flex:           1,
+    alignItems:     'center',
+    justifyContent: 'center',
+    gap:            spacing.md,
   },
   successIcon:  { fontSize: 52 },
   successTitle: { ...typography.h1, textAlign: 'center' },

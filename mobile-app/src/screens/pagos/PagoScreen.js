@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TouchableOpacity, StyleSheet, Alert,
+  View, Text, TouchableOpacity, StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
 import { WebView } from 'react-native-webview';
 import { usePagosStore } from '../../store/pagos.store';
 import { useAsociadoStore } from '../../store/asociado.store';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { Toast, useToast } from '../../components/AppToast';
 import { colors, spacing, radius, typography } from '../../utils/theme';
 
 const MESES_LABELS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
 const PagoScreen = ({ route, navigation }) => {
   const meses = route.params?.meses ?? [];
-  const [urlPago,  setUrlPago]  = useState(null);
-  const [loading,  setLoading]  = useState(false);
+  const [urlPago, setUrlPago] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { show, toastProps }  = useToast();
 
   const { iniciarPago, cargarHistorial } = usePagosStore();
   const { cargarDatos }                  = useAsociadoStore();
@@ -28,35 +31,34 @@ const PagoScreen = ({ route, navigation }) => {
       const url      = await iniciarPago(mesesIds, totalMonto);
       setUrlPago(url);
     } catch (err) {
-      Alert.alert('Error', err.response?.data?.message || 'No se pudo iniciar el pago.');
+      show('error', 'Error al iniciar pago', err.response?.data?.message || 'No se pudo iniciar el pago.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleWebViewNav = async (navState) => {
-    // Detectar URL de éxito o fracaso de Wompi
     if (navState.url?.includes('pago-exitoso') || navState.url?.includes('success')) {
       setUrlPago(null);
       await cargarHistorial();
       await cargarDatos();
-      Alert.alert('✅ Pago exitoso', 'Tu aporte ha sido registrado.', [
-        { text: 'Aceptar', onPress: () => navigation.navigate('EstadoFinanciero') },
-      ]);
+      show('success', 'Pago exitoso', 'Tu aporte ha sido registrado.');
+      setTimeout(() => navigation.navigate('EstadoFinanciero'), 2000);
     }
     if (navState.url?.includes('pago-fallido') || navState.url?.includes('declined')) {
       setUrlPago(null);
-      Alert.alert('Pago no procesado', 'El pago fue rechazado o cancelado. Inténtalo de nuevo.');
+      show('error', 'Pago no procesado', 'El pago fue rechazado o cancelado. Inténtalo de nuevo.');
     }
   };
 
-  // Mostrar WebView con URL de Wompi
   if (urlPago) {
     return (
       <SafeAreaView style={styles.safe}>
+        <Toast {...toastProps} />
         <View style={styles.webHeader}>
-          <TouchableOpacity onPress={() => setUrlPago(null)}>
-            <Text style={styles.backIcon}>✕ Cancelar</Text>
+          <TouchableOpacity style={styles.backBtn} onPress={() => setUrlPago(null)}>
+            <MaterialIcons name="close" size={20} color={colors.primary} />
+            <Text style={styles.backText}>Cancelar</Text>
           </TouchableOpacity>
           <Text style={styles.webTitle}>Pago seguro</Text>
           <View style={{ width: 80 }} />
@@ -73,16 +75,17 @@ const PagoScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.safe}>
+      <Toast {...toastProps} />
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backIcon}>← Volver</Text>
+        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+          <MaterialIcons name="arrow-back-ios" size={20} color={colors.primary} />
+          <Text style={styles.backText}>Volver</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Realizar pago</Text>
-        <View style={{ width: 60 }} />
+        <View style={{ width: 80 }} />
       </View>
 
       <View style={styles.container}>
-        {/* Resumen de meses */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Meses a pagar</Text>
           {meses.map((m) => (
@@ -97,7 +100,6 @@ const PagoScreen = ({ route, navigation }) => {
           </View>
         </View>
 
-        {/* Info Wompi */}
         <View style={styles.infoCard}>
           <Text style={styles.infoIcon}>🔒</Text>
           <Text style={styles.infoText}>
@@ -105,18 +107,15 @@ const PagoScreen = ({ route, navigation }) => {
           </Text>
         </View>
 
-        {/* Botón pagar */}
         <TouchableOpacity
           style={[styles.pagarBtn, loading && { opacity: 0.6 }]}
           onPress={handleIniciarPago}
           disabled={loading || meses.length === 0}
           activeOpacity={0.85}
         >
-          {loading ? (
-            <Text style={styles.pagarBtnText}>Procesando...</Text>
-          ) : (
-            <Text style={styles.pagarBtnText}>Pagar ${totalMonto.toLocaleString('es-CO')} →</Text>
-          )}
+          <Text style={styles.pagarBtnText}>
+            {loading ? 'Procesando...' : `Pagar $${totalMonto.toLocaleString('es-CO')} →`}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -132,8 +131,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical:   spacing.md,
   },
-  backIcon:  { ...typography.bodyBold, color: colors.primary },
-  title:     { ...typography.h2 },
+  backBtn:  { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: spacing.xs, paddingHorizontal: spacing.xs },
+  backText: { ...typography.body, color: colors.primary, fontWeight: '600' },
+  title:    { ...typography.h2 },
   container: { flex: 1, padding: spacing.lg, gap: spacing.lg },
 
   card: {
@@ -153,9 +153,9 @@ const styles = StyleSheet.create({
   mesLabel:  { ...typography.body },
   mesMonto:  { ...typography.bodyBold },
   totalRow: {
-    flexDirection:   'row',
-    justifyContent:  'space-between',
-    marginTop:       spacing.sm,
+    flexDirection:  'row',
+    justifyContent: 'space-between',
+    marginTop:      spacing.sm,
   },
   totalLabel: { ...typography.h3 },
   totalMonto: { ...typography.h3, color: colors.primary },

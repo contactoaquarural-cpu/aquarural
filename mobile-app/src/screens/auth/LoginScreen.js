@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  StyleSheet, ScrollView, Alert, ActivityIndicator, KeyboardAvoidingView, Platform,
+  StyleSheet, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/auth.store';
 import { useAsociadoStore } from '../../store/asociado.store';
+import { Toast, useToast } from '../../components/AppToast';
 import { colors, spacing, radius, typography } from '../../utils/theme';
 
 const LoginScreen = ({ navigation }) => {
@@ -15,25 +16,22 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [loading,  setLoading]  = useState(false);
+  const { show, toastProps } = useToast();
 
   const login        = useAuthStore((s) => s.login);
   const cargarDatos  = useAsociadoStore((s) => s.cargarDatos);
 
   const handleLogin = async () => {
     if (!cedula.trim() || !password.trim()) {
-      Alert.alert('Campos requeridos', 'Ingresa tu cédula y contraseña.');
+      show('warning', 'Campos requeridos', 'Ingresa tu cédula y contraseña.');
       return;
     }
     setLoading(true);
     try {
       await login(cedula.trim(), password);
       await cargarDatos();
-      // La navegación es automática — el RootNavigator detecta el token
     } catch (err) {
-      Alert.alert(
-        'Error al ingresar',
-        err.response?.data?.message || 'Verifica tu cédula y contraseña.'
-      );
+      show('error', 'Error al ingresar', err.response?.data?.message || 'Verifica tu cédula y contraseña.');
     } finally {
       setLoading(false);
     }
@@ -41,6 +39,7 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safe}>
+      <Toast {...toastProps} />
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

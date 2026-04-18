@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, Image, TouchableOpacity, StyleSheet,
-  RefreshControl, ScrollView, Alert,
+  RefreshControl, ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,11 +10,13 @@ import { useAuthStore }     from '../../store/auth.store';
 import { useAsociadoStore } from '../../store/asociado.store';
 import EstadoBadge    from '../../components/EstadoBadge';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { Toast, useToast } from '../../components/AppToast';
 import { colors, spacing, radius, typography } from '../../utils/theme';
 
 const MiCarneScreen = ({ navigation }) => {
   const user     = useAuthStore((s) => s.user);
   const { asociado, cargarDatos } = useAsociadoStore();
+  const { show, toastProps } = useToast();
 
   const [qrBase64,  setQrBase64]  = useState(null);
   const [qrLoading, setQrLoading] = useState(false);
@@ -30,9 +32,9 @@ const MiCarneScreen = ({ navigation }) => {
     setQrLoading(true);
     try {
       const { data } = await api.get(`/asociados/${userId}/qr`);
-      setQrBase64(data.data.qr);
+      setQrBase64(data.data.qrBase64);
     } catch (err) {
-      Alert.alert('Error', 'No se pudo cargar el carné QR.');
+      show('error', 'Error al cargar carné', err.response?.data?.message || 'No se pudo generar el código QR.');
     } finally {
       setQrLoading(false);
     }
@@ -56,6 +58,7 @@ const MiCarneScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safe}>
+      <Toast {...toastProps} />
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}

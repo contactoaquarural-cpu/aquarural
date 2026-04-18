@@ -29,6 +29,12 @@ const fincaSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    latitud: {
+      type: Number,
+    },
+    longitud: {
+      type: Number,
+    },
   },
   {
     timestamps: true,
