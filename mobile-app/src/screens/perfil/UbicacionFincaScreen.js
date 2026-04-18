@@ -101,7 +101,6 @@ const UbicacionFincaScreen = () => {
 
   const guardarEnBackend = async (coords) => {
     const fincaActual = getFinca();
-    console.log('finca en store:', JSON.stringify(fincaActual));
     if (!fincaActual?._id) {
       show('error', 'Error', 'No se encontró la finca. Vuelve al perfil e intenta de nuevo.');
       return;

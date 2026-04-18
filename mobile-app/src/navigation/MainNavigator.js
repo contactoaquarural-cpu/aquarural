@@ -39,9 +39,17 @@ const TabIcon = ({ symbol, label, focused }) => (
   </View>
 );
 
+const stackOptions = {
+  headerShown: false,
+  cardStyle: { backgroundColor: colors.background },
+  cardOverlayEnabled: false,
+  cardShadowEnabled: false,
+  animationEnabled: true,
+};
+
 // Stack de Pagos (anidado dentro del tab)
 const PagosStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator screenOptions={stackOptions}>
     <Stack.Screen name="EstadoFinanciero" component={EstadoFinancieroScreen} />
     <Stack.Screen name="HistorialPagos"   component={HistorialPagosScreen} />
     <Stack.Screen name="Pago"             component={PagoScreen} />
@@ -50,7 +58,7 @@ const PagosStack = () => (
 
 // Stack de Noticias
 const NoticiasStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator screenOptions={stackOptions}>
     <Stack.Screen name="NoticiasList"    component={NoticiasScreen} />
     <Stack.Screen name="DetalleNoticia"  component={DetalleNoticiaScreen} />
   </Stack.Navigator>
@@ -58,7 +66,7 @@ const NoticiasStack = () => (
 
 // Stack de Convenios
 const ConveniosStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator screenOptions={stackOptions}>
     <Stack.Screen name="ConveniosList"  component={ConveniosScreen} />
     <Stack.Screen name="DetalleConvenio" component={DetalleConvenioScreen} />
   </Stack.Navigator>
@@ -66,7 +74,7 @@ const ConveniosStack = () => (
 
 // Stack de Perfil
 const PerfilStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator screenOptions={stackOptions}>
     <Stack.Screen name="PerfilMain"    component={PerfilScreen} />
     <Stack.Screen name="EditarPerfil"  component={EditarPerfilScreen} />
     <Stack.Screen name="DatosFinca"      component={DatosFincaScreen} />
