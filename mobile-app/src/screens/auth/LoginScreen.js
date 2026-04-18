@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/auth.store';
 import { useAsociadoStore } from '../../store/asociado.store';
 import { colors, spacing, radius, typography } from '../../utils/theme';
@@ -96,11 +97,17 @@ const LoginScreen = ({ navigation }) => {
                   placeholder="••••••••"
                   placeholderTextColor={colors.outline}
                   secureTextEntry={!showPass}
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   returnKeyType="done"
                   onSubmitEditing={handleLogin}
                 />
                 <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeBtn}>
-                  <Text style={styles.eyeIcon}>{showPass ? '🙈' : '👁️'}</Text>
+                  <MaterialIcons
+                    name={showPass ? 'visibility' : 'visibility-off'}
+                    size={20}
+                    color={colors.onSurfaceVariant}
+                  />
                 </TouchableOpacity>
               </View>
             </View>

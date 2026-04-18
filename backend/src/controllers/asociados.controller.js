@@ -313,6 +313,22 @@ exports.obtenerQR = async (req, res) => {
   }
 };
 
+// ─── PATCH /asociados/:id/fcm-token ──────────────────────────────────────────
+
+exports.actualizarFcmToken = async (req, res) => {
+  try {
+    const { fcmToken } = req.body;
+    if (!fcmToken) {
+      return res.status(400).json({ success: false, data: null, message: 'fcmToken requerido' });
+    }
+    await Asociado.findByIdAndUpdate(req.params.id, { fcmToken });
+    res.status(200).json({ success: true, data: null, message: 'Token FCM actualizado' });
+  } catch (error) {
+    logger.error('Error al actualizar fcmToken', { error: error.message });
+    res.status(500).json({ success: false, data: null, message: 'Error interno del servidor' });
+  }
+};
+
 // ─── PATCH /asociados/:id/estado ─────────────────────────────────────────────
 
 exports.cambiarEstado = async (req, res) => {

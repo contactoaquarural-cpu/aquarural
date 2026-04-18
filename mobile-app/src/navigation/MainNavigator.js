@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
+import { MaterialIcons } from '@expo/vector-icons';
 import { colors, spacing } from '../utils/theme';
 
 // Screens
@@ -22,12 +24,14 @@ import DetalleNoticiaScreen     from '../screens/noticias/DetalleNoticiaScreen';
 const Tab   = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// Icono de tab personalizado (texto + símbolo)
+// Icono de tab personalizado
 const TabIcon = ({ symbol, label, focused }) => (
   <View style={[styles.tabIcon, focused && styles.tabIconFocused]}>
-    <Text style={[styles.tabSymbol, focused && styles.tabSymbolFocused]}>
-      {symbol}
-    </Text>
+    <MaterialIcons
+      name={symbol}
+      size={22}
+      color={focused ? colors.primary : colors.onSurfaceVariant}
+    />
     <Text style={[styles.tabLabel, focused && styles.tabLabelFocused]}>
       {label}
     </Text>
@@ -69,12 +73,14 @@ const PerfilStack = () => (
   </Stack.Navigator>
 );
 
-const MainNavigator = () => (
+const MainNavigator = () => {
+  const insets = useSafeAreaInsets();
+  return (
   <Tab.Navigator
     screenOptions={{
       headerShown: false,
       tabBarShowLabel: false,
-      tabBarStyle: styles.tabBar,
+      tabBarStyle: [styles.tabBar, { paddingBottom: insets.bottom || spacing.sm, height: 56 + (insets.bottom || 0) }],
     }}
   >
     <Tab.Screen
@@ -100,7 +106,7 @@ const MainNavigator = () => (
       component={MiCarneScreen}
       options={{
         tabBarIcon: ({ focused }) => (
-          <TabIcon symbol="qr_code_2" label="Carné" focused={focused} />
+          <TabIcon symbol="qr-code-2" label="Mi ID" focused={focused} />
         ),
       }}
     />
@@ -132,15 +138,14 @@ const MainNavigator = () => (
       }}
     />
   </Tab.Navigator>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor:  colors.surfaceContainerHigh,
-    borderTopWidth:   0,
-    height:           72,
-    paddingBottom:    spacing.sm,
-    paddingTop:       spacing.sm,
+    backgroundColor: colors.surfaceContainerHigh,
+    borderTopWidth:  0,
+    paddingTop:      spacing.sm,
   },
   tabIcon: {
     alignItems: 'center',
@@ -148,14 +153,6 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   tabIconFocused: {},
-  tabSymbol: {
-    fontFamily: 'material-symbols',
-    fontSize: 22,
-    color: colors.onSurfaceVariant,
-  },
-  tabSymbolFocused: {
-    color: colors.primary,
-  },
   tabLabel: {
     fontSize: 10,
     fontWeight: '600',

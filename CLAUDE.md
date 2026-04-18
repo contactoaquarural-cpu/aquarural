@@ -127,9 +127,11 @@ plataforma-digital-ganadera/
 | Fase 2 | Módulo de pagos y control de estado (backend) | ✅ Completado |
 | Fase 3 | QR carné digital y convenios (backend) | ✅ Completado |
 | Fase 4 | Panel web administrativo (React + Tailwind CSS) | ✅ Completado |
-| Fase 5 | App móvil completa (React Native + Expo) | ⬜ Pendiente |
-| Fase 6 | Noticias y notificaciones (backend + frontend) | ⬜ Pendiente |
+| Fase 5 | App móvil completa (React Native + Expo) | ✅ Completado |
+| Fase 6 | Noticias y notificaciones (backend + frontend) | ✅ Completado |
 | Fase 7 | Estadísticas, pruebas y despliegue | ⬜ Pendiente |
+| Fase 8 | Modo claro/oscuro (web admin + app móvil) | ⬜ Pendiente |
+| Fase 9 | Ubicación de finca con Google Maps API | ⬜ Pendiente |
 
 **Leyenda:** ⬜ Pendiente — 🔄 En progreso — ✅ Completado
 

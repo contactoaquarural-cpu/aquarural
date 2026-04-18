@@ -1,41 +1,53 @@
 {
   "expo": {
     "name": "ASOGACENTRO",
-    "slug": "asogacentro-mobile",
+    "slug": "asogacentro-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#111414"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "co.metadevelopment.asogacentro"
+      "bundleIdentifier": "com.asogacentro.app"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#111414"
-      },
-      "package": "co.metadevelopment.asogacentro",
-      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+      "package": "com.asogacentro.app",
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
       "expo-secure-store",
       "expo-camera",
       [
         "expo-image-picker",
-        { "photosPermission": "Permite seleccionar foto de perfil." }
+        {
+          "photosPermission": "Permite seleccionar foto de perfil."
+        }
+      ],
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "color": "#1A7A3C"
+        }
       ]
     ],
     "extra": {
       "eas": {
-        "projectId": "YOUR_EAS_PROJECT_ID"
+        "projectId": "bc1ee1af-8601-4c69-aa3b-d5cd5549dd06"
       }
-    }
+    },
+    "owner": "asogacentro2026"
   }
 }

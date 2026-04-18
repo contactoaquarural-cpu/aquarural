@@ -8,6 +8,7 @@ import ExpedientePage from './pages/Asociados/ExpedientePage';
 import ConveniosPage from './pages/Convenios/ConveniosPage';
 import ReportesPage from './pages/Reportes/ReportesPage';
 import NoticiasPage from './pages/Noticias/NoticiasPage';
+import PreciosPage  from './pages/Precios/PreciosPage';
 
 // Protege rutas que requieren autenticación
 const ProtectedRoute = ({ children }) => {
@@ -35,6 +36,7 @@ const App = () => {
           <Route path="convenios"    element={<ConveniosPage />} />
           <Route path="reportes"     element={<ReportesPage />} />
           <Route path="noticias"     element={<NoticiasPage />} />
+          <Route path="precios"      element={<PreciosPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

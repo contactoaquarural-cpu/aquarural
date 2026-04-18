@@ -9,6 +9,7 @@ router.post('/', asociadosController.registrar);
 router.get('/', verifyToken, asociadosController.listar);
 router.get('/:id', verifyToken, asociadosController.obtenerPorId);
 router.put('/:id', verifyToken, asociadosController.actualizar);
+router.patch('/:id/fcm-token', verifyToken, asociadosController.actualizarFcmToken);
 router.patch('/:id/estado', verifyToken, verifyAdmin, asociadosController.cambiarEstado);
 router.post('/:id/foto', verifyToken, handleUpload, asociadosController.subirFoto);
 router.get('/:id/qr', verifyToken, asociadosController.obtenerQR);

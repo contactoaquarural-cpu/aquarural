@@ -11,6 +11,7 @@ const qrRoutes = require('./routes/qr.routes');
 const conveniosRoutes = require('./routes/convenios.routes');
 const fincasRoutes = require('./routes/fincas.routes');
 const noticiasRoutes = require('./routes/noticias.routes');
+const preciosRoutes  = require('./routes/precios.routes');
 
 const app = express();
 
@@ -55,6 +56,7 @@ app.use('/qr', qrRoutes);
 app.use('/convenios', conveniosRoutes);
 app.use('/fincas', fincasRoutes);
 app.use('/noticias', noticiasRoutes);
+app.use('/precios',  preciosRoutes);
 
 // 404 — ruta no encontrada
 app.use((req, res) => {

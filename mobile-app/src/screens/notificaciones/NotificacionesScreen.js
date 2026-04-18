@@ -3,6 +3,7 @@ import {
   View, Text, FlatList, TouchableOpacity,
   StyleSheet, RefreshControl,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import api from '../../services/api.service';
@@ -73,8 +74,9 @@ const NotificacionesScreen = () => {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backIcon}>←</Text>
+        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+          <MaterialIcons name="arrow-back-ios" size={20} color={colors.primary} />
+          <Text style={styles.backText}>Volver</Text>
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.title}>Notificaciones</Text>
@@ -117,7 +119,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical:   spacing.md,
   },
-  backIcon:    { ...typography.h2, color: colors.primary, paddingHorizontal: spacing.sm },
+  backBtn:  { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: spacing.xs, paddingHorizontal: spacing.xs },
+  backText: { ...typography.body, color: colors.primary, fontWeight: '600' },
   headerCenter: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   title:        { ...typography.h2 },
   badge: {

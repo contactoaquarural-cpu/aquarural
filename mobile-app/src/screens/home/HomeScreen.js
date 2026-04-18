@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
   StyleSheet, RefreshControl,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import api from '../../services/api.service';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthStore }     from '../../store/auth.store';
@@ -21,16 +23,43 @@ const QuickCard = ({ icon, label, sublabel, onPress, accent }) => (
   </TouchableOpacity>
 );
 
+const CATEGORIA_LABELS = {
+  GANADO_CARNE: 'Ganado Carne',
+  GANADO_LECHE: 'Ganado Leche',
+  INSUMOS:      'Insumos',
+};
+
+const CATEGORIA_ICONS = {
+  GANADO_CARNE: 'lunch-dining',
+  GANADO_LECHE: 'water-drop',
+  INSUMOS:      'agriculture',
+};
+
 const HomeScreen = () => {
   const navigation    = useNavigation();
   const user          = useAuthStore((s) => s.user);
   const { asociado, finca, isLoading, cargarDatos } = useAsociadoStore();
   const { aportes, mesesPendientes, cargarHistorial } = usePagosStore();
+  const [precios, setPrecios] = useState([]);
+  const [fechaPrecios, setFechaPrecios] = useState(null);
 
   useEffect(() => {
     cargarDatos();
     cargarHistorial();
+    cargarPrecios();
   }, []);
+
+  const cargarPrecios = async () => {
+    try {
+      const { data } = await api.get('/precios');
+      setPrecios(data.data || []);
+      if (data.data?.length > 0) {
+        setFechaPrecios(new Date(data.data[0].updatedAt));
+      }
+    } catch {
+      // Widget se oculta si no hay precios
+    }
+  };
 
   if (isLoading && !asociado) return <LoadingSpinner message="Cargando tu información..." />;
 
@@ -107,6 +136,44 @@ const HomeScreen = () => {
                 <Text style={styles.fincaStatLabel}>Producción</Text>
               </View>
             </View>
+          </View>
+        )}
+
+        {/* Widget precios de referencia */}
+        {precios.length > 0 && (
+          <View style={styles.preciosCard}>
+            <View style={styles.preciosHeader}>
+              <View style={styles.preciosTitleRow}>
+                <MaterialIcons name="trending-up" size={18} color={colors.primary} />
+                <Text style={styles.preciosTitle}>Precios de Referencia</Text>
+              </View>
+              {fechaPrecios && (
+                <Text style={styles.preciosFecha}>
+                  Act. {fechaPrecios.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' })}
+                </Text>
+              )}
+            </View>
+            {Object.keys(CATEGORIA_LABELS).map((cat) => {
+              const items = precios.filter((p) => p.categoria === cat);
+              if (!items.length) return null;
+              return (
+                <View key={cat} style={styles.preciosCat}>
+                  <View style={styles.preciosCatHeader}>
+                    <MaterialIcons name={CATEGORIA_ICONS[cat]} size={14} color={colors.onSurfaceVariant} />
+                    <Text style={styles.preciosCatLabel}>{CATEGORIA_LABELS[cat]}</Text>
+                  </View>
+                  {items.map((p) => (
+                    <View key={p._id} style={styles.precioRow}>
+                      <Text style={styles.precioProducto}>{p.producto}</Text>
+                      <View style={styles.precioRight}>
+                        <Text style={styles.precioValor}>${p.precio.toLocaleString('es-CO')}</Text>
+                        <Text style={styles.precioUnidad}>/{p.unidad}</Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              );
+            })}
           </View>
         )}
 
@@ -278,6 +345,43 @@ const styles = StyleSheet.create({
   quickIcon:       { fontSize: 28, marginBottom: spacing.xs },
   quickLabel:      { ...typography.bodyBold },
   quickSub:        { ...typography.small },
+
+  preciosCard: {
+    marginHorizontal: spacing.lg,
+    marginBottom:     spacing.lg,
+    backgroundColor:  colors.surfaceContainerLow,
+    borderRadius:     radius.xl,
+    padding:          spacing.lg,
+  },
+  preciosHeader: {
+    flexDirection:   'row',
+    justifyContent:  'space-between',
+    alignItems:      'center',
+    marginBottom:    spacing.md,
+  },
+  preciosTitleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  preciosTitle:    { ...typography.bodyBold, color: colors.onSurface },
+  preciosFecha:    { ...typography.small, color: colors.onSurfaceVariant },
+  preciosCat: { marginBottom: spacing.sm },
+  preciosCatHeader: {
+    flexDirection:  'row',
+    alignItems:     'center',
+    gap:            4,
+    marginBottom:   spacing.xs,
+  },
+  preciosCatLabel: { ...typography.label, color: colors.onSurfaceVariant },
+  precioRow: {
+    flexDirection:     'row',
+    justifyContent:    'space-between',
+    alignItems:        'center',
+    paddingVertical:   spacing.xs + 2,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.surfaceContainerHigh,
+  },
+  precioProducto: { ...typography.body, flex: 1 },
+  precioRight:    { flexDirection: 'row', alignItems: 'baseline', gap: 2 },
+  precioValor:    { ...typography.bodyBold, color: colors.primary },
+  precioUnidad:   { ...typography.small, color: colors.onSurfaceVariant },
 
   section: {
     marginHorizontal: spacing.lg,

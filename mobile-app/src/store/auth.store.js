@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import * as SecureStore from 'expo-secure-store';
 import api from '../services/api.service';
+import { inicializarNotificaciones } from '../services/notifications.service';
 
 export const useAuthStore = create((set, get) => ({
   user:          null,
@@ -40,6 +41,9 @@ export const useAuthStore = create((set, get) => ({
     await SecureStore.setItemAsync('asoga_user',          JSON.stringify(asociado));
 
     set({ user: asociado, token: accessToken, refreshToken });
+
+    // Registrar token FCM en segundo plano — no bloquea el login
+    inicializarNotificaciones(asociado._id).catch(() => {});
   },
 
   // Logout

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "709945629223",
+    "project_id": "asogacentro-c0393",
+    "storage_bucket": "asogacentro-c0393.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709945629223:android:26e3f643ad59c93ac10c02",
+        "android_client_info": {
+          "package_name": "com.asogacentro.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7F9LJcuBIV9L0Ep0PwhgnD3naX4NSaLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

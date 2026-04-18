@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { to: '/asociados', icon: 'groups',       label: 'Asociados' },
   { to: '/convenios', icon: 'handshake',    label: 'Convenios' },
   { to: '/noticias',  icon: 'newspaper',    label: 'Noticias' },
+  { to: '/precios',   icon: 'trending_up',  label: 'Precios' },
   { to: '/reportes',  icon: 'query_stats',  label: 'Reportes' },
 ];
 
