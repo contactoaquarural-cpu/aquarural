@@ -33,8 +33,14 @@ const ExpedientePage = () => {
     queryFn: () => api.get(`/asociados/${id}/aportes`).then((r) => r.data),
   });
 
+  const { data: fincaData } = useQuery({
+    queryKey: ['finca', id],
+    queryFn: () => api.get(`/asociados/${id}/fincas`).then((r) => r.data),
+  });
+
   const asociado = aData?.data;
-  const aportes  = aportesData?.data?.aportes ?? [];
+  const aportes  = aportesData?.data ?? [];
+  const finca    = fincaData?.data?.[0] ?? null;
 
   const est = ESTADO_MAP[asociado?.estado] ?? ESTADO_MAP.INACTIVO;
 
@@ -127,21 +133,50 @@ const ExpedientePage = () => {
               Información General
             </h3>
             <div className="space-y-5">
-              <InfoRow icon="call"           label="Teléfono Principal" value={asociado.telefono} />
+              <InfoRow icon="call"           label="Teléfono Principal"  value={asociado.telefono} />
               <InfoRow icon="alternate_email" label="Correo Electrónico" value={asociado.correo} />
-              <InfoRow icon="home_work"      label="Nombre de la Finca" value={asociado.nombreFinca} />
-              <InfoRow icon="location_on"    label="Vereda / Municipio"  value={asociado.vereda} />
+              <InfoRow icon="home_work"      label="Nombre de la Finca"  value={finca?.nombre} />
+              <InfoRow icon="location_on"    label="Vereda"              value={finca?.vereda} />
+              <InfoRow icon="location_city"  label="Municipio"           value={asociado.municipio} />
+              <InfoRow icon="grass"          label="Hectáreas"           value={finca?.hectareas != null ? `${finca.hectareas} ha` : null} />
+              <InfoRow icon="pets"           label="Cabezas de Ganado"   value={finca?.cabezasGanado != null ? `${finca.cabezasGanado} cabezas` : null} />
             </div>
           </section>
 
-          {/* Mapa placeholder */}
-          <section className="bg-surface-container-low rounded-3xl overflow-hidden h-56 relative group">
-            <div className="absolute inset-0 z-10 bg-gradient-to-t from-surface-container-lowest/80 to-transparent p-6 flex flex-col justify-end">
-              <h3 className="text-sm font-bold text-white mb-1">Ubicación de Predio</h3>
-              <p className="text-xs text-white/70">{asociado.vereda ?? 'Sin ubicación registrada'}</p>
-            </div>
-            <div className="w-full h-full bg-gradient-to-br from-emerald-900/30 to-primary-container/20 flex items-center justify-center">
+          {/* Ubicación GPS */}
+          <section className="bg-surface-container-low rounded-3xl overflow-hidden relative">
+            <div className="w-full bg-gradient-to-br from-emerald-900/30 to-primary-container/20 flex items-center justify-center h-32">
               <span className="material-symbols-outlined text-primary/20 text-8xl">map</span>
+            </div>
+            <div className="p-5">
+              <h3 className="text-sm font-bold text-emerald-500 uppercase tracking-widest mb-3 font-headline">
+                Ubicación de Predio
+              </h3>
+              {finca?.latitud ? (
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center bg-surface-container-high rounded-xl px-4 py-2">
+                    <span className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider">Latitud</span>
+                    <span className="text-sm font-mono text-primary">{finca.latitud.toFixed(6)}</span>
+                  </div>
+                  <div className="flex justify-between items-center bg-surface-container-high rounded-xl px-4 py-2">
+                    <span className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider">Longitud</span>
+                    <span className="text-sm font-mono text-primary">{finca.longitud.toFixed(6)}</span>
+                  </div>
+                  <a
+                    href={`https://www.google.com/maps?q=${finca.latitud},${finca.longitud}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-2 w-full mt-1 py-2 rounded-xl bg-primary-container/40 text-primary text-xs font-bold hover:bg-primary-container/60 transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-sm">open_in_new</span>
+                    Ver en Google Maps
+                  </a>
+                </div>
+              ) : (
+                <p className="text-xs text-on-surface-variant italic">
+                  Sin coordenadas GPS registradas. El asociado puede registrarlas desde la app móvil.
+                </p>
+              )}
             </div>
           </section>
         </div>

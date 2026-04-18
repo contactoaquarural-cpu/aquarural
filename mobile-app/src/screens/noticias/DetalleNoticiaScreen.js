@@ -4,6 +4,7 @@ import {
   TouchableOpacity, StyleSheet, Share,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
 import { colors, spacing, radius, typography } from '../../utils/theme';
 
 const CATEGORIA_CONFIG = {
@@ -33,20 +34,18 @@ const DetalleNoticiaScreen = ({ route, navigation }) => {
     <SafeAreaView style={styles.safe}>
       <ScrollView showsVerticalScrollIndicator={false}>
 
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+            <MaterialIcons name="arrow-back-ios" size={20} color={colors.primary} />
+            <Text style={styles.backText}>Volver</Text>
+          </TouchableOpacity>
+          <View style={{ width: 80 }} />
+        </View>
+
         {/* Imagen de portada */}
-        {noticia.imagen ? (
-          <View style={styles.imageContainer}>
-            <Image source={{ uri: noticia.imagen }} style={styles.image} resizeMode="cover" />
-            <TouchableOpacity style={styles.backBtnOverlay} onPress={() => navigation.goBack()}>
-              <Text style={styles.backIcon}>←</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={styles.noImageHeader}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={styles.backIconPlain}>←</Text>
-            </TouchableOpacity>
-          </View>
+        {noticia.imagen && (
+          <Image source={{ uri: noticia.imagen }} style={styles.image} resizeMode="cover" />
         )}
 
         <View style={styles.content}>
@@ -98,25 +97,16 @@ const DetalleNoticiaScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
 
-  imageContainer: { position: 'relative', height: 240 },
-  image:          { width: '100%', height: '100%' },
-  backBtnOverlay: {
-    position:        'absolute',
-    top:             spacing.md,
-    left:            spacing.md,
-    backgroundColor: 'rgba(17,20,20,0.7)',
-    borderRadius:    radius.full,
-    width:           36,
-    height:          36,
-    alignItems:      'center',
-    justifyContent:  'center',
-  },
-  backIcon:      { ...typography.h3, color: colors.onSurface },
-  noImageHeader: {
+  header: {
+    flexDirection:     'row',
+    alignItems:        'center',
+    justifyContent:    'space-between',
     paddingHorizontal: spacing.md,
     paddingVertical:   spacing.md,
   },
-  backIconPlain: { ...typography.h2, color: colors.primary },
+  backBtn:  { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: spacing.xs, paddingHorizontal: spacing.xs },
+  backText: { ...typography.body, color: colors.primary, fontWeight: '600' },
+  image:    { width: '100%', height: 200 },
 
   content: { padding: spacing.lg, gap: spacing.md },
 

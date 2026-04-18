@@ -14,14 +14,6 @@ import EstadoBadge    from '../../components/EstadoBadge';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { colors, spacing, radius, typography } from '../../utils/theme';
 
-// Tarjeta de acceso rápido
-const QuickCard = ({ icon, label, sublabel, onPress, accent }) => (
-  <TouchableOpacity style={[styles.quickCard, accent && styles.quickCardAccent]} onPress={onPress} activeOpacity={0.8}>
-    <Text style={styles.quickIcon}>{icon}</Text>
-    <Text style={styles.quickLabel}>{label}</Text>
-    {sublabel ? <Text style={styles.quickSub}>{sublabel}</Text> : null}
-  </TouchableOpacity>
-);
 
 const CATEGORIA_LABELS = {
   GANADO_CARNE: 'Ganado Carne',
@@ -40,7 +32,7 @@ const HomeScreen = () => {
   const user          = useAuthStore((s) => s.user);
   const { asociado, finca, isLoading, cargarDatos } = useAsociadoStore();
   const { aportes, mesesPendientes, cargarHistorial } = usePagosStore();
-  const [precios, setPrecios] = useState([]);
+  const [precios,      setPrecios]      = useState([]);
   const [fechaPrecios, setFechaPrecios] = useState(null);
 
   useEffect(() => {
@@ -61,7 +53,7 @@ const HomeScreen = () => {
     }
   };
 
-  if (isLoading && !asociado) return <LoadingSpinner message="Cargando tu información..." />;
+if (isLoading && !asociado) return <LoadingSpinner message="Cargando tu información..." />;
 
   const estado = asociado?.estado || user?.estado || 'AL_DIA';
   const nombre = asociado?.nombre || user?.nombre || '';
@@ -74,7 +66,7 @@ const HomeScreen = () => {
         refreshControl={
           <RefreshControl
             refreshing={isLoading}
-            onRefresh={() => { cargarDatos(); cargarHistorial(); }}
+            onRefresh={() => { cargarDatos(); cargarHistorial(); cargarPrecios(); }}
             tintColor={colors.primary}
           />
         }
@@ -177,35 +169,31 @@ const HomeScreen = () => {
           </View>
         )}
 
-        {/* Accesos rápidos */}
-        <Text style={styles.sectionTitle}>Accesos rápidos</Text>
-        <View style={styles.quickGrid}>
-          <QuickCard
-            icon="💳"
-            label="Mi Carné"
-            sublabel="Código QR"
-            onPress={() => navigation.navigate('MiCarne')}
-          />
-          <QuickCard
-            icon="💰"
-            label="Pagos"
-            sublabel={`${mesesPendientes.length} pendientes`}
+        {/* Próximo aporte */}
+        {mesesPendientes.length > 0 && (
+          <TouchableOpacity
+            style={styles.proximoCard}
             onPress={() => navigation.navigate('Pagos')}
-            accent={mesesPendientes.length > 0}
-          />
-          <QuickCard
-            icon="🤝"
-            label="Convenios"
-            sublabel="Beneficios"
-            onPress={() => navigation.navigate('Beneficios')}
-          />
-          <QuickCard
-            icon="👤"
-            label="Mi Perfil"
-            sublabel="Configuración"
-            onPress={() => navigation.navigate('Perfil')}
-          />
-        </View>
+            activeOpacity={0.85}
+          >
+            <View style={styles.proximoLeft}>
+              <MaterialIcons name="calendar-today" size={20} color={colors.tertiary} />
+              <View>
+                <Text style={styles.proximoLabel}>Próximo aporte pendiente</Text>
+                <Text style={styles.proximoMes}>
+                  {MESES[mesesPendientes[0].mes - 1]} {mesesPendientes[0].año}
+                  {mesesPendientes.length > 1 ? ` (+${mesesPendientes.length - 1} más)` : ''}
+                </Text>
+                {mesesPendientes[0].fechaVencimiento && (
+                  <Text style={styles.proximoVence}>
+                    Vence: {new Date(mesesPendientes[0].fechaVencimiento).toLocaleDateString('es-CO', { day: 'numeric', month: 'long' })}
+                  </Text>
+                )}
+              </View>
+            </View>
+            <MaterialIcons name="chevron-right" size={22} color={colors.tertiary} />
+          </TouchableOpacity>
+        )}
 
         {/* Últimos aportes */}
         {aportes.length > 0 && (
@@ -327,24 +315,23 @@ const styles = StyleSheet.create({
   },
   sectionLink: { ...typography.small, color: colors.primary, fontWeight: '600' },
 
-  quickGrid: {
-    flexDirection:   'row',
-    flexWrap:        'wrap',
-    paddingHorizontal: spacing.lg,
-    gap:             spacing.md,
-    marginBottom:    spacing.xl,
+  proximoCard: {
+    marginHorizontal: spacing.lg,
+    marginBottom:     spacing.lg,
+    backgroundColor:  colors.tertiaryContainer + '33',
+    borderRadius:     radius.xl,
+    padding:          spacing.lg,
+    flexDirection:    'row',
+    alignItems:       'center',
+    justifyContent:   'space-between',
+    borderWidth:      1,
+    borderColor:      colors.tertiary + '44',
   },
-  quickCard: {
-    width:           '46%',
-    backgroundColor: colors.surfaceContainerLow,
-    borderRadius:    radius.xl,
-    padding:         spacing.lg,
-    gap:             spacing.xs,
-  },
-  quickCardAccent: { backgroundColor: colors.tertiaryContainer },
-  quickIcon:       { fontSize: 28, marginBottom: spacing.xs },
-  quickLabel:      { ...typography.bodyBold },
-  quickSub:        { ...typography.small },
+  proximoLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, flex: 1 },
+  proximoLabel: { ...typography.label, color: colors.tertiary, marginBottom: 2 },
+  proximoMes:   { ...typography.bodyBold, color: colors.tertiary },
+  proximoVence: { ...typography.small, color: colors.tertiary, marginTop: 2, opacity: 0.8 },
+
 
   preciosCard: {
     marginHorizontal: spacing.lg,

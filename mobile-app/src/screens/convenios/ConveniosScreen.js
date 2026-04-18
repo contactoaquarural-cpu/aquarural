@@ -16,6 +16,63 @@ const TIPO_CONFIG = {
   OTRO:         { icon: '🤝', color: colors.onSurface, bg: colors.surfaceContainerHighest },
 };
 
+const CONVENIOS_DEMO = [
+  {
+    _id: 'demo-1',
+    nombre: 'Agropecuaria El Potrero',
+    tipo: 'AGROPECUARIO',
+    descripcion: 'Venta de concentrados, sal mineralizada y suplementos para ganado bovino. Descuento especial para asociados de Asogacentro.',
+    telefono: '318 456 7890',
+    descuentoPorcentaje: 10,
+    direccion: 'Cra. 5 #8-32, Garzón, Huila',
+  },
+  {
+    _id: 'demo-2',
+    nombre: 'Clínica Veterinaria Los Andes',
+    tipo: 'VETERINARIA',
+    descripcion: 'Servicios de medicina veterinaria, vacunación, inseminación artificial y cirugías. Atención 24 horas para emergencias ganaderas.',
+    telefono: '312 789 0123',
+    descuentoPorcentaje: 15,
+    direccion: 'Cl. 12 #6-45, Garzón, Huila',
+  },
+  {
+    _id: 'demo-3',
+    nombre: 'Distribuidora AgroHuila',
+    tipo: 'INSUMOS',
+    descripcion: 'Herbicidas, fertilizantes, pesticidas y equipos agrícolas. Asesoría técnica gratuita para asociados con compras mayores a $200.000.',
+    telefono: '310 234 5678',
+    descuentoPorcentaje: 8,
+    direccion: 'Av. Circunvalar #15-10, Garzón, Huila',
+  },
+  {
+    _id: 'demo-4',
+    nombre: 'Almacén Ganadero del Sur',
+    tipo: 'AGROPECUARIO',
+    descripcion: 'Equipos de ordeño, herramientas para finca, cercas eléctricas y ropa de trabajo. El almacén más completo del sur del Huila.',
+    telefono: '315 678 9012',
+    descuentoPorcentaje: 12,
+    direccion: 'Cra. 9 #10-67, Garzón, Huila',
+  },
+  {
+    _id: 'demo-5',
+    nombre: 'Banco Agrario de Colombia',
+    tipo: 'OTRO',
+    descripcion: 'Créditos agropecuarios con tasas preferenciales para ganaderos asociados. Líneas especiales para compra de ganado, mejoramiento de praderas e infraestructura.',
+    telefono: '018000 912227',
+    descuentoPorcentaje: 0,
+    direccion: 'Cl. 7 #5-12, Garzón, Huila',
+  },
+  {
+    _id: 'demo-6',
+    nombre: 'Laboratorio Biovet Diagnóstico',
+    tipo: 'VETERINARIA',
+    descripcion: 'Análisis de brucelosis, tuberculosis, mastitis y perfiles sanitarios completos. Resultados en 48 horas con entrega a domicilio en la finca.',
+    telefono: '321 345 6789',
+    descuentoPorcentaje: 20,
+    direccion: 'Cl. 4 #3-89, Garzón, Huila',
+  },
+];
+
 const ConvenioCard = ({ item, onPress }) => {
   const config = TIPO_CONFIG[item.tipo] || TIPO_CONFIG.OTRO;
   return (
@@ -61,10 +118,12 @@ const ConveniosScreen = ({ navigation }) => {
     setError(null);
     try {
       const { data } = await api.get('/convenios');
-      setConvenios(data.data ?? []);
-      setFiltered(data.data ?? []);
-    } catch (err) {
-      setError(err.response?.data?.message || 'No se pudieron cargar los convenios.');
+      const lista = data.data?.length > 0 ? data.data : CONVENIOS_DEMO;
+      setConvenios(lista);
+      setFiltered(lista);
+    } catch {
+      setConvenios(CONVENIOS_DEMO);
+      setFiltered(CONVENIOS_DEMO);
     } finally {
       setLoading(false);
     }

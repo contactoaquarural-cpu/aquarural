@@ -19,13 +19,13 @@ const AsociadosPage = () => {
     queryKey: ['asociados', page, estado, busqueda],
     queryFn: () =>
       api.get('/asociados', {
-        params: { page, limit, estado: estado || undefined, busqueda: busqueda || undefined },
+        params: { page, limit, estado: estado || undefined, buscar: busqueda || undefined },
       }).then((r) => r.data),
     keepPreviousData: true,
   });
 
-  const asociados = data?.data?.asociados ?? [];
-  const total     = data?.data?.total ?? 0;
+  const asociados = data?.data ?? [];
+  const total     = data?.pagination?.total ?? 0;
   const totalPages = Math.ceil(total / limit);
 
   const iniciales = (nombre = '') =>

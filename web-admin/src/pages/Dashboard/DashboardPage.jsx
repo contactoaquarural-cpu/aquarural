@@ -21,8 +21,8 @@ const DashboardPage = () => {
     queryFn: () => api.get('/asociados?limit=5').then((r) => r.data),
   });
 
-  const asociados = asociadosData?.data?.asociados ?? [];
-  const total = asociadosData?.data?.total ?? 0;
+  const asociados = asociadosData?.data ?? [];
+  const total = asociadosData?.pagination?.total ?? 0;
 
   const estadoBadge = (estado) => {
     const map = {

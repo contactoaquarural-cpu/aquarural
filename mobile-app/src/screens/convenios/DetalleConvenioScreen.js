@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 import { colors, spacing, radius, typography } from '../../utils/theme';
 
 const TIPO_CONFIG = {
@@ -34,7 +35,8 @@ const DetalleConvenioScreen = ({ route, navigation }) => {
           style={styles.hero}
         >
           <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-            <Text style={styles.backIcon}>←</Text>
+            <MaterialIcons name="arrow-back-ios" size={20} color={colors.primary} />
+            <Text style={styles.backText}>Volver</Text>
           </TouchableOpacity>
 
           <View style={[styles.heroIconBox, { backgroundColor: config.bg + 'aa' }]}>
@@ -132,8 +134,8 @@ const styles = StyleSheet.create({
     alignItems:    'flex-start',
     gap:           spacing.md,
   },
-  backBtn:     { marginBottom: spacing.sm },
-  backIcon:    { ...typography.h2, color: colors.onSurface },
+  backBtn:  { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: spacing.xs, paddingHorizontal: spacing.xs, marginBottom: spacing.sm },
+  backText: { ...typography.body, color: colors.primary, fontWeight: '600' },
   heroIconBox: {
     width:           64,
     height:          64,

@@ -45,6 +45,30 @@ const NoticiaCard = ({ item, onPress }) => {
   );
 };
 
+const NOTICIAS_DEMO = [
+  {
+    _id:             'demo-1',
+    titulo:          'Son días difíciles para el agro colombiano',
+    contenido:       'El sector agropecuario colombiano enfrenta múltiples desafíos simultáneos: la posible prohibición de exportaciones de carne y ganado generaría pérdidas cercanas a 320 millones de dólares. Ajustes automáticos en los avalúos catastrales han provocado protestas de productores al aumentar significativamente el impuesto predial. El gremio ganadero pide al gobierno medidas urgentes de alivio económico.',
+    categoria:       'GOBIERNO',
+    fechaPublicacion: '2026-04-15T00:00:00.000Z',
+  },
+  {
+    _id:             'demo-2',
+    titulo:          'Burger Master 2026: la parrilla que dinamiza la producción de carne en Colombia',
+    contenido:       'El Burger Master 2026 regresa del 20 al 26 de abril como un evento gastronómico que impulsa el consumo de carne en Colombia. En su edición anterior alcanzó cifras históricas con 3.349.210 hamburguesas vendidas, generando más de 80.000 millones de pesos en siete días. El festival abre oportunidades para que ganaderos y emprendedores se integren verticalmente en la cadena productiva.',
+    categoria:       'EVENTO',
+    fechaPublicacion: '2026-04-10T00:00:00.000Z',
+  },
+  {
+    _id:             'demo-3',
+    titulo:          'Golpe al bolsillo del ganadero: precio de la leche solo sube 1,3% en 2026',
+    contenido:       'El precio base de la leche cruda en Colombia experimentará un incremento de apenas 1,3% a partir del 1 de marzo de 2026, según el ajuste anual del Ministerio de Agricultura. Este aumento, uno de los más bajos en años recientes, no refleja la realidad económica que enfrentan los productores. El sector enfrenta importaciones sin arancel, problemas climáticos y costos de producción en aumento.',
+    categoria:       'PRECIOS',
+    fechaPublicacion: '2026-03-14T00:00:00.000Z',
+  },
+];
+
 const NoticiasScreen = ({ navigation }) => {
   const [noticias,   setNoticias]   = useState([]);
   const [loading,    setLoading]    = useState(true);
@@ -56,9 +80,10 @@ const NoticiasScreen = ({ navigation }) => {
     setError(null);
     try {
       const { data } = await api.get('/noticias?limit=30');
-      setNoticias(data.data ?? []);
-    } catch (err) {
-      setError(err.response?.data?.message || 'No se pudieron cargar las noticias.');
+      const lista = data.data?.length > 0 ? data.data : NOTICIAS_DEMO;
+      setNoticias(lista);
+    } catch {
+      setNoticias(NOTICIAS_DEMO);
     } finally {
       setLoading(false);
     }
@@ -113,6 +138,7 @@ const NoticiasScreen = ({ navigation }) => {
           />
         )}
         contentContainerStyle={styles.list}
+        ItemSeparatorComponent={() => <View style={{ height: spacing.md }} />}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />
@@ -153,7 +179,7 @@ const styles = StyleSheet.create({
   searchIcon:  { fontSize: 16 },
   searchInput: { flex: 1, ...typography.body, color: colors.onSurface },
 
-  list: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xxl },
+  list: { padding: spacing.lg, paddingBottom: spacing.xxl },
 
   card: {
     backgroundColor: colors.surfaceContainerLow,
