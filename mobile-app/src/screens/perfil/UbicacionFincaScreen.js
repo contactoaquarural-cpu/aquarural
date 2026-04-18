@@ -17,18 +17,25 @@ const PENDING_KEY = 'ubicacion_finca_pendiente';
 
 const UbicacionFincaScreen = () => {
   const navigation = useNavigation();
-  const { finca, asociado } = useAsociadoStore();
+  const { finca, asociado, cargarDatos, actualizarFinca } = useAsociadoStore();
+  const getFinca = () => useAsociadoStore.getState().finca;
   const { show, toastProps } = useToast();
 
   const [loading,    setLoading]    = useState(false);
   const [syncing,    setSyncing]    = useState(false);
-  const [ubicacion,  setUbicacion]  = useState(
-    finca?.latitud ? { latitud: finca.latitud, longitud: finca.longitud } : null
-  );
+  const [ubicacion,  setUbicacion]  = useState(null);
   const [pendiente,  setPendiente]  = useState(false);
 
   useEffect(() => {
-    verificarPendiente();
+    const init = async () => {
+      if (!finca) await cargarDatos();
+      const fincaActual = useAsociadoStore.getState().finca;
+      if (fincaActual?.latitud) {
+        setUbicacion({ latitud: fincaActual.latitud, longitud: fincaActual.longitud });
+      }
+      verificarPendiente();
+    };
+    init();
   }, []);
 
   const verificarPendiente = async () => {
@@ -46,9 +53,23 @@ const UbicacionFincaScreen = () => {
         return;
       }
 
-      const loc = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
+      // Primero intentar posición actual, con fallback a última conocida
+      let loc = null;
+      try {
+        loc = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+          timeInterval: 5000,
+          mayShowUserSettingsDialog: true,
+        });
+      } catch {
+        loc = await Location.getLastKnownPositionAsync();
+      }
+
+      if (!loc) {
+        show('error', 'Error de GPS', 'No se pudo obtener la ubicación. Asegúrate de estar al aire libre.');
+        setLoading(false);
+        return;
+      }
 
       const coords = {
         latitud:  loc.coords.latitude,
@@ -70,15 +91,23 @@ const UbicacionFincaScreen = () => {
         setPendiente(true);
         show('info', 'Guardado sin conexión', 'Las coordenadas se sincronizarán cuando tengas señal.');
       }
-    } catch {
-      show('error', 'Error de GPS', 'No se pudo obtener la ubicación. Asegúrate de tener el GPS activo.');
+    } catch (err) {
+      console.error('GPS error:', err?.message || err);
+      show('error', 'Error de GPS', err?.message || 'No se pudo obtener la ubicación.');
     } finally {
       setLoading(false);
     }
   };
 
   const guardarEnBackend = async (coords) => {
-    await api.put(`/fincas/${finca?._id}`, coords);
+    const fincaActual = getFinca();
+    console.log('finca en store:', JSON.stringify(fincaActual));
+    if (!fincaActual?._id) {
+      show('error', 'Error', 'No se encontró la finca. Vuelve al perfil e intenta de nuevo.');
+      return;
+    }
+    await api.put(`/fincas/${fincaActual._id}`, coords);
+    await cargarDatos();
     await AsyncStorage.removeItem(PENDING_KEY);
     setPendiente(false);
     show('success', 'Ubicación guardada', 'Las coordenadas de tu finca fueron registradas.');

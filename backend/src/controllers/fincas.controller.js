@@ -10,7 +10,9 @@ const fincaSchema = z.object({
   tipoProduccion: z.enum(['CARNE', 'LECHE', 'DOBLE'], {
     errorMap: () => ({ message: 'Tipo de producción inválido. Usa: CARNE, LECHE o DOBLE' }),
   }),
-  vereda: z.string().optional(),
+  vereda:   z.string().optional(),
+  latitud:  z.number().optional(),
+  longitud: z.number().optional(),
 });
 
 const actualizarSchema = fincaSchema.omit({ asociadoId: true }).partial();

@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { z } = require('zod');
 const Asociado = require('../models/Asociado');
+const Finca = require('../models/Finca');
 const Aporte = require('../models/Aporte');
 const Notificacion = require('../models/Notificacion');
 const { subirImagen } = require('../services/cloudinary.service');
@@ -61,6 +62,20 @@ exports.registrar = async (req, res) => {
 
     const hash = await bcrypt.hash(password, 10);
     const asociado = await Asociado.create({ nombre, cedula, password: hash, telefono, correo, municipio });
+
+    // Crear finca si viene en el body
+    if (req.body.finca) {
+      const { nombre: nombreFinca, hectareas, cabezasGanado, tipoProduccion, vereda } = req.body.finca;
+      const tipoValido = ['CARNE', 'LECHE', 'DOBLE'].includes(tipoProduccion) ? tipoProduccion : 'CARNE';
+      await Finca.create({
+        asociadoId:     asociado._id,
+        nombre:         nombreFinca || 'Mi Finca',
+        hectareas:      hectareas   || 0,
+        cabezasGanado:  cabezasGanado || 0,
+        tipoProduccion: tipoValido,
+        vereda:         vereda || undefined,
+      });
+    }
 
     res.status(201).json({
       success: true,

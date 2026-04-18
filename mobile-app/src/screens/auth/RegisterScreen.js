@@ -135,7 +135,7 @@ const RegisterScreen = ({ navigation }) => {
           nombre:         nombreFinca.trim(),
           hectareas:      parseFloat(hectareas) || 0,
           cabezasGanado:  parseInt(cabezas) || 0,
-          tipoProduccion: produccion.join(','),
+          tipoProduccion: produccion.length > 1 ? 'DOBLE' : produccion[0] || 'CARNE',
           vereda:         vereda.trim() || undefined,
         },
       });

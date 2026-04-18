@@ -46,7 +46,13 @@ export const useAsociadoStore = create((set, get) => ({
   // Actualizar finca
   actualizarFinca: async (datosActualizados) => {
     const fincaId = get().finca?._id;
-    const { data } = await api.put(`/fincas/${fincaId}`, datosActualizados);
+    const userId  = useAuthStore.getState().user?._id;
+    let data;
+    if (fincaId) {
+      ({ data } = await api.put(`/fincas/${fincaId}`, datosActualizados));
+    } else {
+      ({ data } = await api.post('/fincas', { ...datosActualizados, asociadoId: userId }));
+    }
     set({ finca: data.data });
     return data.data;
   },
