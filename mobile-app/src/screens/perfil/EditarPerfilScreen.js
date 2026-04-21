@@ -93,17 +93,21 @@ const EditarPerfilScreen = () => {
   );
 };
 
-const Field = ({ label, ...props }) => (
-  <View style={styles.fieldGroup}>
-    <Text style={styles.fieldLabel}>{label}</Text>
-    <TextInput
-      style={styles.input}
-      placeholderTextColor={colors.outline}
-      autoCapitalize="none"
-      {...props}
-    />
-  </View>
-);
+const Field = ({ label, ...props }) => {
+  const { colors, typography } = useTheme();
+  const styles = makeStyles(colors, typography);
+  return (
+    <View style={styles.fieldGroup}>
+      <Text style={styles.fieldLabel}>{label}</Text>
+      <TextInput
+        style={styles.input}
+        placeholderTextColor={colors.outline}
+        autoCapitalize="none"
+        {...props}
+      />
+    </View>
+  );
+};
 
 const makeStyles = (colors, typography) => StyleSheet.create({
   safe:   { flex: 1, backgroundColor: colors.background },

@@ -12,15 +12,16 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import { useTheme } from '../../utils/ThemeContext';
 import { spacing, radius } from '../../utils/theme';
 
-const TIPO_CONFIG = {
+const getTipoConfig = (colors) => ({
   MORA:        { icon: '⚠️', color: colors.tertiary },
   NOTICIA:     { icon: '📰', color: colors.primary },
   CONVENIO:    { icon: '🤝', color: '#82cfff' },
   SISTEMA:     { icon: '⚙️', color: colors.onSurfaceVariant },
-};
+});
 
 const NotifItem = ({ item }) => {
-  const config = TIPO_CONFIG[item.tipo] || TIPO_CONFIG.SISTEMA;
+  const { colors, typography } = useTheme();
+  const config = getTipoConfig(colors)[item.tipo] || getTipoConfig(colors).SISTEMA;
   const styles = makeStyles(colors, typography);
 
   return (

@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, Image, TouchableOpacity, StyleSheet,
-  RefreshControl, ScrollView,
+  RefreshControl, ScrollView, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import api from '../../services/api.service';
 import { useAuthStore }     from '../../store/auth.store';
 import { useAsociadoStore } from '../../store/asociado.store';
-import EstadoBadge    from '../../components/EstadoBadge';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import EstadoBadge from '../../components/EstadoBadge';
 import { Toast, useToast } from '../../components/AppToast';
 import { useTheme } from '../../utils/ThemeContext';
 import { spacing, radius } from '../../utils/theme';
@@ -53,8 +52,6 @@ const MiCarneScreen = ({ navigation }) => {
     await cargarQR();
     setRefreshing(false);
   };
-
-  if (qrLoading && !qrBase64) return <LoadingSpinner message="Generando carné..." />;
 
   const isMora = estado !== 'AL_DIA';
 
@@ -117,18 +114,28 @@ const MiCarneScreen = ({ navigation }) => {
                 <Text style={styles.moraBtnText}>Ponerse al día →</Text>
               </TouchableOpacity>
             </View>
-          ) : qrBase64 ? (
+          ) : (
             <View style={styles.qrContainer}>
               <View style={styles.qrFrame}>
-                <Image
-                  source={{ uri: qrBase64 }}
-                  style={styles.qrImage}
-                  resizeMode="contain"
-                />
+                {qrLoading ? (
+                  <View style={styles.qrPlaceholder}>
+                    <ActivityIndicator color={colors.primary} size="large" />
+                  </View>
+                ) : qrBase64 ? (
+                  <Image
+                    source={{ uri: qrBase64 }}
+                    style={styles.qrImage}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <View style={styles.qrPlaceholder}>
+                    <Text style={styles.qrCaption}>Sin conexión — jalá para recargar</Text>
+                  </View>
+                )}
               </View>
               <Text style={styles.qrCaption}>Presenta este código en comercios aliados</Text>
             </View>
-          ) : null}
+          )}
 
           {/* Footer del carné */}
           <View style={styles.carneFoot}>
@@ -197,7 +204,8 @@ const makeStyles = (colors, typography) => StyleSheet.create({
     padding:         spacing.md,
     borderRadius:    radius.lg,
   },
-  qrImage:   { width: 200, height: 200 },
+  qrImage:       { width: 200, height: 200 },
+  qrPlaceholder: { width: 200, height: 200, alignItems: 'center', justifyContent: 'center' },
   qrCaption: { ...typography.small, textAlign: 'center', color: colors.onSurfaceVariant },
 
   moraBlock: {

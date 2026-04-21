@@ -414,6 +414,8 @@ const RegisterScreen = ({ navigation }) => {
 };
 
 const PulseRing = () => {
+  const { colors, typography } = useTheme();
+  const styles = makeStyles(colors, typography);
   const scale = useRef(new Animated.Value(1)).current;
   const opacity = useRef(new Animated.Value(0.6)).current;
 
@@ -437,14 +439,20 @@ const PulseRing = () => {
   );
 };
 
-const ErrorText = ({ msg }) => (
-  <View style={styles.errorRow}>
-    <MaterialIcons name="error-outline" size={14} color={colors.error} />
-    <Text style={styles.errorText}>{msg}</Text>
-  </View>
-);
+const ErrorText = ({ msg }) => {
+  const { colors } = useTheme();
+  const styles = makeStyles(colors, {});
+  return (
+    <View style={styles.errorRow}>
+      <MaterialIcons name="error-outline" size={14} color={colors.error} />
+      <Text style={styles.errorText}>{msg}</Text>
+    </View>
+  );
+};
 
 const ConfirmPasswordField = ({ value, onChangeText, error }) => {
+  const { colors, typography } = useTheme();
+  const styles = makeStyles(colors, typography);
   const [visible, setVisible] = useState(false);
   return (
     <View style={styles.fieldGroup}>

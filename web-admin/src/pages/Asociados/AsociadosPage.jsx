@@ -87,7 +87,7 @@ const AsociadosPage = () => {
             <span className="material-symbols-outlined text-xl">filter_list</span>
             Más Filtros
           </button>
-          <button className="bg-tertiary-container/40 text-on-tertiary-container px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-tertiary-container/60 transition-colors">
+          <button className="bg-surface-container-highest text-on-surface px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-surface-bright transition-colors">
             <span className="material-symbols-outlined text-xl">download</span>
             Exportar a Excel
           </button>
@@ -126,7 +126,7 @@ const AsociadosPage = () => {
                 asociados.map((a) => {
                   const est = ESTADO_MAP[a.estado] ?? ESTADO_MAP.INACTIVO;
                   return (
-                    <tr key={a._id} className="hover:bg-surface-container-highest/50 transition-colors group">
+                    <tr key={a._id} className="hover:bg-surface-container transition-colors group">
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-primary font-bold text-sm font-headline select-none">

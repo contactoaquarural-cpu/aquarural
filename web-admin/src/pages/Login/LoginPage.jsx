@@ -167,7 +167,7 @@ const LoginPage = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-gradient-to-br from-primary-container to-primary-container/70 text-primary font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed font-headline"
+                  className="w-full py-4 bg-primary text-on-primary font-bold rounded-xl shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed font-headline"
                 >
                   {loading ? (
                     <>
@@ -175,10 +175,7 @@ const LoginPage = () => {
                       Ingresando...
                     </>
                   ) : (
-                    <>
-                      <span>Ingresar</span>
-                      <span className="material-symbols-outlined">arrow_forward</span>
-                    </>
+                    <span>Ingresar</span>
                   )}
                 </button>
               </div>

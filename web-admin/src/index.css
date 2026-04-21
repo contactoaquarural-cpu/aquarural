@@ -78,6 +78,8 @@
   html.light .bg-surface-container        { background-color: #eaeeeb !important; }
   html.light .bg-surface-container-high  { background-color: #dde3de !important; }
   html.light .bg-surface-container-highest { background-color: #d0d8d2 !important; }
+  html.light .hover\:bg-surface-container:hover { background-color: #eaeeeb !important; }
+  html.light .hover\:bg-surface-bright:hover    { background-color: #d0d8d2 !important; }
   html.light .bg-primary-container   { background-color: #d4ede2 !important; }
   html.light .bg-tertiary-container  { background-color: #ffdcc2 !important; }
   html.light .bg-error-container     { background-color: #ffdad6 !important; }

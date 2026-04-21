@@ -125,23 +125,16 @@ const LoginScreen = ({ navigation }) => {
 
             {/* Botón ingresar */}
             <TouchableOpacity
-              style={[styles.loginBtn, loading && styles.loginBtnDisabled]}
+              style={[styles.loginBtn, { backgroundColor: colors.primary }, loading && styles.loginBtnDisabled]}
               onPress={handleLogin}
               disabled={loading}
               activeOpacity={0.85}
             >
-              <LinearGradient
-                colors={[colors.primaryContainer, '#0d3327']}
-                style={styles.loginBtnGradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-              >
-                {loading ? (
-                  <ActivityIndicator color={colors.primary} />
-                ) : (
-                  <Text style={styles.loginBtnText}>Ingresar →</Text>
-                )}
-              </LinearGradient>
+              {loading ? (
+                <ActivityIndicator color={colors.onPrimary} />
+              ) : (
+                <Text style={styles.loginBtnText}>Ingresar</Text>
+              )}
             </TouchableOpacity>
 
             {/* Ir a registro */}
@@ -217,16 +210,17 @@ const makeStyles = (colors, typography) => StyleSheet.create({
   forgotBtn: { alignSelf: 'flex-end', marginBottom: spacing.xl },
   forgotText: { ...typography.small, color: colors.onPrimaryContainer, fontWeight: '600' },
 
-  loginBtn: { borderRadius: radius.lg, overflow: 'hidden', marginBottom: spacing.xl },
-  loginBtnDisabled: { opacity: 0.6 },
-  loginBtnGradient: {
+  loginBtn: {
+    borderRadius:   radius.lg,
     paddingVertical: spacing.md + 2,
-    alignItems:      'center',
+    alignItems:     'center',
+    marginBottom:   spacing.xl,
   },
+  loginBtnDisabled: { opacity: 0.6 },
   loginBtnText: {
     ...typography.h3,
-    color:          colors.primary,
-    letterSpacing:  1,
+    color:         colors.onPrimary,
+    letterSpacing: 1,
   },
 
   registerRow:  { flexDirection: 'row', justifyContent: 'center', marginTop: spacing.sm },
