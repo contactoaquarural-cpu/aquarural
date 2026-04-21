@@ -27,9 +27,9 @@ export const usePagosStore = create((set) => ({
     }
   },
 
-  // Iniciar pago en Wompi — retorna la URL de pago
-  iniciarPago: async (mesesIds, monto) => {
-    const { data } = await api.post('/pagos/iniciar', { mesesIds, monto });
-    return data.data.urlPago;
+  // Iniciar pago en Wompi — retorna los parámetros del checkout widget
+  iniciarPago: async (meses) => {
+    const { data } = await api.post('/pagos/iniciar', { meses });
+    return data.data;
   },
 }));

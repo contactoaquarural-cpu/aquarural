@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
 import {
-  View, Text, FlatList, StyleSheet, RefreshControl,
+  View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { usePagosStore } from '../../store/pagos.store';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { colors, spacing, radius, typography } from '../../utils/theme';
@@ -44,8 +43,7 @@ const AporteItem = ({ item }) => (
   </View>
 );
 
-const HistorialPagosScreen = () => {
-  const navigation = useNavigation();
+const HistorialPagosScreen = ({ navigation }) => {
   const { aportes, isLoading, cargarHistorial } = usePagosStore();
 
   useEffect(() => { cargarHistorial(); }, []);
@@ -55,8 +53,9 @@ const HistorialPagosScreen = () => {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backIcon}>←</Text>
+        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+          <MaterialIcons name="arrow-back-ios" size={20} color={colors.primary} />
+          <Text style={styles.backText}>Volver</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Historial de Pagos</Text>
         <View style={{ width: 32 }} />
@@ -91,7 +90,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical:   spacing.md,
   },
-  backIcon: { ...typography.h2, color: colors.primary, paddingHorizontal: spacing.sm },
+  backBtn:  { flexDirection: 'row', alignItems: 'center', gap: 4, paddingVertical: spacing.xs, paddingHorizontal: spacing.xs },
+  backText: { ...typography.body, color: colors.primary, fontWeight: '600' },
   title:    { ...typography.h2 },
 
   list: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xxl },

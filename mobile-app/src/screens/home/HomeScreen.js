@@ -131,6 +131,26 @@ if (isLoading && !asociado) return <LoadingSpinner message="Cargando tu informac
           </View>
         )}
 
+        {/* Widget ubicación de finca */}
+        {finca && !finca.latitud && (
+          <TouchableOpacity
+            style={styles.ubicacionWidget}
+            onPress={() => navigation.navigate('Perfil', { screen: 'UbicacionFinca' })}
+            activeOpacity={0.85}
+          >
+            <View style={styles.ubicacionLeft}>
+              <View style={styles.ubicacionIconBox}>
+                <MaterialIcons name="location-off" size={22} color={colors.tertiary} />
+              </View>
+              <View style={styles.ubicacionTexts}>
+                <Text style={styles.ubicacionTitle}>Registra la ubicación de tu finca</Text>
+                <Text style={styles.ubicacionSub}>Toma las coordenadas GPS estando en tu predio</Text>
+              </View>
+            </View>
+            <MaterialIcons name="chevron-right" size={22} color={colors.tertiary} />
+          </TouchableOpacity>
+        )}
+
         {/* Widget precios de referencia */}
         {precios.length > 0 && (
           <View style={styles.preciosCard}>
@@ -173,7 +193,7 @@ if (isLoading && !asociado) return <LoadingSpinner message="Cargando tu informac
         {mesesPendientes.length > 0 && (
           <TouchableOpacity
             style={styles.proximoCard}
-            onPress={() => navigation.navigate('Pagos')}
+            onPress={() => navigation.navigate('Pagos', { screen: 'Pago', params: { meses: mesesPendientes } })}
             activeOpacity={0.85}
           >
             <View style={styles.proximoLeft}>
@@ -304,6 +324,31 @@ const styles = StyleSheet.create({
     height:          32,
     backgroundColor: colors.outlineVariant,
   },
+
+  ubicacionWidget: {
+    marginHorizontal: spacing.lg,
+    marginBottom:     spacing.lg,
+    backgroundColor:  colors.tertiaryContainer + '22',
+    borderRadius:     radius.xl,
+    padding:          spacing.md,
+    flexDirection:    'row',
+    alignItems:       'center',
+    justifyContent:   'space-between',
+    borderWidth:      1,
+    borderColor:      colors.tertiary + '33',
+  },
+  ubicacionLeft:   { flexDirection: 'row', alignItems: 'center', gap: spacing.md, flex: 1 },
+  ubicacionIconBox: {
+    width:           40,
+    height:          40,
+    borderRadius:    radius.lg,
+    backgroundColor: colors.tertiaryContainer,
+    alignItems:      'center',
+    justifyContent:  'center',
+  },
+  ubicacionTexts:  { flex: 1, gap: 2 },
+  ubicacionTitle:  { ...typography.bodyBold, color: colors.tertiary },
+  ubicacionSub:    { ...typography.small, color: colors.tertiary, opacity: 0.8 },
 
   sectionTitle: { ...typography.h3, marginHorizontal: spacing.lg, marginBottom: spacing.md },
   sectionHeader: {

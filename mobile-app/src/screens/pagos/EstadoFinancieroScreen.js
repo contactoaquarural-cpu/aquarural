@@ -4,7 +4,6 @@ import {
   StyleSheet, RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
 import { useAuthStore }  from '../../store/auth.store';
 import { usePagosStore } from '../../store/pagos.store';
 import EstadoBadge    from '../../components/EstadoBadge';
@@ -13,8 +12,7 @@ import { colors, spacing, radius, typography } from '../../utils/theme';
 
 const MESES_LABELS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-const EstadoFinancieroScreen = () => {
-  const navigation = useNavigation();
+const EstadoFinancieroScreen = ({ navigation }) => {
   const user       = useAuthStore((s) => s.user);
   const { aportes, mesesPendientes, isLoading, cargarHistorial } = usePagosStore();
 
