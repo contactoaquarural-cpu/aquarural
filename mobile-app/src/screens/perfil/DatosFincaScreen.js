@@ -8,9 +8,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAsociadoStore } from '../../store/asociado.store';
 import { Toast, useToast } from '../../components/AppToast';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
 const DatosFincaScreen = () => {
+  const { colors, typography } = useTheme();
   const navigation = useNavigation();
   const { finca, actualizarFinca } = useAsociadoStore();
   const { show, toastProps } = useToast();
@@ -44,6 +46,8 @@ const DatosFincaScreen = () => {
       setLoading(false);
     }
   };
+
+  const styles = makeStyles(colors, typography);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -112,7 +116,7 @@ const Field = ({ label, ...props }) => (
   </View>
 );
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe:   { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection:   'row',

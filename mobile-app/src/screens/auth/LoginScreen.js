@@ -9,9 +9,11 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/auth.store';
 import { useAsociadoStore } from '../../store/asociado.store';
 import { Toast, useToast } from '../../components/AppToast';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
 const LoginScreen = ({ navigation }) => {
+  const { colors, typography } = useTheme();
   const [cedula,   setCedula]   = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
@@ -36,6 +38,8 @@ const LoginScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
+
+  const styles = makeStyles(colors, typography);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -154,7 +158,7 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe:  { flex: 1, backgroundColor: colors.background },
   flex:  { flex: 1 },
   scroll: { flexGrow: 1 },

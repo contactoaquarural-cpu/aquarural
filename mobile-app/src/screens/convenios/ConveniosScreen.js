@@ -7,14 +7,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '../../services/api.service';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage   from '../../components/ErrorMessage';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { useTheme }   from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
-const TIPO_CONFIG = {
+const getTipoConfig = (colors) => ({
   AGROPECUARIO: { icon: '🌾', color: colors.primary,   bg: colors.primaryContainer },
   VETERINARIA:  { icon: '🐾', color: colors.tertiary,  bg: colors.tertiaryContainer },
   INSUMOS:      { icon: '🧪', color: '#82cfff',        bg: '#002d57' },
   OTRO:         { icon: '🤝', color: colors.onSurface, bg: colors.surfaceContainerHighest },
-};
+});
 
 const CONVENIOS_DEMO = [
   {
@@ -73,8 +74,10 @@ const CONVENIOS_DEMO = [
   },
 ];
 
-const ConvenioCard = ({ item, onPress }) => {
+const ConvenioCard = ({ item, onPress, colors, typography }) => {
+  const TIPO_CONFIG = getTipoConfig(colors);
   const config = TIPO_CONFIG[item.tipo] || TIPO_CONFIG.OTRO;
+  const styles = makeStyles(colors, typography);
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
       <View style={styles.cardHeader}>
@@ -107,6 +110,7 @@ const ConvenioCard = ({ item, onPress }) => {
 };
 
 const ConveniosScreen = ({ navigation }) => {
+  const { colors, typography } = useTheme();
   const [convenios,  setConvenios]  = useState([]);
   const [filtered,   setFiltered]   = useState([]);
   const [busqueda,   setBusqueda]   = useState('');
@@ -148,6 +152,8 @@ const ConveniosScreen = ({ navigation }) => {
     setRefreshing(false);
   };
 
+  const styles = makeStyles(colors, typography);
+
   if (loading) return <LoadingSpinner message="Cargando convenios..." />;
   if (error)   return <ErrorMessage message={error} onRetry={cargarConvenios} />;
 
@@ -178,6 +184,8 @@ const ConveniosScreen = ({ navigation }) => {
         renderItem={({ item }) => (
           <ConvenioCard
             item={item}
+            colors={colors}
+            typography={typography}
             onPress={() => navigation.navigate('DetalleConvenio', { convenio: item })}
           />
         )}
@@ -197,7 +205,7 @@ const ConveniosScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   header: {
     paddingHorizontal: spacing.lg,

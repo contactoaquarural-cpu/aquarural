@@ -11,9 +11,11 @@ import { useAsociadoStore } from '../../store/asociado.store';
 import EstadoBadge    from '../../components/EstadoBadge';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { Toast, useToast } from '../../components/AppToast';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
 const MiCarneScreen = ({ navigation }) => {
+  const { colors, typography } = useTheme();
   const user     = useAuthStore((s) => s.user);
   const { asociado, cargarDatos } = useAsociadoStore();
   const { show, toastProps } = useToast();
@@ -55,6 +57,8 @@ const MiCarneScreen = ({ navigation }) => {
   if (qrLoading && !qrBase64) return <LoadingSpinner message="Generando carné..." />;
 
   const isMora = estado !== 'AL_DIA';
+
+  const styles = makeStyles(colors, typography);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -157,7 +161,7 @@ const MiCarneScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe:   { flex: 1, backgroundColor: colors.background },
   scroll: { padding: spacing.lg },
   header: {

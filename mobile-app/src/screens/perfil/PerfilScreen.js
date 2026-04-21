@@ -1,33 +1,21 @@
 import React, { useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
-  StyleSheet, Image,
+  StyleSheet, Image, Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import api from '../../services/api.service';
 import { useAuthStore }     from '../../store/auth.store';
 import { useAsociadoStore } from '../../store/asociado.store';
+import { useTheme }         from '../../utils/ThemeContext';
 import EstadoBadge from '../../components/EstadoBadge';
 import { Toast, ConfirmModal, useToast } from '../../components/AppToast';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { spacing, radius } from '../../utils/theme';
 
-const MenuRow = ({ icon, label, sublabel, onPress, danger }) => (
-  <TouchableOpacity style={styles.menuRow} onPress={onPress} activeOpacity={0.8}>
-    <View style={[styles.menuIconBox, danger && styles.menuIconBoxDanger]}>
-      <Text style={styles.menuIcon}>{icon}</Text>
-    </View>
-    <View style={styles.menuInfo}>
-      <Text style={[styles.menuLabel, danger && styles.menuLabelDanger]}>{label}</Text>
-      {sublabel ? <Text style={styles.menuSub}>{sublabel}</Text> : null}
-    </View>
-    <Text style={styles.menuArrow}>›</Text>
-  </TouchableOpacity>
-);
-
-const PerfilScreen = () => {
-  const navigation = useNavigation();
+const PerfilScreen = ({ navigation }) => {
+  const { isDark, toggleTheme, colors, typography } = useTheme();
   const logout     = useAuthStore((s) => s.logout);
   const user       = useAuthStore((s) => s.user);
   const { asociado, cargarDatos } = useAsociadoStore();
@@ -77,7 +65,7 @@ const PerfilScreen = () => {
     }
   };
 
-  const handleLogout = () => setConfirmLogout(true);
+  const styles = makeStyles(colors, typography);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -105,7 +93,7 @@ const PerfilScreen = () => {
               </View>
             )}
             <View style={styles.avatarEditBadge}>
-              <Text style={styles.avatarEditIcon}>📷</Text>
+              <MaterialIcons name="photo-camera" size={14} color={colors.primary} />
             </View>
           </TouchableOpacity>
           <Text style={styles.profileNombre}>{nombre}</Text>
@@ -113,34 +101,44 @@ const PerfilScreen = () => {
           <EstadoBadge estado={estado} />
         </View>
 
-        {/* Acciones de perfil */}
+        {/* Mi cuenta */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Mi cuenta</Text>
           <View style={styles.menuCard}>
-            <MenuRow
-              icon="✏️"
-              label="Editar perfil"
-              sublabel="Nombre, teléfono, correo"
-              onPress={() => navigation.navigate('EditarPerfil')}
-            />
-            <MenuRow
-              icon="🌾"
-              label="Datos de la finca"
-              sublabel="Hectáreas, ganado, producción"
-              onPress={() => navigation.navigate('DatosFinca')}
-            />
-            <MenuRow
-              icon="📍"
-              label="Ubicación de la finca"
-              sublabel="Tomar coordenadas GPS"
-              onPress={() => navigation.navigate('UbicacionFinca')}
-            />
-            <MenuRow
-              icon="🔔"
-              label="Notificaciones"
-              sublabel="Historial de avisos"
-              onPress={() => navigation.navigate('Notificaciones')}
-            />
+            <MenuRow icon="edit" label="Editar perfil" sublabel="Nombre, teléfono, correo"
+              onPress={() => navigation.navigate('EditarPerfil')} colors={colors} typography={typography} />
+            <MenuRow icon="agriculture" label="Datos de la finca" sublabel="Hectáreas, ganado, producción"
+              onPress={() => navigation.navigate('DatosFinca')} colors={colors} typography={typography} />
+            <MenuRow icon="location-on" label="Ubicación de la finca" sublabel="Tomar coordenadas GPS"
+              onPress={() => navigation.navigate('UbicacionFinca')} colors={colors} typography={typography} />
+            <MenuRow icon="notifications" label="Notificaciones" sublabel="Historial de avisos"
+              onPress={() => navigation.navigate('Notificaciones')} colors={colors} typography={typography} />
+          </View>
+        </View>
+
+        {/* Apariencia */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Apariencia</Text>
+          <View style={styles.menuCard}>
+            <View style={styles.menuRow}>
+              <View style={styles.menuIconBox}>
+                <MaterialIcons
+                  name={isDark ? 'dark-mode' : 'light-mode'}
+                  size={20}
+                  color={colors.primary}
+                />
+              </View>
+              <View style={styles.menuInfo}>
+                <Text style={styles.menuLabel}>Modo {isDark ? 'oscuro' : 'claro'}</Text>
+                <Text style={styles.menuSub}>{isDark ? 'Activado' : 'Desactivado'}</Text>
+              </View>
+              <Switch
+                value={isDark}
+                onValueChange={toggleTheme}
+                trackColor={{ false: colors.surfaceContainerHigh, true: colors.primaryContainer }}
+                thumbColor={isDark ? colors.primary : colors.outline}
+              />
+            </View>
           </View>
         </View>
 
@@ -148,51 +146,56 @@ const PerfilScreen = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Soporte</Text>
           <View style={styles.menuCard}>
-            <MenuRow
-              icon="📞"
-              label="Contactar a ASOGACENTRO"
-              sublabel="316 616 0377"
-              onPress={() => {}}
-            />
+            <MenuRow icon="phone" label="Contactar a ASOGACENTRO" sublabel="316 616 0377"
+              onPress={() => {}} colors={colors} typography={typography} />
           </View>
         </View>
 
         {/* Cerrar sesión */}
         <View style={styles.section}>
           <View style={styles.menuCard}>
-            <MenuRow
-              icon="🚪"
-              label="Cerrar sesión"
-              onPress={handleLogout}
-              danger
-            />
+            <MenuRow icon="logout" label="Cerrar sesión"
+              onPress={() => setConfirmLogout(true)} danger colors={colors} typography={typography} />
           </View>
         </View>
 
-        {/* Versión */}
         <Text style={styles.version}>ASOGACENTRO v1.0 · MetaDevelopment Ltd</Text>
-
         <View style={{ height: spacing.xxl }} />
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
+const MenuRow = ({ icon, label, sublabel, onPress, danger, colors, typography }) => {
+  const styles = makeStyles(colors, typography);
+  return (
+    <TouchableOpacity style={styles.menuRow} onPress={onPress} activeOpacity={0.8}>
+      <View style={[styles.menuIconBox, danger && styles.menuIconBoxDanger]}>
+        <MaterialIcons
+          name={icon}
+          size={20}
+          color={danger ? colors.error : colors.primary}
+        />
+      </View>
+      <View style={styles.menuInfo}>
+        <Text style={[styles.menuLabel, danger && styles.menuLabelDanger]}>{label}</Text>
+        {sublabel ? <Text style={styles.menuSub}>{sublabel}</Text> : null}
+      </View>
+      <MaterialIcons name="chevron-right" size={22} color={colors.outline} />
+    </TouchableOpacity>
+  );
+};
+
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
 
   profileHeader: {
-    alignItems:       'center',
-    paddingVertical:  spacing.xl,
+    alignItems:        'center',
+    paddingVertical:   spacing.xl,
     paddingHorizontal: spacing.lg,
-    gap:              spacing.sm,
+    gap:               spacing.sm,
   },
-  avatar: {
-    width:        80,
-    height:       80,
-    borderRadius: 40,
-    marginBottom: spacing.sm,
-  },
+  avatar: { width: 80, height: 80, borderRadius: 40, marginBottom: spacing.sm },
   avatarFallback: {
     width:           80,
     height:          80,
@@ -214,11 +217,10 @@ const styles = StyleSheet.create({
     alignItems:      'center',
     justifyContent:  'center',
   },
-  avatarEditIcon:  { fontSize: 14 },
-  profileNombre:   { ...typography.h2, textAlign: 'center' },
-  profileCedula:   { ...typography.body, marginBottom: spacing.xs },
+  profileNombre: { ...typography.h2, textAlign: 'center' },
+  profileCedula: { ...typography.body, marginBottom: spacing.xs },
 
-  section: { paddingHorizontal: spacing.lg, marginBottom: spacing.lg },
+  section:      { paddingHorizontal: spacing.lg, marginBottom: spacing.lg },
   sectionTitle: { ...typography.label, marginBottom: spacing.sm },
 
   menuCard: {
@@ -244,18 +246,16 @@ const styles = StyleSheet.create({
     justifyContent:  'center',
   },
   menuIconBoxDanger: { backgroundColor: colors.errorContainer + '44' },
-  menuIcon:          { fontSize: 18 },
   menuInfo:          { flex: 1 },
   menuLabel:         { ...typography.bodyBold },
   menuLabelDanger:   { color: colors.error },
   menuSub:           { ...typography.small, marginTop: 2 },
-  menuArrow:         { ...typography.h2, color: colors.outline },
 
   version: {
     ...typography.label,
-    textAlign: 'center',
-    marginTop: spacing.md,
-    color:     colors.outline,
+    textAlign:    'center',
+    marginTop:    spacing.md,
+    color:        colors.outline,
     marginBottom: spacing.lg,
   },
 });

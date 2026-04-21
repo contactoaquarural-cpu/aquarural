@@ -5,19 +5,23 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { colors, spacing, radius, typography } from '../../utils/theme';
-
-const CATEGORIA_CONFIG = {
-  GOBIERNO:      { icon: '🏛️', color: '#60a5fa', bg: '#1e3a5f' },
-  SANIDAD:       { icon: '🩺', color: colors.primary, bg: colors.primaryContainer },
-  PRECIOS:       { icon: '📈', color: colors.tertiary, bg: colors.tertiaryContainer },
-  EVENTO:        { icon: '📅', color: '#c084fc', bg: '#3b1f5e' },
-  INSTITUCIONAL: { icon: '🏢', color: colors.onSurface, bg: colors.surfaceContainerHighest },
-};
+import { useTheme } from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
 const DetalleNoticiaScreen = ({ route, navigation }) => {
+  const { colors, typography } = useTheme();
   const { noticia } = route.params;
+
+  const CATEGORIA_CONFIG = {
+    GOBIERNO:      { icon: '🏛️', color: '#60a5fa', bg: '#1e3a5f' },
+    SANIDAD:       { icon: '🩺', color: colors.primary, bg: colors.primaryContainer },
+    PRECIOS:       { icon: '📈', color: colors.tertiary, bg: colors.tertiaryContainer },
+    EVENTO:        { icon: '📅', color: '#c084fc', bg: '#3b1f5e' },
+    INSTITUCIONAL: { icon: '🏢', color: colors.onSurface, bg: colors.surfaceContainerHighest },
+  };
+
   const cat = CATEGORIA_CONFIG[noticia.categoria] || CATEGORIA_CONFIG.INSTITUCIONAL;
+  const styles = makeStyles(colors, typography);
 
   const handleCompartir = async () => {
     try {
@@ -94,7 +98,7 @@ const DetalleNoticiaScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
 
   header: {

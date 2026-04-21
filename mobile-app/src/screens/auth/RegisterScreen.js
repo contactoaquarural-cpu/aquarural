@@ -8,11 +8,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import api from '../../services/api.service';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
 const STEPS = ['Datos', 'Acceso', 'Finca'];
 
 const RegisterScreen = ({ navigation }) => {
+  const { colors, typography } = useTheme();
   const [step,    setStep]    = useState(0);
   const [loading, setLoading] = useState(false);
   const [exitoso, setExitoso] = useState(false);
@@ -146,6 +148,8 @@ const RegisterScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
+
+  const styles = makeStyles(colors, typography);
 
   const renderStep = () => {
     if (step === 0) return (
@@ -484,6 +488,8 @@ const ConfirmPasswordField = ({ value, onChangeText, error }) => {
 };
 
 const InputField = ({ label, secureTextEntry, value, onChangeText, error, autoCapitalize = 'none', ...props }) => {
+  const { colors, typography } = useTheme();
+  const styles = makeStyles(colors, typography);
   const [visible, setVisible] = useState(false);
   const { secureTextEntry: _drop, ...safeProps } = props;
 
@@ -543,7 +549,7 @@ const InputField = ({ label, secureTextEntry, value, onChangeText, error, autoCa
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe:  { flex: 1, backgroundColor: colors.background },
   flex:  { flex: 1 },
   scroll: { flex: 1 },

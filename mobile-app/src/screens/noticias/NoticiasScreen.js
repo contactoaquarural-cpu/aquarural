@@ -7,18 +7,21 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '../../services/api.service';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import ErrorMessage   from '../../components/ErrorMessage';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { useTheme }   from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
-const CATEGORIA_CONFIG = {
+const getCategoriaConfig = (colors) => ({
   GOBIERNO:      { icon: '🏛️', color: '#60a5fa', bg: '#1e3a5f' },
   SANIDAD:       { icon: '🩺', color: colors.primary, bg: colors.primaryContainer },
   PRECIOS:       { icon: '📈', color: colors.tertiary, bg: colors.tertiaryContainer },
   EVENTO:        { icon: '📅', color: '#c084fc', bg: '#3b1f5e' },
   INSTITUCIONAL: { icon: '🏢', color: colors.onSurface, bg: colors.surfaceContainerHighest },
-};
+});
 
-const NoticiaCard = ({ item, onPress }) => {
+const NoticiaCard = ({ item, onPress, colors, typography }) => {
+  const CATEGORIA_CONFIG = getCategoriaConfig(colors);
   const cat = CATEGORIA_CONFIG[item.categoria] || CATEGORIA_CONFIG.INSTITUCIONAL;
+  const styles = makeStyles(colors, typography);
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
       {item.imagen && (
@@ -70,6 +73,7 @@ const NOTICIAS_DEMO = [
 ];
 
 const NoticiasScreen = ({ navigation }) => {
+  const { colors, typography } = useTheme();
   const [noticias,   setNoticias]   = useState([]);
   const [loading,    setLoading]    = useState(true);
   const [error,      setError]      = useState(null);
@@ -104,6 +108,8 @@ const NoticiasScreen = ({ navigation }) => {
       )
     : noticias;
 
+  const styles = makeStyles(colors, typography);
+
   if (loading) return <LoadingSpinner message="Cargando noticias..." />;
   if (error)   return <ErrorMessage message={error} onRetry={cargarNoticias} />;
 
@@ -134,6 +140,8 @@ const NoticiasScreen = ({ navigation }) => {
         renderItem={({ item }) => (
           <NoticiaCard
             item={item}
+            colors={colors}
+            typography={typography}
             onPress={() => navigation.navigate('DetalleNoticia', { noticia: item })}
           />
         )}
@@ -156,7 +164,7 @@ const NoticiasScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   header: {
     paddingHorizontal: spacing.lg,

@@ -9,7 +9,8 @@ import { usePagosStore }    from '../../store/pagos.store';
 import { useAsociadoStore } from '../../store/asociado.store';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { Toast, useToast } from '../../components/AppToast';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { useTheme }   from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
 const MESES_LABELS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
@@ -98,6 +99,7 @@ const buildCheckoutHtml = ({ publicKey, amountInCents, reference, currency, acce
 `.trim();
 
 const PagoScreen = ({ route, navigation }) => {
+  const { colors, typography } = useTheme();
   const meses = route.params?.meses ?? [];
   const [checkout, setCheckout] = useState(null);  // parámetros del widget
   const [loading,  setLoading]  = useState(false);
@@ -158,6 +160,8 @@ const PagoScreen = ({ route, navigation }) => {
       // mensaje no parseable — ignorar
     }
   };
+
+  const styles = makeStyles(colors, typography);
 
   // ── Pantalla de resultado ────────────────────────────────────────────────────
   if (resultado) {
@@ -303,7 +307,7 @@ const PagoScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
 
   header: {

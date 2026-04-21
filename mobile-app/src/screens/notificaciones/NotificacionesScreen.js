@@ -9,7 +9,8 @@ import { useNavigation } from '@react-navigation/native';
 import api from '../../services/api.service';
 import { useAuthStore } from '../../store/auth.store';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
 const TIPO_CONFIG = {
   MORA:        { icon: '⚠️', color: colors.tertiary },
@@ -20,6 +21,8 @@ const TIPO_CONFIG = {
 
 const NotifItem = ({ item }) => {
   const config = TIPO_CONFIG[item.tipo] || TIPO_CONFIG.SISTEMA;
+  const styles = makeStyles(colors, typography);
+
   return (
     <View style={[styles.item, !item.leido && styles.itemUnread]}>
       <View style={[styles.iconBox, { backgroundColor: config.color + '22' }]}>
@@ -42,6 +45,7 @@ const NotifItem = ({ item }) => {
 };
 
 const NotificacionesScreen = () => {
+  const { colors, typography } = useTheme();
   const navigation   = useNavigation();
   const user         = useAuthStore((s) => s.user);
   const [notifs,     setNotifs]     = useState([]);
@@ -110,7 +114,7 @@ const NotificacionesScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection:   'row',

@@ -8,11 +8,13 @@ import { useAuthStore }  from '../../store/auth.store';
 import { usePagosStore } from '../../store/pagos.store';
 import EstadoBadge    from '../../components/EstadoBadge';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { useTheme }   from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
 const MESES_LABELS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
 const EstadoFinancieroScreen = ({ navigation }) => {
+  const { colors, typography } = useTheme();
   const user       = useAuthStore((s) => s.user);
   const { aportes, mesesPendientes, isLoading, cargarHistorial } = usePagosStore();
 
@@ -22,6 +24,7 @@ const EstadoFinancieroScreen = ({ navigation }) => {
 
   const estado = user?.estado || 'AL_DIA';
   const totalPendiente = mesesPendientes.reduce((sum, a) => sum + (a.monto || 0), 0);
+  const styles = makeStyles(colors, typography);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -116,7 +119,7 @@ const EstadoFinancieroScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe:   { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection:   'row',

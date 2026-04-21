@@ -6,18 +6,22 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
-import { colors, spacing, radius, typography } from '../../utils/theme';
-
-const TIPO_CONFIG = {
-  AGROPECUARIO: { icon: '🌾', color: colors.primary,   bg: colors.primaryContainer },
-  VETERINARIA:  { icon: '🐾', color: colors.tertiary,  bg: colors.tertiaryContainer },
-  INSUMOS:      { icon: '🧪', color: '#82cfff',        bg: '#002d57' },
-  OTRO:         { icon: '🤝', color: colors.onSurface, bg: colors.surfaceContainerHighest },
-};
+import { useTheme } from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
 const DetalleConvenioScreen = ({ route, navigation }) => {
+  const { colors, typography } = useTheme();
   const { convenio } = route.params;
+
+  const TIPO_CONFIG = {
+    AGROPECUARIO: { icon: '🌾', color: colors.primary,   bg: colors.primaryContainer },
+    VETERINARIA:  { icon: '🐾', color: colors.tertiary,  bg: colors.tertiaryContainer },
+    INSUMOS:      { icon: '🧪', color: '#82cfff',        bg: '#002d57' },
+    OTRO:         { icon: '🤝', color: colors.onSurface, bg: colors.surfaceContainerHighest },
+  };
+
   const config = TIPO_CONFIG[convenio.tipo] || TIPO_CONFIG.OTRO;
+  const styles = makeStyles(colors, typography);
 
   const handleLlamar = () => {
     if (convenio.telefono) {
@@ -124,7 +128,7 @@ const DetalleConvenioScreen = ({ route, navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
 
   hero: {

@@ -11,11 +11,13 @@ import { useNavigation } from '@react-navigation/native';
 import api from '../../services/api.service';
 import { useAsociadoStore } from '../../store/asociado.store';
 import { Toast, useToast } from '../../components/AppToast';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
 const PENDING_KEY = 'ubicacion_finca_pendiente';
 
 const UbicacionFincaScreen = () => {
+  const { colors, typography } = useTheme();
   const navigation = useNavigation();
   const { finca, asociado, cargarDatos, actualizarFinca } = useAsociadoStore();
   const getFinca = () => useAsociadoStore.getState().finca;
@@ -134,6 +136,8 @@ const UbicacionFincaScreen = () => {
     }
   };
 
+  const styles = makeStyles(colors, typography);
+
   return (
     <SafeAreaView style={styles.safe}>
       <Toast {...toastProps} />
@@ -224,7 +228,7 @@ const UbicacionFincaScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe:      { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection:     'row',

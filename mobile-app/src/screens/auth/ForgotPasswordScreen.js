@@ -7,9 +7,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import api from '../../services/api.service';
 import { Toast, useToast } from '../../components/AppToast';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
 const ForgotPasswordScreen = ({ navigation }) => {
+  const { colors, typography } = useTheme();
   const [correo,  setCorreo]  = useState('');
   const [loading, setLoading] = useState(false);
   const [sent,    setSent]    = useState(false);
@@ -30,6 +32,8 @@ const ForgotPasswordScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
+
+  const styles = makeStyles(colors, typography);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -89,7 +93,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe:      { flex: 1, backgroundColor: colors.background },
   backBtn:   { flexDirection: 'row', alignItems: 'center', gap: 4, padding: spacing.md },
   backText:  { ...typography.body, color: colors.primary, fontWeight: '600' },

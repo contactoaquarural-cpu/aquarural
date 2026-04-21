@@ -12,7 +12,8 @@ import { useAsociadoStore } from '../../store/asociado.store';
 import { usePagosStore }    from '../../store/pagos.store';
 import EstadoBadge    from '../../components/EstadoBadge';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { colors, spacing, radius, typography } from '../../utils/theme';
+import { useTheme }   from '../../utils/ThemeContext';
+import { spacing, radius } from '../../utils/theme';
 
 
 const CATEGORIA_LABELS = {
@@ -28,6 +29,7 @@ const CATEGORIA_ICONS = {
 };
 
 const HomeScreen = () => {
+  const { colors, typography } = useTheme();
   const navigation    = useNavigation();
   const user          = useAuthStore((s) => s.user);
   const { asociado, finca, isLoading, cargarDatos } = useAsociadoStore();
@@ -53,8 +55,9 @@ const HomeScreen = () => {
     }
   };
 
-if (isLoading && !asociado) return <LoadingSpinner message="Cargando tu información..." />;
+  if (isLoading && !asociado) return <LoadingSpinner message="Cargando tu información..." />;
 
+  const styles = makeStyles(colors, typography);
   const estado = asociado?.estado || user?.estado || 'AL_DIA';
   const nombre = asociado?.nombre || user?.nombre || '';
   const firstName = nombre.split(' ')[0];
@@ -256,7 +259,7 @@ if (isLoading && !asociado) return <LoadingSpinner message="Cargando tu informac
 
 const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
-const styles = StyleSheet.create({
+const makeStyles = (colors, typography) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
 
   header: {
