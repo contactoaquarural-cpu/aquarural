@@ -45,7 +45,7 @@ const AsociadosPage = () => {
             cumplimiento administrativo de cada unidad productiva.
           </p>
         </div>
-        <button className="bg-gradient-to-tr from-primary-container to-primary-container/70 text-primary font-semibold px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 hover:brightness-125 active:scale-95 transition-all font-headline">
+        <button className="btn-cta font-semibold px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 active:scale-95 transition-all font-headline">
           <span className="material-symbols-outlined">person_add</span>
           Nuevo Asociado
         </button>

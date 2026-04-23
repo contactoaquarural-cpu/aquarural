@@ -114,7 +114,7 @@ const ExpedientePage = () => {
             <span className="material-symbols-outlined text-lg">edit</span>
             Editar Socio
           </button>
-          <button className="bg-gradient-to-br from-primary-container to-primary-container/80 text-primary px-6 py-2.5 rounded-lg text-sm font-extrabold flex items-center gap-2 shadow-lg hover:brightness-125 transition-all active:scale-95 font-headline">
+          <button className="btn-cta px-6 py-2.5 rounded-lg text-sm font-extrabold flex items-center gap-2 shadow-lg transition-all active:scale-95 font-headline">
             <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
               description
             </span>

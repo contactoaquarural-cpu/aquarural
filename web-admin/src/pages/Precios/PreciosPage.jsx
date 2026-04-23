@@ -76,7 +76,7 @@ const PreciosPage = () => {
         </div>
         <button
           onClick={() => { setForm(EMPTY); setEditId(null); setShowForm(true); setError(''); }}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-container text-primary font-semibold font-headline text-sm hover:opacity-90 transition"
+          className="btn-cta flex items-center gap-2 px-4 py-2 rounded-xl font-semibold font-headline text-sm transition"
         >
           <span className="material-symbols-outlined text-lg">add</span>
           Nuevo precio

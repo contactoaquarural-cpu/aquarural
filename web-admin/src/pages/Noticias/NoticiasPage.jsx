@@ -109,7 +109,7 @@ const NoticiasPage = () => {
         </div>
         <button
           onClick={abrirNuevo}
-          className="flex items-center gap-2 bg-gradient-to-br from-primary-container to-primary-container/70 text-primary font-bold px-6 py-3 rounded-xl shadow-lg hover:brightness-125 transition-all"
+          className="btn-cta flex items-center gap-2 font-bold px-6 py-3 rounded-xl shadow-lg transition-all"
         >
           <span className="material-symbols-outlined text-sm">add</span>
           Nueva Noticia

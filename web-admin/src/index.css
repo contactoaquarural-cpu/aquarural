@@ -97,6 +97,24 @@
   html.light .border-outline-variant { border-color: #bec9c0 !important; }
   html.light .border-emerald-900\/20 { border-color: #1b433230 !important; }
 
+  /* ── Botón CTA principal ─────────────────────────────────────────────── */
+  .btn-cta {
+    background-color: #1b4332;
+    color: #a5d0b9;
+  }
+  .btn-cta:hover {
+    filter: brightness(1.25);
+    color: #a5d0b9;
+  }
+  html.light .btn-cta {
+    background-color: #1b4332 !important;
+    color: #ffffff !important;
+  }
+  html.light .btn-cta:hover {
+    filter: brightness(1.2);
+    color: #ffffff !important;
+  }
+
   /* ── Scrollbar ─────────────────────────────────────────────────────────── */
   .scrollbar-thin::-webkit-scrollbar {
     width: 4px;

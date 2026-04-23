@@ -69,6 +69,70 @@ exports.reporteMorosos = async (req, res) => {
   }
 };
 
+// ─── GET /admin/reportes/financiero ──────────────────────────────────────────
+
+exports.reporteFinanciero = async (req, res) => {
+  try {
+    const añoActual = new Date().getFullYear();
+
+    const [
+      totalAsociados,
+      alDia,
+      enMora,
+      inactivos,
+      aportesAño,
+      aportesTotalPagado,
+    ] = await Promise.all([
+      Asociado.countDocuments(),
+      Asociado.countDocuments({ estado: 'AL_DIA' }),
+      Asociado.countDocuments({ estado: 'EN_MORA' }),
+      Asociado.countDocuments({ estado: 'INACTIVO' }),
+      Aporte.find({ año: añoActual }).select('mes monto estado'),
+      Aporte.aggregate([
+        { $match: { estado: 'PAGADO' } },
+        { $group: { _id: null, total: { $sum: '$monto' } } },
+      ]),
+    ]);
+
+    // Recaudación por mes del año actual
+    const recaudacionMensual = Array.from({ length: 12 }, (_, i) => {
+      const mes = i + 1;
+      const aportesMes = aportesAño.filter((a) => a.mes === mes);
+      return {
+        mes,
+        pagado:   aportesMes.filter((a) => a.estado === 'PAGADO').reduce((s, a) => s + a.monto, 0),
+        pendiente: aportesMes.filter((a) => a.estado === 'PENDIENTE').reduce((s, a) => s + a.monto, 0),
+      };
+    });
+
+    const recaudacionTotal = aportesTotalPagado[0]?.total ?? 0;
+    const indiceMorosidad = totalAsociados > 0
+      ? Math.round(((enMora + inactivos) / totalAsociados) * 100)
+      : 0;
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalAsociados,
+        alDia,
+        enMora,
+        inactivos,
+        recaudacionTotal,
+        indiceMorosidad,
+        recaudacionMensual,
+      },
+      message: 'Reporte financiero obtenido exitosamente',
+    });
+  } catch (error) {
+    logger.error('Error al generar reporte financiero', { error: error.message });
+    res.status(500).json({
+      success: false,
+      data: null,
+      message: 'Error interno del servidor',
+    });
+  }
+};
+
 // ─── POST /admin/notificaciones/enviar ───────────────────────────────────────
 
 exports.enviarNotificacionMasiva = async (req, res) => {

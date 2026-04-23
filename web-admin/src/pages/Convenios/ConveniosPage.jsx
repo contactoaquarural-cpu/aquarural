@@ -68,7 +68,7 @@ const ConveniosPage = () => {
         </div>
         <button
           onClick={openCreate}
-          className="bg-gradient-to-br from-primary to-primary-container text-on-primary font-headline font-bold py-3 px-8 rounded-lg flex items-center gap-2 shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
+          className="btn-cta font-headline font-bold py-3 px-8 rounded-lg flex items-center gap-2 shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
         >
           <span className="material-symbols-outlined">add_circle</span>
           Crear Nuevo Convenio
