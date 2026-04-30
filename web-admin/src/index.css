@@ -74,6 +74,7 @@
   /* ── Colores semánticos en modo claro (sobrescriben Tailwind) ─────────── */
   html.light .bg-background          { background-color: #f0f2f0 !important; }
   html.light .bg-surface             { background-color: #ffffff !important; }
+  html.light .bg-surface-container-lowest  { background-color: #eaeeeb !important; }
   html.light .bg-surface-container-low   { background-color: #f5f7f5 !important; }
   html.light .bg-surface-container        { background-color: #eaeeeb !important; }
   html.light .bg-surface-container-high  { background-color: #dde3de !important; }

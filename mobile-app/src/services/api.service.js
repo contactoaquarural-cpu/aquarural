@@ -5,7 +5,7 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 15000, // 15s — conexiones rurales del Huila
+  timeout: 30000, // 30s — conexiones rurales + cold start de Railway
   headers: { 'Content-Type': 'application/json' },
 });
 

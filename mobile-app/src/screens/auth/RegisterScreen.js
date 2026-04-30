@@ -27,25 +27,24 @@ const RegisterScreen = ({ navigation }) => {
   const [municipio,    setMunicipio]    = useState('Garzón');
   const [municipios,   setMunicipios]   = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [loadingMunicipios, setLoadingMunicipios] = useState(false);
 
   // Errores inline por campo
   const [errores, setErrores] = useState({});
 
   useEffect(() => {
-    const cargarMunicipios = async () => {
-      setLoadingMunicipios(true);
-      try {
-        const res = await fetch('https://api-colombia.com/api/v1/Department/18/cities');
-        const data = await res.json();
-        setMunicipios(data.sort((a, b) => a.name.localeCompare(b.name)));
-      } catch {
-        // Si falla la API el campo queda con el valor por defecto
-      } finally {
-        setLoadingMunicipios(false);
-      }
-    };
-    cargarMunicipios();
+    // Lista estática de municipios del Huila — evita dependencia de API externa
+    setMunicipios([
+      { name: 'Acevedo' }, { name: 'Agrado' }, { name: 'Aipe' }, { name: 'Algeciras' },
+      { name: 'Altamira' }, { name: 'Baraya' }, { name: 'Campoalegre' }, { name: 'Colombia' },
+      { name: 'Elías' }, { name: 'Garzón' }, { name: 'Gigante' }, { name: 'Guadalupe' },
+      { name: 'Hobo' }, { name: 'Iquira' }, { name: 'Isnos' }, { name: 'La Argentina' },
+      { name: 'La Plata' }, { name: 'Nataga' }, { name: 'Neiva' }, { name: 'Oporapa' },
+      { name: 'Paicol' }, { name: 'Palermo' }, { name: 'Palestina' }, { name: 'Pital' },
+      { name: 'Pitalito' }, { name: 'Rivera' }, { name: 'Saladoblanco' }, { name: 'San Agustín' },
+      { name: 'Santa María' }, { name: 'Suaza' }, { name: 'Tarqui' }, { name: 'Tello' },
+      { name: 'Teruel' }, { name: 'Tesalia' }, { name: 'Timana' }, { name: 'Villavieja' },
+      { name: 'Yaguará' },
+    ]);
   }, []);
 
   // Paso 2 — Acceso
@@ -143,7 +142,10 @@ const RegisterScreen = ({ navigation }) => {
       });
       setExitoso(true);
     } catch (err) {
-      setError('submit', err.response?.data?.message || 'No se pudo completar el registro.');
+      const msg = err.code === 'ECONNABORTED'
+        ? 'La conexión tardó demasiado. Verifica tu internet e intenta de nuevo.'
+        : err.response?.data?.message || 'No se pudo completar el registro. Intenta de nuevo.';
+      setError('submit', msg);
     } finally {
       setLoading(false);
     }
@@ -198,13 +200,9 @@ const RegisterScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.selector}
             onPress={() => setModalVisible(true)}
-            disabled={loadingMunicipios}
           >
             <Text style={styles.selectorText}>{municipio || 'Selecciona un municipio'}</Text>
-            {loadingMunicipios
-              ? <ActivityIndicator size="small" color={colors.primary} />
-              : <MaterialIcons name="arrow-drop-down" size={24} color={colors.onSurfaceVariant} />
-            }
+            <MaterialIcons name="arrow-drop-down" size={24} color={colors.onSurfaceVariant} />
           </TouchableOpacity>
         </View>
 
