@@ -217,7 +217,7 @@ const RegisterScreen = ({ navigation }) => {
               </View>
               <FlatList
                 data={municipios}
-                keyExtractor={(item) => String(item.id)}
+                keyExtractor={(item) => item.name}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     style={[styles.modalItem, municipio === item.name && styles.modalItemActive]}

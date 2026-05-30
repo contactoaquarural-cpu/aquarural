@@ -37,6 +37,7 @@ npx expo start                 # Iniciar servidor Metro
 npx expo start --tunnel        # Modo túnel (para dispositivo físico con Expo Go)
 npx expo start --android       # Abrir en emulador Android
 npx expo start --ios           # Abrir en simulador iOS (solo Mac)
+npx expo start --clear
 
 # Builds con EAS
 eas build --platform android --profile preview     # APK de prueba

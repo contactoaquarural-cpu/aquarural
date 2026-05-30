@@ -51,10 +51,9 @@ async function calcularMesesSinPagar(asociadoId) {
 
 async function ejecutarJobCrearAportes() {
   const hoy = new Date();
-  // Mes anterior
-  let mes = hoy.getMonth(); // getMonth() es 0-based, así que sin +1 = mes anterior
+  // Mes actual
+  let mes = hoy.getMonth() + 1; // getMonth() es 0-based, +1 = mes actual
   let año = hoy.getFullYear();
-  if (mes === 0) { mes = 12; año--; }
 
   logger.info('Job crear aportes iniciado', { mes, año });
   let creados = 0;

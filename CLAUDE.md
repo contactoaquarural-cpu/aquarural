@@ -129,7 +129,7 @@ plataforma-digital-ganadera/
 | Fase 4 | Panel web administrativo (React + Tailwind CSS) | ✅ Completado |
 | Fase 5 | App móvil completa (React Native + Expo) | ✅ Completado |
 | Fase 6 | Noticias y notificaciones (backend + frontend) | ✅ Completado |
-| Fase 7 | Modo claro/oscuro (web admin + app móvil) | ⬜ Pendiente |
+| Fase 7 | Modo claro/oscuro (web admin + app móvil) | ✅ Completado |
 | Fase 8 | Estadísticas, pruebas y despliegue | ⬜ Pendiente |
 | v2.0 | Ubicación de finca con Google Maps API | ⬜ Versión 2.0 |
 

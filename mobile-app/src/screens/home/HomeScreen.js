@@ -33,7 +33,7 @@ const HomeScreen = () => {
   const navigation    = useNavigation();
   const user          = useAuthStore((s) => s.user);
   const { asociado, finca, isLoading, cargarDatos } = useAsociadoStore();
-  const { aportes, mesesPendientes, cargarHistorial } = usePagosStore();
+  const { mesesPendientes, cargarHistorial } = usePagosStore();
   const [precios,      setPrecios]      = useState([]);
   const [fechaPrecios, setFechaPrecios] = useState(null);
 
@@ -58,8 +58,14 @@ const HomeScreen = () => {
   if (isLoading && !asociado) return <LoadingSpinner message="Cargando tu información..." />;
 
   const styles = makeStyles(colors, typography);
-  const estado = asociado?.estado || user?.estado || 'AL_DIA';
   const nombre = asociado?.nombre || user?.nombre || '';
+
+  // Calcular estado en tiempo real desde los aportes pendientes
+  const estado = (() => {
+    if (mesesPendientes.length === 0) return asociado?.estado || user?.estado || 'AL_DIA';
+    if (mesesPendientes.length >= 3)  return 'INACTIVO';
+    return 'EN_MORA';
+  })();
   const firstName = nombre.split(' ')[0];
 
   return (
@@ -192,72 +198,12 @@ const HomeScreen = () => {
           </View>
         )}
 
-        {/* Próximo aporte */}
-        {mesesPendientes.length > 0 && (
-          <TouchableOpacity
-            style={styles.proximoCard}
-            onPress={() => navigation.navigate('Pagos', { screen: 'Pago', params: { meses: mesesPendientes } })}
-            activeOpacity={0.85}
-          >
-            <View style={styles.proximoLeft}>
-              <MaterialIcons name="calendar-today" size={20} color={colors.tertiary} />
-              <View>
-                <Text style={styles.proximoLabel}>Próximo aporte pendiente</Text>
-                <Text style={styles.proximoMes}>
-                  {MESES[mesesPendientes[0].mes - 1]} {mesesPendientes[0].año}
-                  {mesesPendientes.length > 1 ? ` (+${mesesPendientes.length - 1} más)` : ''}
-                </Text>
-                {mesesPendientes[0].fechaVencimiento && (
-                  <Text style={styles.proximoVence}>
-                    Vence: {new Date(mesesPendientes[0].fechaVencimiento).toLocaleDateString('es-CO', { day: 'numeric', month: 'long' })}
-                  </Text>
-                )}
-              </View>
-            </View>
-            <MaterialIcons name="chevron-right" size={22} color={colors.tertiary} />
-          </TouchableOpacity>
-        )}
-
-        {/* Últimos aportes */}
-        {aportes.length > 0 && (
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Últimos aportes</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Pagos', { screen: 'HistorialPagos' })}>
-                <Text style={styles.sectionLink}>Ver todos</Text>
-              </TouchableOpacity>
-            </View>
-            {aportes.slice(0, 3).map((a) => (
-              <View key={a._id} style={styles.aporteRow}>
-                <View>
-                  <Text style={styles.aporteLabel}>
-                    {MESES[a.mes - 1]} {a.año}
-                  </Text>
-                  <Text style={styles.aporteMetodo}>{a.metodoPago || 'N/A'}</Text>
-                </View>
-                <View style={styles.aporteRight}>
-                  <Text style={[
-                    styles.aporteEstado,
-                    a.estado === 'PAGADO' ? styles.pagado : styles.pendiente,
-                  ]}>
-                    {a.estado === 'PAGADO' ? 'Pagado' : 'Pendiente'}
-                  </Text>
-                  <Text style={styles.aporteNum}>
-                    ${(a.monto || 0).toLocaleString('es-CO')}
-                  </Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
 
         <View style={{ height: spacing.xxl }} />
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
 const makeStyles = (colors, typography) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
@@ -363,24 +309,6 @@ const makeStyles = (colors, typography) => StyleSheet.create({
   },
   sectionLink: { ...typography.small, color: colors.primary, fontWeight: '600' },
 
-  proximoCard: {
-    marginHorizontal: spacing.lg,
-    marginBottom:     spacing.lg,
-    backgroundColor:  colors.tertiaryContainer + '33',
-    borderRadius:     radius.xl,
-    padding:          spacing.lg,
-    flexDirection:    'row',
-    alignItems:       'center',
-    justifyContent:   'space-between',
-    borderWidth:      1,
-    borderColor:      colors.tertiary + '44',
-  },
-  proximoLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, flex: 1 },
-  proximoLabel: { ...typography.label, color: colors.tertiary, marginBottom: 2 },
-  proximoMes:   { ...typography.bodyBold, color: colors.tertiary },
-  proximoVence: { ...typography.small, color: colors.tertiary, marginTop: 2, opacity: 0.8 },
-
-
   preciosCard: {
     marginHorizontal: spacing.lg,
     marginBottom:     spacing.lg,
@@ -418,28 +346,6 @@ const makeStyles = (colors, typography) => StyleSheet.create({
   precioValor:    { ...typography.bodyBold, color: colors.primary },
   precioUnidad:   { ...typography.small, color: colors.onSurfaceVariant },
 
-  section: {
-    marginHorizontal: spacing.lg,
-    backgroundColor:  colors.surfaceContainerLow,
-    borderRadius:     radius.xl,
-    padding:          spacing.lg,
-    marginBottom:     spacing.lg,
-  },
-  aporteRow: {
-    flexDirection:   'row',
-    justifyContent:  'space-between',
-    alignItems:      'center',
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.surfaceContainerHigh,
-  },
-  aporteLabel:  { ...typography.bodyBold },
-  aporteMetodo: { ...typography.small, marginTop: 2 },
-  aporteRight:  { alignItems: 'flex-end', gap: 4 },
-  aporteEstado: { ...typography.label },
-  pagado:       { color: colors.primary },
-  pendiente:    { color: colors.tertiary },
-  aporteNum:    { ...typography.bodyBold },
 });
 
 export default HomeScreen;

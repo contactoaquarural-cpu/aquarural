@@ -44,19 +44,25 @@ const EstadoFinancieroScreen = ({ navigation }) => {
         <View style={styles.summaryCard}>
           <View style={styles.summaryRow}>
             <View style={styles.summaryItem}>
-              <Text style={styles.summaryNum}>{mesesPendientes.length}</Text>
+              <Text style={styles.summaryNum} numberOfLines={1} adjustsFontSizeToFit>
+                {mesesPendientes.length}
+              </Text>
               <Text style={styles.summaryLabel}>Meses{'\n'}pendientes</Text>
             </View>
             <View style={styles.summaryDivider} />
             <View style={styles.summaryItem}>
-              <Text style={[styles.summaryNum, mesesPendientes.length > 0 && { color: colors.tertiary }]}>
+              <Text
+                style={[styles.summaryNum, mesesPendientes.length > 0 && { color: colors.tertiary }]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+              >
                 ${totalPendiente.toLocaleString('es-CO')}
               </Text>
               <Text style={styles.summaryLabel}>Deuda{'\n'}total</Text>
             </View>
             <View style={styles.summaryDivider} />
             <View style={styles.summaryItem}>
-              <Text style={styles.summaryNum}>
+              <Text style={styles.summaryNum} numberOfLines={1} adjustsFontSizeToFit>
                 {aportes.filter((a) => a.estado === 'PAGADO').length}
               </Text>
               <Text style={styles.summaryLabel}>Meses{'\n'}pagados</Text>
@@ -140,8 +146,8 @@ const makeStyles = (colors, typography) => StyleSheet.create({
     gap:              spacing.md,
   },
   summaryRow:     { flexDirection: 'row', alignItems: 'center' },
-  summaryItem:    { flex: 1, alignItems: 'center', gap: 4 },
-  summaryNum:     { ...typography.displayMd, color: colors.primary },
+  summaryItem:    { flex: 1, alignItems: 'center', gap: 4, paddingHorizontal: 4 },
+  summaryNum:     { ...typography.displayMd, color: colors.primary, fontSize: 18, textAlign: 'center' },
   summaryLabel:   { ...typography.label, textAlign: 'center', lineHeight: 14 },
   summaryDivider: { width: 1, height: 40, backgroundColor: colors.outlineVariant },
 
