@@ -21,7 +21,8 @@ const generarFirmaCheckout = (reference, amountInCents) => {
 };
 
 // Verifica la firma del webhook enviado por Wompi
-// SHA256(properties[0_val] + properties[1_val] + ... + timestamp + integrity_secret)
+// SHA256(properties[0_val] + properties[1_val] + ... + timestamp + events_secret)
+// Nota: el webhook usa WOMPI_EVENTS_SECRET, distinto al WOMPI_INTEGRITY_SECRET del checkout
 const verificarFirmaWebhook = (evento) => {
   try {
     const { signature, timestamp, data } = evento;
@@ -40,7 +41,7 @@ const verificarFirmaWebhook = (evento) => {
       cadena += String(valor ?? '');
     }
     cadena += String(timestamp);
-    cadena += process.env.WOMPI_INTEGRITY_SECRET;
+    cadena += process.env.WOMPI_EVENTS_SECRET;
 
     const hash = crypto.createHash('sha256').update(cadena).digest('hex');
     return hash === signature.checksum;

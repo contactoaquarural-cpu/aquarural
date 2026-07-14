@@ -11,7 +11,11 @@ const qrRoutes = require('./routes/qr.routes');
 const conveniosRoutes = require('./routes/convenios.routes');
 const fincasRoutes = require('./routes/fincas.routes');
 const noticiasRoutes = require('./routes/noticias.routes');
-const preciosRoutes  = require('./routes/precios.routes');
+const preciosRoutes        = require('./routes/precios.routes');
+const publicacionesRoutes   = require('./routes/publicaciones.routes');
+const capitulosRoutes       = require('./routes/capitulos.routes');
+const configuracionRoutes   = require('./routes/configuracion.routes');
+const documentosRoutes      = require('./routes/documentos.routes');
 
 const app = express();
 
@@ -56,7 +60,11 @@ app.use('/qr', qrRoutes);
 app.use('/convenios', conveniosRoutes);
 app.use('/fincas', fincasRoutes);
 app.use('/noticias', noticiasRoutes);
-app.use('/precios',  preciosRoutes);
+app.use('/precios',        preciosRoutes);
+app.use('/publicaciones',  publicacionesRoutes);
+app.use('/capitulos',      capitulosRoutes);
+app.use('/configuracion',  configuracionRoutes);
+app.use('/documentos',     documentosRoutes);
 
 // 404 — ruta no encontrada
 app.use((req, res) => {

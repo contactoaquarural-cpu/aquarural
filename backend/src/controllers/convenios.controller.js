@@ -1,5 +1,8 @@
 const { z } = require('zod');
-const Convenio = require('../models/Convenio');
+const Convenio      = require('../models/Convenio');
+const Asociado      = require('../models/Asociado');
+const Notificacion  = require('../models/Notificacion');
+const { enviarNotificacionMasiva } = require('../services/firebase.service');
 const logger = require('../utils/logger');
 
 const convenioSchema = z.object({
@@ -70,6 +73,22 @@ exports.crear = async (req, res) => {
     }
 
     const convenio = await Convenio.create(resultado.data);
+
+    try {
+      const titulo  = '🤝 Nuevo convenio disponible';
+      const mensaje = `Nuevo convenio con ${convenio.nombre}`;
+      const [conToken, todos] = await Promise.all([
+        Asociado.find({ fcmToken: { $exists: true, $ne: null } }).select('fcmToken'),
+        Asociado.find({}).select('_id'),
+      ]);
+      const tokens = conToken.map((a) => a.fcmToken).filter(Boolean);
+      if (tokens.length > 0) await enviarNotificacionMasiva(tokens, titulo, mensaje);
+      const notifDocs = todos.map((a) => ({ asociadoId: a._id, titulo, mensaje, tipo: 'CONVENIO' }));
+      if (notifDocs.length > 0) await Notificacion.insertMany(notifDocs);
+      logger.info('Notificación push enviada por nuevo convenio', { nombre: convenio.nombre, tokens: tokens.length, registros: notifDocs.length });
+    } catch (pushError) {
+      logger.warn('Error al enviar push de nuevo convenio', { error: pushError.message });
+    }
 
     res.status(201).json({
       success: true,

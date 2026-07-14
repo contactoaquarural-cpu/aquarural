@@ -2,10 +2,9 @@ const cron = require('node-cron');
 const Asociado = require('../models/Asociado');
 const Aporte = require('../models/Aporte');
 const Notificacion = require('../models/Notificacion');
+const Configuracion = require('../models/Configuracion');
 const { enviarNotificacion } = require('../services/firebase.service');
 const logger = require('../utils/logger');
-
-const MONTO_MENSUAL = Number(process.env.MONTO_APORTE_MENSUAL) || 50000;
 
 // Retorna los últimos N meses (sin incluir el mes actual)
 function getMesesAnteriores(n) {
@@ -51,14 +50,16 @@ async function calcularMesesSinPagar(asociadoId) {
 
 async function ejecutarJobCrearAportes() {
   const hoy = new Date();
-  // Mes actual
-  let mes = hoy.getMonth() + 1; // getMonth() es 0-based, +1 = mes actual
+  let mes = hoy.getMonth() + 1;
   let año = hoy.getFullYear();
 
   logger.info('Job crear aportes iniciado', { mes, año });
   let creados = 0;
 
   try {
+    const config = await Configuracion.obtener();
+    const MONTO_MENSUAL = config.montoAporte;
+
     const asociados = await Asociado.find({
       estado: { $in: ['AL_DIA', 'EN_MORA'] },
     }).select('_id nombre');

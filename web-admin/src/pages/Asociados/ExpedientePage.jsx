@@ -2,6 +2,13 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api.service';
 
+const DOCS_MAP = {
+  VACUNACION:       { label: 'Certificado Vacunación', icon: 'vaccines' },
+  TITULO_PROPIEDAD: { label: 'Título de Propiedad',   icon: 'home_work' },
+  REGISTRO_ICA:     { label: 'Registro Ganadero ICA', icon: 'verified' },
+  OTRO:             { label: 'Otro documento',         icon: 'description' },
+};
+
 const InfoRow = ({ icon, label, value }) => (
   <div className="flex items-center gap-4">
     <div className="w-10 h-10 rounded-xl bg-surface-container-lowest flex items-center justify-center text-primary flex-shrink-0">
@@ -38,9 +45,15 @@ const ExpedientePage = () => {
     queryFn: () => api.get(`/asociados/${id}/fincas`).then((r) => r.data),
   });
 
-  const asociado = aData?.data;
-  const aportes  = aportesData?.data ?? [];
-  const finca    = fincaData?.data?.[0] ?? null;
+  const { data: docsData } = useQuery({
+    queryKey: ['documentos', id],
+    queryFn: () => api.get(`/documentos/asociado/${id}`).then((r) => r.data),
+  });
+
+  const asociado  = aData?.data;
+  const aportes   = aportesData?.data ?? [];
+  const finca     = fincaData?.data?.[0] ?? null;
+  const documentos = docsData?.data ?? [];
 
   const est = ESTADO_MAP[asociado?.estado] ?? ESTADO_MAP.INACTIVO;
 
@@ -237,33 +250,49 @@ const ExpedientePage = () => {
           </section>
         </div>
 
-        {/* Documentos placeholder */}
+        {/* Documentos */}
         <div className="col-span-12 lg:col-span-3">
           <section className="bg-surface-container-low rounded-3xl p-6 h-full">
             <h3 className="text-sm font-bold text-emerald-500 uppercase tracking-widest mb-6 font-headline">
               Documentación
             </h3>
-            <div className="space-y-4">
-              {['Certificado Vacunación', 'Título de Propiedad', 'Registro Ganadero ICA'].map((doc) => (
-                <div
-                  key={doc}
-                  className="bg-surface-container-lowest p-4 rounded-2xl group cursor-pointer hover:bg-surface-container-highest transition-all"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-900/20 flex items-center justify-center text-emerald-400">
-                      <span className="material-symbols-outlined">description</span>
-                    </div>
-                    <span className="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">
-                      download
-                    </span>
-                  </div>
-                  <p className="text-xs font-bold text-on-surface truncate">{doc}</p>
-                </div>
-              ))}
-              <button className="w-full py-4 border-2 border-dashed border-outline-variant/30 rounded-2xl text-on-surface-variant flex flex-col items-center justify-center gap-1 hover:border-emerald-500/40 hover:text-emerald-400 transition-all">
-                <span className="material-symbols-outlined">add_circle</span>
-                <span className="text-[10px] font-bold uppercase tracking-widest">Cargar Nuevo</span>
-              </button>
+            <div className="space-y-3">
+              {documentos.length === 0 ? (
+                <p className="text-xs text-on-surface-variant text-center py-6">
+                  El asociado no ha subido documentos aún
+                </p>
+              ) : (
+                documentos.map((doc) => {
+                  const def = DOCS_MAP[doc.tipo] ?? DOCS_MAP.OTRO;
+                  return (
+                    <a
+                      key={doc.tipo}
+                      href={doc.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="bg-surface-container-lowest p-4 rounded-2xl flex items-center gap-3 hover:bg-surface-container-highest transition-all group"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-emerald-900/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                        <span className="material-symbols-outlined text-lg">{def.icon}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-on-surface truncate">{def.label}</p>
+                        <p className="text-[10px] text-on-surface-variant">
+                          {new Date(doc.fechaSubida).toLocaleDateString('es-CO')}
+                        </p>
+                      </div>
+                      <span className="material-symbols-outlined text-on-surface-variant text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                        open_in_new
+                      </span>
+                    </a>
+                  );
+                })
+              )}
+              {documentos.length > 0 && (
+                <p className="text-[10px] text-on-surface-variant text-center pt-2">
+                  {documentos.length} de {Object.keys(DOCS_MAP).length - 1} documentos subidos
+                </p>
+              )}
             </div>
           </section>
         </div>

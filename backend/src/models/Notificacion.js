@@ -23,7 +23,7 @@ const notificacionSchema = new mongoose.Schema(
     },
     tipo: {
       type: String,
-      enum: ['MORA', 'NOTICIA', 'CONVENIO', 'SISTEMA'],
+      enum: ['MORA', 'NOTICIA', 'CONVENIO', 'GANADERO_TV', 'PRECIO', 'MERCADO', 'SISTEMA'],
     },
   },
   {

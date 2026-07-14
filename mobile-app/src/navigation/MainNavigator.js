@@ -10,7 +10,6 @@ import { colors, spacing } from '../utils/theme';
 import HomeScreen                from '../screens/home/HomeScreen';
 import EstadoFinancieroScreen    from '../screens/pagos/EstadoFinancieroScreen';
 import HistorialPagosScreen      from '../screens/pagos/HistorialPagosScreen';
-import PagoScreen                from '../screens/pagos/PagoScreen';
 import MiCarneScreen             from '../screens/qr/MiCarneScreen';
 import ConveniosScreen           from '../screens/convenios/ConveniosScreen';
 import DetalleConvenioScreen     from '../screens/convenios/DetalleConvenioScreen';
@@ -19,13 +18,23 @@ import EditarPerfilScreen        from '../screens/perfil/EditarPerfilScreen';
 import DatosFincaScreen          from '../screens/perfil/DatosFincaScreen';
 import UbicacionFincaScreen      from '../screens/perfil/UbicacionFincaScreen';
 import NotificacionesScreen      from '../screens/notificaciones/NotificacionesScreen';
-import NoticiasScreen           from '../screens/noticias/NoticiasScreen';
-import DetalleNoticiaScreen     from '../screens/noticias/DetalleNoticiaScreen';
+import MisDocumentosScreen       from '../screens/perfil/MisDocumentosScreen';
+import NoticiasScreen            from '../screens/noticias/NoticiasScreen';
+import DetalleNoticiaScreen      from '../screens/noticias/DetalleNoticiaScreen';
+
+// Nuevas pantallas — Mercado Ganadero
+import MercadoScreen             from '../screens/mercado/MercadoScreen';
+import DetallePublicacionScreen  from '../screens/mercado/DetallePublicacionScreen';
+import CrearPublicacionScreen    from '../screens/mercado/CrearPublicacionScreen';
+import MisPublicacionesScreen    from '../screens/mercado/MisPublicacionesScreen';
+
+// Explorar (Noticias + Ganadero TV + Convenios agrupados)
+import ExplorarScreen            from '../screens/explorar/ExplorarScreen';
+import ReproductorScreen         from '../screens/ganaderoTV/ReproductorScreen';
 
 const Tab   = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// Icono de tab personalizado
 const TabIcon = ({ symbol, label, focused }) => (
   <View style={[styles.tabIcon, focused && styles.tabIconFocused]}>
     <MaterialIcons
@@ -47,107 +56,107 @@ const stackOptions = {
   animationEnabled: true,
 };
 
-// Stack de Pagos (anidado dentro del tab)
-const PagosStack = () => (
+// ─── Stacks ───────────────────────────────────────────────────────────────────
+
+const HomeStack = () => (
   <Stack.Navigator screenOptions={stackOptions}>
+    <Stack.Screen name="HomeMain"        component={HomeScreen} />
     <Stack.Screen name="EstadoFinanciero" component={EstadoFinancieroScreen} />
     <Stack.Screen name="HistorialPagos"   component={HistorialPagosScreen} />
-    <Stack.Screen name="Pago"             component={PagoScreen} />
   </Stack.Navigator>
 );
 
-// Stack de Noticias
-const NoticiasStack = () => (
+const MercadoStack = () => (
   <Stack.Navigator screenOptions={stackOptions}>
-    <Stack.Screen name="NoticiasList"    component={NoticiasScreen} />
+    <Stack.Screen name="MercadoList"         component={MercadoScreen} />
+    <Stack.Screen name="DetallePublicacion"  component={DetallePublicacionScreen} />
+    <Stack.Screen name="CrearPublicacion"    component={CrearPublicacionScreen} />
+    <Stack.Screen name="MisPublicaciones"    component={MisPublicacionesScreen} />
+  </Stack.Navigator>
+);
+
+const ExplorarStack = () => (
+  <Stack.Navigator screenOptions={stackOptions}>
+    <Stack.Screen name="ExplorarMain"    component={ExplorarScreen} />
     <Stack.Screen name="DetalleNoticia"  component={DetalleNoticiaScreen} />
-  </Stack.Navigator>
-);
-
-// Stack de Convenios
-const ConveniosStack = () => (
-  <Stack.Navigator screenOptions={stackOptions}>
-    <Stack.Screen name="ConveniosList"  component={ConveniosScreen} />
     <Stack.Screen name="DetalleConvenio" component={DetalleConvenioScreen} />
+    <Stack.Screen name="Reproductor"     component={ReproductorScreen} />
   </Stack.Navigator>
 );
 
-// Stack de Perfil
 const PerfilStack = () => (
   <Stack.Navigator screenOptions={stackOptions}>
-    <Stack.Screen name="PerfilMain"    component={PerfilScreen} />
-    <Stack.Screen name="EditarPerfil"  component={EditarPerfilScreen} />
+    <Stack.Screen name="PerfilMain"      component={PerfilScreen} />
+    <Stack.Screen name="EditarPerfil"    component={EditarPerfilScreen} />
     <Stack.Screen name="DatosFinca"      component={DatosFincaScreen} />
     <Stack.Screen name="UbicacionFinca"  component={UbicacionFincaScreen} />
     <Stack.Screen name="Notificaciones"  component={NotificacionesScreen} />
+    <Stack.Screen name="MisPublicaciones" component={MisPublicacionesScreen} />
+    <Stack.Screen name="MisDocumentos"    component={MisDocumentosScreen} />
   </Stack.Navigator>
 );
+
+// ─── Navegador principal (5 tabs) ─────────────────────────────────────────────
 
 const MainNavigator = () => {
   const insets = useSafeAreaInsets();
   return (
-  <Tab.Navigator
-    screenOptions={{
-      headerShown: false,
-      tabBarShowLabel: false,
-      tabBarStyle: [styles.tabBar, { paddingBottom: insets.bottom || spacing.sm, height: 56 + (insets.bottom || 0) }],
-    }}
-  >
-    <Tab.Screen
-      name="Inicio"
-      component={HomeScreen}
-      options={{
-        tabBarIcon: ({ focused }) => (
-          <TabIcon symbol="home" label="Inicio" focused={focused} />
-        ),
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: [
+          styles.tabBar,
+          { paddingBottom: insets.bottom || spacing.sm, height: 56 + (insets.bottom || 0) },
+        ],
       }}
-    />
-    <Tab.Screen
-      name="Pagos"
-      component={PagosStack}
-      options={{
-        tabBarIcon: ({ focused }) => (
-          <TabIcon symbol="payments" label="Pagos" focused={focused} />
-        ),
-      }}
-    />
-    <Tab.Screen
-      name="MiCarne"
-      component={MiCarneScreen}
-      options={{
-        tabBarIcon: ({ focused }) => (
-          <TabIcon symbol="qr-code-2" label="Mi ID" focused={focused} />
-        ),
-      }}
-    />
-    <Tab.Screen
-      name="Beneficios"
-      component={ConveniosStack}
-      options={{
-        tabBarIcon: ({ focused }) => (
-          <TabIcon symbol="storefront" label="Beneficios" focused={focused} />
-        ),
-      }}
-    />
-    <Tab.Screen
-      name="Noticias"
-      component={NoticiasStack}
-      options={{
-        tabBarIcon: ({ focused }) => (
-          <TabIcon symbol="newspaper" label="Noticias" focused={focused} />
-        ),
-      }}
-    />
-    <Tab.Screen
-      name="Perfil"
-      component={PerfilStack}
-      options={{
-        tabBarIcon: ({ focused }) => (
-          <TabIcon symbol="person" label="Perfil" focused={focused} />
-        ),
-      }}
-    />
-  </Tab.Navigator>
+    >
+      <Tab.Screen
+        name="Inicio"
+        component={HomeStack}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon symbol="home" label="Inicio" focused={focused} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Mercado"
+        component={MercadoStack}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon symbol="storefront" label="Mercado" focused={focused} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="MiCarne"
+        component={MiCarneScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon symbol="qr-code-2" label="Mi ID" focused={focused} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Explorar"
+        component={ExplorarStack}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon symbol="explore" label="Explorar" focused={focused} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Perfil"
+        component={PerfilStack}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon symbol="person" label="Perfil" focused={focused} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 

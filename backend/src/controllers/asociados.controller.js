@@ -264,6 +264,40 @@ exports.historialNotificaciones = async (req, res) => {
   }
 };
 
+// ─── PATCH /asociados/:id/notificaciones/:notifId/leer ───────────────────────
+
+exports.marcarNotificacionLeida = async (req, res) => {
+  try {
+    const notif = await Notificacion.findOneAndUpdate(
+      { _id: req.params.notifId, asociadoId: req.params.id },
+      { leido: true },
+      { new: true }
+    );
+    if (!notif) {
+      return res.status(404).json({ success: false, data: null, message: 'Notificación no encontrada' });
+    }
+    res.status(200).json({ success: true, data: notif, message: 'Notificación marcada como leída' });
+  } catch (error) {
+    logger.error('Error al marcar notificación como leída', { error: error.message });
+    res.status(500).json({ success: false, data: null, message: 'Error interno del servidor' });
+  }
+};
+
+// ─── PATCH /asociados/:id/notificaciones/leer-todas ──────────────────────────
+
+exports.marcarTodasLeidas = async (req, res) => {
+  try {
+    const { modifiedCount } = await Notificacion.updateMany(
+      { asociadoId: req.params.id, leido: false },
+      { leido: true }
+    );
+    res.status(200).json({ success: true, data: { marcadas: modifiedCount }, message: `${modifiedCount} notificaciones marcadas como leídas` });
+  } catch (error) {
+    logger.error('Error al marcar todas las notificaciones como leídas', { error: error.message });
+    res.status(500).json({ success: false, data: null, message: 'Error interno del servidor' });
+  }
+};
+
 // ─── POST /asociados/:id/foto ─────────────────────────────────────────────────
 
 exports.subirFoto = async (req, res) => {

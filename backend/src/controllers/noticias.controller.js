@@ -1,5 +1,9 @@
 const { z } = require('zod');
-const Noticia = require('../models/Noticia');
+const Noticia       = require('../models/Noticia');
+const Asociado      = require('../models/Asociado');
+const Notificacion  = require('../models/Notificacion');
+const { enviarNotificacionMasiva } = require('../services/firebase.service');
+const logger = require('../utils/logger');
 
 const noticiaSchema = z.object({
   titulo:    z.string().min(3, 'El título debe tener al menos 3 caracteres').trim(),
@@ -104,6 +108,24 @@ exports.crear = async (req, res) => {
       fechaPublicacion: publicado ? new Date() : undefined,
     });
 
+    if (publicado) {
+      try {
+        const titulo  = '📰 Nueva noticia publicada';
+        const mensaje = noticia.titulo;
+        const [conToken, todos] = await Promise.all([
+          Asociado.find({ fcmToken: { $exists: true, $ne: null } }).select('fcmToken'),
+          Asociado.find({}).select('_id'),
+        ]);
+        const tokens = conToken.map((a) => a.fcmToken).filter(Boolean);
+        if (tokens.length > 0) await enviarNotificacionMasiva(tokens, titulo, mensaje);
+        const notifDocs = todos.map((a) => ({ asociadoId: a._id, titulo, mensaje, tipo: 'NOTICIA' }));
+        if (notifDocs.length > 0) await Notificacion.insertMany(notifDocs);
+        logger.info('Notificación push enviada por nueva noticia', { titulo: noticia.titulo, tokens: tokens.length, registros: notifDocs.length });
+      } catch (pushError) {
+        logger.warn('Error al enviar push de nueva noticia', { error: pushError.message });
+      }
+    }
+
     res.status(201).json({ success: true, data: noticia, message: 'Noticia creada exitosamente' });
   } catch (error) {
     res.status(500).json({ success: false, data: null, message: 'Error interno del servidor' });
@@ -127,13 +149,33 @@ exports.actualizar = async (req, res) => {
       return res.status(404).json({ success: false, data: null, message: 'Noticia no encontrada' });
     }
 
+    const publicandoPorPrimeraVez = resultado.data.publicado && !noticia.publicado;
+
     // Si se publica por primera vez, registrar fecha
-    if (resultado.data.publicado && !noticia.publicado) {
+    if (publicandoPorPrimeraVez) {
       resultado.data.fechaPublicacion = new Date();
     }
 
     Object.assign(noticia, resultado.data);
     await noticia.save();
+
+    if (publicandoPorPrimeraVez) {
+      try {
+        const titulo  = '📰 Nueva noticia publicada';
+        const mensaje = noticia.titulo;
+        const [conToken, todos] = await Promise.all([
+          Asociado.find({ fcmToken: { $exists: true, $ne: null } }).select('fcmToken'),
+          Asociado.find({}).select('_id'),
+        ]);
+        const tokens = conToken.map((a) => a.fcmToken).filter(Boolean);
+        if (tokens.length > 0) await enviarNotificacionMasiva(tokens, titulo, mensaje);
+        const notifDocs = todos.map((a) => ({ asociadoId: a._id, titulo, mensaje, tipo: 'NOTICIA' }));
+        if (notifDocs.length > 0) await Notificacion.insertMany(notifDocs);
+        logger.info('Notificación push enviada al publicar noticia', { titulo: noticia.titulo, tokens: tokens.length, registros: notifDocs.length });
+      } catch (pushError) {
+        logger.warn('Error al enviar push al publicar noticia', { error: pushError.message });
+      }
+    }
 
     res.status(200).json({ success: true, data: noticia, message: 'Noticia actualizada' });
   } catch (error) {

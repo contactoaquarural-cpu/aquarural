@@ -17,12 +17,7 @@ export const useAuthStore = create((set, get) => ({
       const userJson     = await SecureStore.getItemAsync('asoga_user');
 
       if (token && userJson) {
-        set({
-          token,
-          refreshToken,
-          user:      JSON.parse(userJson),
-          isLoading: false,
-        });
+        set({ token, refreshToken, user: JSON.parse(userJson), isLoading: false });
       } else {
         set({ isLoading: false });
       }

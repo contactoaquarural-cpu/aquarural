@@ -7,7 +7,10 @@ const NAV_ITEMS = [
   { to: '/convenios', icon: 'handshake',    label: 'Convenios' },
   { to: '/noticias',  icon: 'newspaper',    label: 'Noticias' },
   { to: '/precios',   icon: 'trending_up',  label: 'Precios' },
-  { to: '/reportes',  icon: 'query_stats',  label: 'Reportes' },
+  { to: '/mercado',     icon: 'storefront',   label: 'Mercado' },
+  { to: '/ganadero-tv', icon: 'live_tv',      label: 'Ganadero TV' },
+  { to: '/reportes',       icon: 'query_stats',  label: 'Reportes' },
+  { to: '/configuracion',  icon: 'settings',     label: 'Configuración' },
 ];
 
 const Sidebar = () => {

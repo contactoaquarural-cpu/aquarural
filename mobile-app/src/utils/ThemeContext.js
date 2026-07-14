@@ -34,3 +34,5 @@ export const useTheme = () => {
   if (!ctx) throw new Error('useTheme debe usarse dentro de ThemeProvider');
   return ctx;
 };
+
+export const useThemeColors = () => useTheme().colors;

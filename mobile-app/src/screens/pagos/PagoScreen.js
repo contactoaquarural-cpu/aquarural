@@ -273,19 +273,48 @@ const PagoScreen = ({ route, navigation }) => {
           </View>
         </View>
 
-        <View style={styles.infoCard}>
-          <MaterialIcons name="lock" size={20} color={colors.primary} />
-          <Text style={styles.infoText}>
-            Pago 100% seguro con Wompi. Puedes pagar con PSE, tarjeta de crédito/débito o Nequi directamente desde la app.
-          </Text>
-        </View>
+        {/* Métodos de pago */}
+        <View style={styles.metodosCard}>
+          <View style={styles.metodosHeader}>
+            <MaterialIcons name="lock" size={16} color={colors.primary} />
+            <Text style={styles.metodosTitle}>Pago 100% seguro · Elige tu método</Text>
+          </View>
 
-        <View style={styles.metodosRow}>
-          {['PSE', 'Nequi', 'Tarjeta'].map((m) => (
-            <View key={m} style={styles.metodoBadge}>
-              <Text style={styles.metodoText}>{m}</Text>
+          {/* Fila 1 — Tarjeta y Nequi */}
+          <View style={styles.metodosRow}>
+            <View style={styles.metodoBadge}>
+              <View style={[styles.metodoLogoBox, { backgroundColor: '#1A1F71' }]}>
+                <MaterialIcons name="credit-card" size={18} color="#fff" />
+              </View>
+              <Text style={styles.metodoText}>Tarjeta</Text>
+              <Text style={styles.metodoSub}>Visa · MC · Amex</Text>
             </View>
-          ))}
+            <View style={styles.metodoBadge}>
+              <View style={[styles.metodoLogoBox, { backgroundColor: '#6A0DAD' }]}>
+                <Text style={styles.metodoLetra}>N</Text>
+              </View>
+              <Text style={styles.metodoText}>Nequi</Text>
+              <Text style={styles.metodoSub}>Billetera digital</Text>
+            </View>
+          </View>
+
+          {/* Fila 2 — DaviPlata y PSE */}
+          <View style={styles.metodosRow}>
+            <View style={styles.metodoBadge}>
+              <View style={[styles.metodoLogoBox, { backgroundColor: '#E8001C' }]}>
+                <Text style={styles.metodoLetra}>D</Text>
+              </View>
+              <Text style={styles.metodoText}>DaviPlata</Text>
+              <Text style={styles.metodoSub}>Billetera digital</Text>
+            </View>
+            <View style={styles.metodoBadge}>
+              <View style={[styles.metodoLogoBox, { backgroundColor: '#00539B' }]}>
+                <Text style={styles.metodoLetra}>PSE</Text>
+              </View>
+              <Text style={styles.metodoText}>PSE</Text>
+              <Text style={styles.metodoSub}>Transferencia banco</Text>
+            </View>
+          </View>
         </View>
 
         <TouchableOpacity
@@ -295,11 +324,15 @@ const PagoScreen = ({ route, navigation }) => {
           activeOpacity={0.85}
         >
           {loading ? (
-            <ActivityIndicator color={colors.primary} />
+            <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.pagarBtnText}>
-              Pagar ${totalMonto.toLocaleString('es-CO')} →
-            </Text>
+            <>
+              <MaterialIcons name="payment" size={20} color="#fff" />
+              <Text style={styles.pagarBtnText}>
+                Pagar ${totalMonto.toLocaleString('es-CO')}
+              </Text>
+              <MaterialIcons name="arrow-forward" size={20} color="#fff" />
+            </>
           )}
         </TouchableOpacity>
       </View>
@@ -358,23 +391,52 @@ const makeStyles = (colors, typography) => StyleSheet.create({
   },
   infoText: { ...typography.small, flex: 1, lineHeight: 18 },
 
-  metodosRow: { flexDirection: 'row', gap: spacing.sm },
-  metodoBadge: {
-    backgroundColor: colors.surfaceContainerHigh,
-    borderRadius:    radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical:   spacing.xs + 2,
+  metodosCard: {
+    backgroundColor: colors.surfaceContainerLow,
+    borderRadius:    radius.xl,
+    padding:         spacing.lg,
+    gap:             spacing.md,
   },
-  metodoText: { ...typography.label, color: colors.onSurfaceVariant },
+  metodosHeader: {
+    flexDirection: 'row',
+    alignItems:    'center',
+    gap:           spacing.xs,
+  },
+  metodosTitle: { ...typography.label, color: colors.onSurfaceVariant, fontWeight: '600' },
+  metodosRow:   { flexDirection: 'row', gap: spacing.sm },
+  metodoBadge: {
+    flex:            1,
+    alignItems:      'center',
+    gap:             4,
+    backgroundColor: colors.surfaceContainerHigh,
+    borderRadius:    radius.lg,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xs,
+  },
+  metodoLogoBox: {
+    width:           44,
+    height:          44,
+    borderRadius:    radius.md,
+    backgroundColor: '#E8F5E9',
+    alignItems:      'center',
+    justifyContent:  'center',
+  },
+  metodoLetra: { fontSize: 13, fontWeight: '900', color: '#fff', letterSpacing: -0.5 },
+  metodoText:  { ...typography.small, fontWeight: '700', color: colors.onSurface, marginTop: 2 },
+  metodoSub:   { fontSize: 10, color: colors.onSurfaceVariant, textAlign: 'center' },
 
   pagarBtn: {
-    backgroundColor: colors.primaryContainer,
-    borderRadius:    radius.lg,
-    paddingVertical: spacing.md + 4,
-    alignItems:      'center',
-    marginTop:       'auto',
+    backgroundColor:   colors.primary,
+    borderRadius:      radius.lg,
+    paddingVertical:   spacing.md + 4,
+    paddingHorizontal: spacing.lg,
+    flexDirection:     'row',
+    alignItems:        'center',
+    justifyContent:    'center',
+    gap:               spacing.sm,
+    marginTop:         'auto',
   },
-  pagarBtnText: { ...typography.h3, color: colors.primary },
+  pagarBtnText: { ...typography.h3, color: '#fff', flex: 1, textAlign: 'center' },
 
   webHeader: {
     flexDirection:     'row',

@@ -1,5 +1,8 @@
 const { z } = require('zod');
-const Precio = require('../models/Precio');
+const Precio        = require('../models/Precio');
+const Asociado      = require('../models/Asociado');
+const Notificacion  = require('../models/Notificacion');
+const { enviarNotificacionMasiva } = require('../services/firebase.service');
 const logger = require('../utils/logger');
 
 const precioSchema = z.object({
@@ -45,6 +48,28 @@ exports.actualizar = async (req, res) => {
     }
     const precio = await Precio.findByIdAndUpdate(req.params.id, resultado.data, { new: true });
     if (!precio) return res.status(404).json({ success: false, data: null, message: 'Precio no encontrado' });
+
+    try {
+      const categorias = { GANADO_CARNE: 'Ganado de carne', GANADO_LECHE: 'Ganado de leche', INSUMOS: 'Insumos agropecuarios' };
+      const titulo  = '💰 Actualización de precios';
+      const mensaje = `Se actualizó el precio de ${precio.producto} (${categorias[precio.categoria] || precio.categoria})`;
+
+      const [conToken, todos] = await Promise.all([
+        Asociado.find({ fcmToken: { $exists: true, $ne: null } }).select('fcmToken'),
+        Asociado.find({}).select('_id'),
+      ]);
+
+      const tokens = conToken.map((a) => a.fcmToken).filter(Boolean);
+      if (tokens.length > 0) await enviarNotificacionMasiva(tokens, titulo, mensaje);
+
+      const notifDocs = todos.map((a) => ({ asociadoId: a._id, titulo, mensaje, tipo: 'PRECIO' }));
+      if (notifDocs.length > 0) await Notificacion.insertMany(notifDocs);
+
+      logger.info('Notificación push enviada por actualización de precio', { producto: precio.producto, tokens: tokens.length, registros: notifDocs.length });
+    } catch (pushError) {
+      logger.warn('Error al enviar push de actualización de precio', { error: pushError.message });
+    }
+
     res.status(200).json({ success: true, data: precio, message: 'Precio actualizado exitosamente' });
   } catch (error) {
     logger.error('Error al actualizar precio', { error: error.message });

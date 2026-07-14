@@ -160,7 +160,7 @@ const ConveniosScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <Text style={styles.title}>Convenios y Beneficios</Text>
+        <Text style={styles.title}>Convenios</Text>
         <Text style={styles.subtitle}>{convenios.length} aliados activos</Text>
       </View>
 

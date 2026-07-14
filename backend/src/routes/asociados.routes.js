@@ -15,6 +15,8 @@ router.post('/:id/foto', verifyToken, handleUpload, asociadosController.subirFot
 router.get('/:id/qr', verifyToken, asociadosController.obtenerQR);
 router.get('/:id/fincas', verifyToken, fincasController.listarPorAsociado);
 router.get('/:id/aportes', verifyToken, asociadosController.historialAportes);
-router.get('/:id/notificaciones', verifyToken, asociadosController.historialNotificaciones);
+router.get('/:id/notificaciones',                             verifyToken, asociadosController.historialNotificaciones);
+router.patch('/:id/notificaciones/leer-todas',                verifyToken, asociadosController.marcarTodasLeidas);
+router.patch('/:id/notificaciones/:notifId/leer',             verifyToken, asociadosController.marcarNotificacionLeida);
 
 module.exports = router;

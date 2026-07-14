@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
-  StyleSheet, Image, Switch,
+  StyleSheet, Image, Switch, Linking, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -21,6 +21,26 @@ const PerfilScreen = ({ navigation }) => {
   const { asociado, cargarDatos } = useAsociadoStore();
   const { show, toastProps } = useToast();
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const [telefono, setTelefono] = useState('3166160377');
+
+  useEffect(() => {
+    api.get('/configuracion').then((r) => {
+      if (r.data.data?.telefonoContacto) setTelefono(r.data.data.telefonoContacto);
+    }).catch(() => {});
+  }, []);
+
+  const handleContactar = () => {
+    const numero = telefono.replace(/\D/g, '');
+    Alert.alert(
+      'Contactar a ASOGACENTRO',
+      `¿Cómo deseas comunicarte?\n📞 ${telefono}`,
+      [
+        { text: '📞 Llamar',      onPress: () => Linking.openURL(`tel:${numero}`) },
+        { text: '💬 WhatsApp',    onPress: () => Linking.openURL(`https://wa.me/57${numero}`) },
+        { text: 'Cancelar',       style: 'cancel' },
+      ]
+    );
+  };
 
   const datos  = asociado || user;
   const nombre = datos?.nombre || '';
@@ -113,6 +133,8 @@ const PerfilScreen = ({ navigation }) => {
               onPress={() => navigation.navigate('UbicacionFinca')} colors={colors} typography={typography} />
             <MenuRow icon="notifications" label="Notificaciones" sublabel="Historial de avisos"
               onPress={() => navigation.navigate('Notificaciones')} colors={colors} typography={typography} />
+            <MenuRow icon="folder" label="Mis documentos" sublabel="Vacunación, título, registro ICA"
+              onPress={() => navigation.navigate('MisDocumentos')} colors={colors} typography={typography} />
           </View>
         </View>
 
@@ -146,8 +168,8 @@ const PerfilScreen = ({ navigation }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Soporte</Text>
           <View style={styles.menuCard}>
-            <MenuRow icon="phone" label="Contactar a ASOGACENTRO" sublabel="316 616 0377"
-              onPress={() => {}} colors={colors} typography={typography} />
+            <MenuRow icon="phone" label="Contactar a ASOGACENTRO" sublabel={telefono}
+              onPress={handleContactar} colors={colors} typography={typography} />
           </View>
         </View>
 

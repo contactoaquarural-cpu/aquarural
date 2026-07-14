@@ -39,8 +39,12 @@ npx expo start --android       # Abrir en emulador Android
 npx expo start --ios           # Abrir en simulador iOS (solo Mac)
 npx expo start --clear
 
+# Conectar desde Expo Go (ingresar URL manual en la app)
+# exp://192.168.100.133:8081
+
 # Builds con EAS
-eas build --platform android --profile preview     # APK de prueba
+eas login                                          # Iniciar sesión en Expo (primera vez)
+eas build --platform android --profile preview     # APK de prueba (10-15 min)
 eas build --platform android --profile production  # Build Play Store
 eas submit --platform android                      # Subir a Google Play
 ```

@@ -259,6 +259,30 @@ exports.validarReset = async (req, res) => {
   }
 };
 
+// ─── POST /auth/reset/:token ─────────────────────────────────────────────────
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const decoded = verifyResetToken(req.params.token);
+
+    if (decoded.tipo !== 'reset') {
+      return res.status(400).json({ success: false, data: null, message: 'Token inválido' });
+    }
+
+    const { passwordNuevo } = req.body;
+    if (!passwordNuevo || passwordNuevo.length < 6) {
+      return res.status(400).json({ success: false, data: null, message: 'La contraseña debe tener al menos 6 caracteres' });
+    }
+
+    const hash = await bcrypt.hash(passwordNuevo, 10);
+    await Asociado.findByIdAndUpdate(decoded.id, { password: hash });
+
+    res.status(200).json({ success: true, data: null, message: 'Contraseña actualizada exitosamente' });
+  } catch (error) {
+    res.status(400).json({ success: false, data: null, message: 'Token inválido o expirado' });
+  }
+};
+
 // ─── PUT /auth/cambiar-password ──────────────────────────────────────────────
 
 exports.cambiarPassword = async (req, res) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
   StyleSheet, RefreshControl,
@@ -6,7 +6,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import api from '../../services/api.service';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useAuthStore }     from '../../store/auth.store';
 import { useAsociadoStore } from '../../store/asociado.store';
 import { usePagosStore }    from '../../store/pagos.store';
@@ -36,12 +36,19 @@ const HomeScreen = () => {
   const { mesesPendientes, cargarHistorial } = usePagosStore();
   const [precios,      setPrecios]      = useState([]);
   const [fechaPrecios, setFechaPrecios] = useState(null);
+  const [sinLeer,      setSinLeer]      = useState(0);
 
   useEffect(() => {
     cargarDatos();
     cargarHistorial();
     cargarPrecios();
   }, []);
+
+  useFocusEffect(useCallback(() => {
+    cargarSinLeer();
+    const intervalo = setInterval(cargarSinLeer, 30000);
+    return () => clearInterval(intervalo);
+  }, []));
 
   const cargarPrecios = async () => {
     try {
@@ -52,6 +59,17 @@ const HomeScreen = () => {
       }
     } catch {
       // Widget se oculta si no hay precios
+    }
+  };
+
+  const cargarSinLeer = async () => {
+    try {
+      const id = user?._id;
+      if (!id) return;
+      const { data } = await api.get(`/asociados/${id}/notificaciones`, { params: { leido: false, limit: 50 } });
+      setSinLeer(data.data?.length ?? 0);
+    } catch {
+      // Sin conexión — no mostrar badge
     }
   };
 
@@ -75,7 +93,7 @@ const HomeScreen = () => {
         refreshControl={
           <RefreshControl
             refreshing={isLoading}
-            onRefresh={() => { cargarDatos(); cargarHistorial(); cargarPrecios(); }}
+            onRefresh={() => { cargarDatos(); cargarHistorial(); cargarPrecios(); cargarSinLeer(); }}
             tintColor={colors.primary}
           />
         }
@@ -88,9 +106,14 @@ const HomeScreen = () => {
           </View>
           <TouchableOpacity
             style={styles.notifBtn}
-            onPress={() => navigation.navigate('Perfil', { screen: 'Notificaciones' })}
+            onPress={() => { navigation.navigate('Perfil', { screen: 'Notificaciones' }); setSinLeer(0); }}
           >
             <Text style={styles.notifIcon}>🔔</Text>
+            {sinLeer > 0 && (
+              <View style={styles.notifBadge}>
+                <Text style={styles.notifBadgeText}>{sinLeer > 99 ? '99+' : sinLeer}</Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -109,9 +132,12 @@ const HomeScreen = () => {
           {estado !== 'AL_DIA' && (
             <TouchableOpacity
               style={styles.pagarAhoraBtn}
-              onPress={() => navigation.navigate('Pagos')}
+              onPress={() => navigation.navigate('EstadoFinanciero')}
+              activeOpacity={0.85}
             >
-              <Text style={styles.pagarAhoraText}>Pagar ahora →</Text>
+              <MaterialIcons name="payment" size={18} color={colors.onPrimary} />
+              <Text style={styles.pagarAhoraText}>Pagar ahora</Text>
+              <MaterialIcons name="arrow-forward" size={18} color={colors.onPrimary} />
             </TouchableOpacity>
           )}
         </View>
@@ -227,6 +253,26 @@ const makeStyles = (colors, typography) => StyleSheet.create({
     justifyContent:  'center',
   },
   notifIcon: { fontSize: 18 },
+  notifBadge: {
+    position:        'absolute',
+    top:             -4,
+    right:           -4,
+    backgroundColor: colors.error,
+    borderRadius:    radius.full,
+    minWidth:        18,
+    height:          18,
+    alignItems:      'center',
+    justifyContent:  'center',
+    paddingHorizontal: 4,
+    borderWidth:     2,
+    borderColor:     colors.background,
+  },
+  notifBadgeText: {
+    fontSize:   10,
+    fontWeight: '800',
+    color:      '#fff',
+    lineHeight: 14,
+  },
 
   estadoCard: {
     marginHorizontal: spacing.lg,
@@ -248,12 +294,17 @@ const makeStyles = (colors, typography) => StyleSheet.create({
   estadoNum:      { ...typography.displayMd, color: colors.tertiary },
   estadoNumLabel: { ...typography.label, textAlign: 'right', lineHeight: 14 },
   pagarAhoraBtn: {
-    backgroundColor: colors.tertiaryContainer,
-    borderRadius:    radius.md,
+    backgroundColor:   colors.primary,
+    borderRadius:      radius.md,
     paddingVertical:   spacing.sm,
+    paddingHorizontal: spacing.lg,
+    flexDirection:     'row',
     alignItems:        'center',
+    justifyContent:    'center',
+    gap:               spacing.sm,
+    marginTop:         spacing.sm,
   },
-  pagarAhoraText: { ...typography.bodyBold, color: colors.tertiary },
+  pagarAhoraText: { ...typography.bodyBold, color: colors.onPrimary },
 
   fincaCard: {
     marginHorizontal: spacing.lg,

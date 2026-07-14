@@ -51,8 +51,16 @@ const asociadoSchema = new mongoose.Schema(
     },
     ultimoAcceso: {
       type: Date,
-      default: null, // Se actualiza en cada login
+      default: null,
     },
+    documentos: [
+      {
+        tipo:        { type: String, enum: ['VACUNACION', 'TITULO_PROPIEDAD', 'REGISTRO_ICA', 'OTRO'], required: true },
+        url:         { type: String, required: true },
+        publicId:    { type: String },
+        fechaSubida: { type: Date, default: Date.now },
+      },
+    ],
   },
   {
     timestamps: true,

@@ -49,7 +49,9 @@
         {
           "color": "#1A7A3C"
         }
-      ]
+      ],
+      "expo-video",
+      "expo-web-browser"
     ],
     "extra": {
       "eas": {

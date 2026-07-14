@@ -108,7 +108,7 @@ const MiCarneScreen = ({ navigation }) => {
               </Text>
               <TouchableOpacity
                 style={styles.moraBtn}
-                onPress={() => navigation.navigate('Pagos')}
+                onPress={() => navigation.navigate('Inicio', { screen: 'EstadoFinanciero' })}
                 activeOpacity={0.85}
               >
                 <Text style={styles.moraBtnText}>Ponerse al día →</Text>
