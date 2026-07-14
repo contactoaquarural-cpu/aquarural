@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, FlatList, TouchableOpacity, Image,
   StyleSheet, ActivityIndicator, RefreshControl, ScrollView,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useThemeColors } from '../../utils/ThemeContext';
+import { useFocusEffect } from '@react-navigation/native';
 
 const CATEGORIAS = [
   { key: 'TODOS',   label: 'Todos',    icon: 'grid-view' },
@@ -48,10 +49,15 @@ const MercadoScreen = ({ navigation }) => {
     }
   }, [categoria]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setLoading(true);
     cargar(categoria, 1, true);
   }, [categoria]);
+
+  useFocusEffect(useCallback(() => {
+    setLoading(true);
+    cargar(categoria, 1, true);
+  }, [categoria]));
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -103,13 +109,22 @@ const MercadoScreen = ({ navigation }) => {
       {/* Header */}
       <View style={s.header}>
         <Text style={s.headerTitle}>Mercado</Text>
-        <TouchableOpacity
-          style={s.btnPublicar}
-          onPress={() => navigation.navigate('CrearPublicacion')}
-        >
-          <MaterialIcons name="add" size={18} color={colors.onPrimary} />
-          <Text style={s.btnPublicarText}>Publicar</Text>
-        </TouchableOpacity>
+        <View style={s.headerBtns}>
+          <TouchableOpacity
+            style={s.btnMisAvisos}
+            onPress={() => navigation.navigate('MisPublicaciones')}
+          >
+            <MaterialIcons name="list-alt" size={18} color={colors.primary} />
+            <Text style={s.btnMisAvisosText}>Mis avisos</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={s.btnPublicar}
+            onPress={() => navigation.navigate('CrearPublicacion')}
+          >
+            <MaterialIcons name="add" size={18} color={colors.onPrimary} />
+            <Text style={s.btnPublicarText}>Publicar</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Filtros de categoría */}
@@ -172,6 +187,9 @@ const styles = (c) => StyleSheet.create({
   container:        { flex: 1, backgroundColor: c.background },
   header:           { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 56, paddingBottom: 12 },
   headerTitle:      { fontSize: 24, fontWeight: '700', color: c.onSurface },
+  headerBtns:       { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  btnMisAvisos:     { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: c.surfaceContainer, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20 },
+  btnMisAvisosText: { color: c.primary, fontSize: 13, fontWeight: '700' },
   btnPublicar:      { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: c.primary, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20 },
   btnPublicarText:  { color: c.onPrimary, fontSize: 13, fontWeight: '700' },
   filtrosWrapper:   { flexGrow: 0 },
