@@ -13,6 +13,7 @@ import EstadoBadge    from '../../components/EstadoBadge';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { useTheme }   from '../../utils/ThemeContext';
 import { spacing, radius } from '../../utils/theme';
+import api from '../../services/api.service';
 
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
@@ -90,11 +91,17 @@ const EstadoFinancieroScreen = ({ navigation }) => {
   const { aportes, mesesPendientes, isLoading, cargarHistorial, iniciarPago } = usePagosStore();
   const { cargarDatos } = useAsociadoStore();
 
-  const [iniciando,  setIniciando]  = useState(false);
-  const [checkout,   setCheckout]   = useState(null);  // abre modal Wompi
-  const [resultado,  setResultado]  = useState(null);  // 'exito' | 'error'
+  const [iniciando,      setIniciando]      = useState(false);
+  const [checkout,       setCheckout]       = useState(null);  // abre modal Wompi
+  const [resultado,      setResultado]      = useState(null);  // 'exito' | 'error'
+  const [montoConfigura, setMontoConfigura] = useState(50000);
 
-  useEffect(() => { cargarHistorial(); }, []);
+  useEffect(() => {
+    cargarHistorial();
+    api.get('/configuracion').then((r) => {
+      if (r.data.data?.montoAporte) setMontoConfigura(r.data.data.montoAporte);
+    }).catch(() => {});
+  }, []);
 
   if (isLoading && aportes.length === 0) return <LoadingSpinner />;
 
@@ -106,7 +113,7 @@ const EstadoFinancieroScreen = ({ navigation }) => {
   const handlePagar = async () => {
     setIniciando(true);
     try {
-      const payload = mesesPendientes.map((m) => ({ mes: m.mes, año: m.año, monto: m.monto || 50000 }));
+      const payload = mesesPendientes.map((m) => ({ mes: m.mes, año: m.año, monto: m.monto || montoConfigura }));
       const data = await iniciarPago(payload);
       setCheckout(data);
     } catch {

@@ -1,5 +1,6 @@
 const { z } = require('zod');
 const Configuracion = require('../models/Configuracion');
+const Aporte        = require('../models/Aporte');
 
 const schemaActualizar = z.object({
   montoAporte:      z.number({ invalid_type_error: 'montoAporte debe ser un número' }).min(1000, 'El monto mínimo es $1.000').optional(),
@@ -27,8 +28,17 @@ const actualizar = async (req, res) => {
     }
 
     const config = await Configuracion.obtener();
+    const montoAnterior = config.montoAporte;
     Object.assign(config, parsed.data);
     await config.save();
+
+    // Si cambió el monto, actualizar aportes PENDIENTES que traían el monto anterior
+    if (parsed.data.montoAporte && parsed.data.montoAporte !== montoAnterior) {
+      await Aporte.updateMany(
+        { estado: 'PENDIENTE', monto: montoAnterior },
+        { monto: parsed.data.montoAporte }
+      );
+    }
 
     res.json({ success: true, message: 'Configuración actualizada', data: config });
   } catch (err) {
