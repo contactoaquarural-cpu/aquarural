@@ -22,7 +22,7 @@ exports.listar = async (req, res) => {
 
     // Conteo por respuesta para cada evento
     const respuestas = await Notificacion.aggregate([
-      { $match: { eventoId: { $in: eventoIds }, tipo: 'EVENTO', leido: true } },
+      { $match: { eventoId: { $in: eventoIds }, tipo: 'EVENTO', respuesta: { $ne: null } } },
       { $group: { _id: { eventoId: '$eventoId', respuesta: '$respuesta' }, total: { $sum: 1 } } },
     ]);
 
@@ -68,7 +68,7 @@ exports.misEventos = async (req, res) => {
       const notif = notifMap[e._id.toString()];
       return {
         ...e.toObject(),
-        respondida: notif?.leido    || false,
+        respondida: !!notif?.respuesta,
         respuesta:  notif?.respuesta || null,
       };
     });
