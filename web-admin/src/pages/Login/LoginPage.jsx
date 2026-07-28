@@ -55,13 +55,9 @@ const LoginPage = () => {
               <span className="text-on-primary-container">ganadería digital.</span>
             </h1>
 
-            {/* Imagen — ocupa el espacio disponible */}
-            <div className="flex-1 min-h-0 rounded-2xl overflow-hidden bg-surface-container-low mb-6">
-              <div className="w-full h-full bg-gradient-to-br from-primary-container to-emerald-900 flex items-center justify-center">
-                <span className="material-symbols-outlined text-primary opacity-20" style={{ fontSize: '8rem' }}>
-                  agriculture
-                </span>
-              </div>
+            {/* Logo central */}
+            <div className="flex-1 min-h-0 rounded-2xl overflow-hidden bg-surface-container-low mb-6 flex items-center justify-center">
+              <img src="/logo.png" alt="GanaderoPro" className="w-3/4 max-w-xs object-contain" />
             </div>
 
             {/* Stats */}
@@ -84,14 +80,7 @@ const LoginPage = () => {
 
             {/* Brand */}
             <div className="flex flex-col items-center md:items-start mb-12">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary-container to-primary-container/60 rounded-xl flex items-center justify-center mb-6 shadow-lg rotate-3">
-                <span
-                  className="material-symbols-outlined text-primary text-4xl"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  agriculture
-                </span>
-              </div>
+              <img src="/logo.png" alt="GanaderoPro" className="h-14 w-auto object-contain mb-6" />
               <div className="text-center md:text-left">
                 <h2 className="text-3xl font-extrabold text-primary tracking-tight mb-2 font-headline">
                   Plataforma Digital Ganadera
