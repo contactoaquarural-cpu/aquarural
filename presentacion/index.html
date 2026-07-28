@@ -106,6 +106,7 @@
       align-items: center;
       text-align: center;
       position: relative;
+      gap: 0;
     }
     #s1::before {
       content: '';
@@ -115,51 +116,53 @@
       pointer-events: none;
     }
     .cover-logo {
-      width: 90px; height: 90px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.12);
-      border: 2px solid rgba(255,255,255,0.25);
+      width: 120px; height: 120px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.10);
+      border: 2px solid rgba(255,255,255,0.20);
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 2rem;
-      font-size: 2.8rem;
+      overflow: hidden;
+      padding: 10px;
+    }
+    .cover-logo img {
+      width: 100%; height: 100%;
+      object-fit: contain;
     }
     .cover-title {
       font-family: Georgia, 'Times New Roman', serif;
-      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
       font-weight: 700;
-      line-height: 1.1;
+      line-height: 1.12;
       text-wrap: balance;
-      margin-bottom: 1rem;
+      margin-bottom: 1.25rem;
       color: #fff;
     }
     .cover-sub {
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      color: rgba(255,255,255,0.72);
-      max-width: 540px;
-      line-height: 1.5;
-      margin-bottom: 2.5rem;
+      font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+      color: rgba(255,255,255,0.70);
+      max-width: 520px;
+      line-height: 1.55;
+      margin-bottom: 2rem;
     }
     .cover-badge {
       display: inline-block;
       background: var(--primary);
       color: #fff;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       padding: 0.4rem 1.1rem;
       border-radius: 999px;
+      margin-bottom: 1rem;
     }
     .cover-by {
-      position: absolute;
-      bottom: 5.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255,255,255,0.4);
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      white-space: nowrap;
+      color: rgba(255,255,255,0.35);
+      margin-top: 0.25rem;
     }
 
     /* ── SLIDE BASE ── */
@@ -354,7 +357,9 @@
 
   <!-- SLIDE 1: PORTADA -->
   <div class="slide active" id="s1">
-    <div class="cover-logo">🐄</div>
+    <div class="cover-logo">
+      <img src="../web-admin/public/logo.png" alt="GanaderoPro" />
+    </div>
     <div class="cover-title">La plataforma digital<br>para tu asociación ganadera</div>
     <p class="cover-sub">App móvil para asociados + Panel administrativo + Landing page pública. Todo en uno, listo para operar.</p>
     <span class="cover-badge">GanaderoPro · MVP 2026</span>
