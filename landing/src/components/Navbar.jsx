@@ -25,7 +25,7 @@ const Navbar = ({ config }) => {
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <a href="#hero" className="flex items-center gap-3">
-          <img src="/images/logo.png" alt="GanaderoPro" className="h-8 w-auto" />
+          <img src="/images/logo.png" alt="GanaderoPro" className="h-14 w-auto rounded-lg" />
         </a>
 
         {/* Links desktop */}

@@ -14,6 +14,11 @@ const Hero = ({ config }) => {
         style={{ backgroundImage: 'radial-gradient(#5BB893 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <img src="/images/logo.png" alt="GanaderoPro" className="h-24 w-auto rounded-2xl shadow-xl" />
+        </div>
+
         {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-4 py-2 rounded-full mb-8">
           <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
