@@ -11,10 +11,10 @@ const Navbar = ({ config }) => {
   }, []);
 
   const links = [
-    { label: 'Nosotros',  href: '#nosotros' },
     { label: 'Módulos',   href: '#modulos' },
     { label: 'Noticias',  href: '#noticias' },
     { label: 'Convenios', href: '#convenios' },
+    { label: 'Precios',   href: '#precios' },
     { label: 'Contacto',  href: '#contacto' },
   ];
 

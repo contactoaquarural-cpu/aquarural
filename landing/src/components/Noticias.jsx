@@ -7,7 +7,15 @@ const CATEGORIA_COLORS = {
 };
 
 const Noticias = ({ noticias }) => {
-  if (!noticias?.length) return null;
+  if (!noticias?.length) return (
+    <section id="noticias" className="section-pad bg-dark-card border-y border-dark-border">
+      <div className="max-w-7xl mx-auto text-center">
+        <span className="text-primary text-sm font-semibold uppercase tracking-widest">Actualidad</span>
+        <h2 className="text-3xl md:text-4xl font-extrabold text-white mt-2">Noticias del sector</h2>
+        <p className="text-gray-500 mt-6">Próximamente noticias del sector ganadero.</p>
+      </div>
+    </section>
+  );
 
   return (
     <section id="noticias" className="section-pad bg-dark-card border-y border-dark-border">

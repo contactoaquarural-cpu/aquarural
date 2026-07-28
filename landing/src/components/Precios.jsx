@@ -4,7 +4,7 @@ const Precios = ({ precios }) => {
   const ultimo = precios[0];
 
   return (
-    <section className="section-pad bg-dark-card border-y border-dark-border">
+    <section id="precios" className="section-pad bg-dark-card border-y border-dark-border">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <span className="text-primary text-sm font-semibold uppercase tracking-widest">Mercado</span>

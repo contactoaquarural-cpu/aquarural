@@ -1,5 +1,13 @@
 const Convenios = ({ convenios }) => {
-  if (!convenios?.length) return null;
+  if (!convenios?.length) return (
+    <section id="convenios" className="section-pad max-w-7xl mx-auto">
+      <div className="text-center">
+        <span className="text-primary text-sm font-semibold uppercase tracking-widest">Beneficios</span>
+        <h2 className="text-3xl md:text-4xl font-extrabold text-white mt-2">Convenios exclusivos</h2>
+        <p className="text-gray-500 mt-6">Próximamente convenios disponibles para asociados.</p>
+      </div>
+    </section>
+  );
 
   return (
     <section id="convenios" className="section-pad max-w-7xl mx-auto">
