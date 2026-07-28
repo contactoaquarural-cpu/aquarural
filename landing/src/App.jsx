@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getConfiguracion, getNoticias, getConvenios, getPrecios } from './services/api';
+import { ThemeProvider } from './utils/ThemeContext';
 import Navbar    from './components/Navbar';
 import Hero      from './components/Hero';
 import Stats     from './components/Stats';
@@ -40,17 +41,19 @@ const App = () => {
   }, [config]);
 
   return (
-    <div className="min-h-screen bg-dark">
-      <Navbar    config={config} />
-      <Hero      config={config} />
-      <Stats     stats={stats} />
-      <Modulos   />
-      <Noticias  noticias={noticias} />
-      <Convenios convenios={convenios} />
-      <Precios   precios={precios} />
-      <Contacto  config={config} />
-      <Footer    config={config} />
-    </div>
+    <ThemeProvider>
+      <div className="min-h-screen bg-dark">
+        <Navbar    config={config} />
+        <Hero      config={config} />
+        <Stats     stats={stats} />
+        <Modulos   />
+        <Noticias  noticias={noticias} />
+        <Convenios convenios={convenios} />
+        <Precios   precios={precios} />
+        <Contacto  config={config} />
+        <Footer    config={config} />
+      </div>
+    </ThemeProvider>
   );
 };
 

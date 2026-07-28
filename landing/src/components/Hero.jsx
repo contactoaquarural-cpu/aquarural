@@ -1,13 +1,25 @@
+import { useTheme } from '../utils/ThemeContext';
+
 const Hero = ({ config }) => {
   const nombre    = config?.nombreAsociacion || 'Tu Asociación Ganadera';
   const municipio = config?.municipio || '';
   const telefono  = config?.telefonoContacto || '';
+  const { isDark } = useTheme();
 
   return (
     <section id="hero" className="min-h-screen flex items-center justify-center relative overflow-hidden">
       {/* Fondo con gradiente */}
-      <div className="absolute inset-0 bg-gradient-to-br from-dark via-dark to-[#0d2018] z-0" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_#5BB89322,_transparent_60%)] z-0" />
+      {isDark ? (
+        <>
+          <div className="absolute inset-0 bg-gradient-to-br from-dark via-dark to-[#0d2018] z-0" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_#5BB89322,_transparent_60%)] z-0" />
+        </>
+      ) : (
+        <>
+          <div className="absolute inset-0 bg-gradient-to-br from-[#f4f6f4] via-[#eef2ef] to-[#ddeee5] z-0" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_#5BB89315,_transparent_60%)] z-0" />
+        </>
+      )}
 
       {/* Patrón de puntos */}
       <div className="absolute inset-0 opacity-5 z-0"
@@ -39,7 +51,11 @@ const Hero = ({ config }) => {
             Quiero asociarme
           </a>
           <a href="#modulos"
-            className="w-full sm:w-auto border border-dark-border hover:border-primary text-gray-300 hover:text-primary font-semibold px-8 py-4 rounded-xl transition-all text-base">
+            className={`w-full sm:w-auto border font-semibold px-8 py-4 rounded-xl transition-all text-base ${
+              isDark
+                ? 'border-dark-border hover:border-primary text-gray-300 hover:text-primary'
+                : 'border-gray-300 hover:border-primary text-gray-600 hover:text-primary'
+            }`}>
             Conocer más
           </a>
         </div>
