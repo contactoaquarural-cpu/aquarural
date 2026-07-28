@@ -10,6 +10,7 @@ npm start          # Servidor de producción
 npm test           # Ejecutar suite de tests con cobertura
 npm run test:watch # Tests en modo watch
 npm run seed       # Poblar base de datos con datos de prueba
+node src/utils/seed-contenido.js  # Subir convenios y noticias demo a MongoDB
 ```
 
 ## Panel Web Administrativo
