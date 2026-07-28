@@ -56,8 +56,8 @@ const LoginPage = () => {
             </h1>
 
             {/* Logo central */}
-            <div className="flex-1 min-h-0 rounded-2xl overflow-hidden bg-surface-container-low mb-6 flex items-center justify-center">
-              <img src="/logo.png" alt="GanaderoPro" className="w-3/4 max-w-xs object-contain" />
+            <div className="flex-1 min-h-0 rounded-2xl overflow-hidden bg-surface-container-low mb-6">
+              <img src="/logo.png" alt="GanaderoPro" className="w-full h-full object-contain p-8" />
             </div>
 
             {/* Stats */}
@@ -80,7 +80,6 @@ const LoginPage = () => {
 
             {/* Brand */}
             <div className="flex flex-col items-center md:items-start mb-12">
-              <img src="/logo.png" alt="GanaderoPro" className="h-14 w-auto object-contain mb-6" />
               <div className="text-center md:text-left">
                 <h2 className="text-3xl font-extrabold text-primary tracking-tight mb-2 font-headline">
                   Plataforma Digital Ganadera
