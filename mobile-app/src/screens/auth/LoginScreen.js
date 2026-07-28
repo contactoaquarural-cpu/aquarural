@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity,
+  View, Text, TextInput, TouchableOpacity, Image,
   StyleSheet, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -60,10 +60,11 @@ const LoginScreen = ({ navigation }) => {
             colors={[colors.primaryContainer, colors.background]}
             style={styles.heroGradient}
           >
-            <View style={styles.logoBox}>
-              <Text style={styles.logoIcon}>🐄</Text>
-            </View>
-            <Text style={styles.orgName}>GanaderoPro</Text>
+            <Image
+              source={require('../../../assets/logo.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
           </LinearGradient>
 
           {/* Formulario */}
@@ -174,6 +175,7 @@ const makeStyles = (colors, typography) => StyleSheet.create({
   },
   logoIcon:  { fontSize: 36 },
   orgName:   { ...typography.h1, color: colors.primary, letterSpacing: 2 },
+  logo:      { width: 220, height: 100, alignSelf: 'center', marginBottom: spacing.sm },
   heroSub:   { ...typography.small, color: colors.onSurfaceVariant, textAlign: 'center' },
 
   formContainer: {
