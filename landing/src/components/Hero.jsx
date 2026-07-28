@@ -16,7 +16,7 @@ const Hero = ({ config }) => {
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <img src="/images/logo.png" alt="GanaderoPro" className="h-24 w-auto rounded-2xl shadow-xl" />
+          <img src="/images/logo.png" alt="GanaderoPro" className="h-40 w-auto" style={{ mixBlendMode: 'screen' }} />
         </div>
 
         {/* Badge */}
