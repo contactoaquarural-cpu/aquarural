@@ -6,8 +6,8 @@ const api = axios.create({
 });
 
 export const getConfiguracion  = () => api.get('/configuracion');
-export const getNoticias        = () => api.get('/noticias?limit=3&publicado=true');
-export const getConvenios       = () => api.get('/convenios?activo=true');
+export const getNoticias        = () => api.get('/noticias?page=1&limit=3');
+export const getConvenios       = () => api.get('/convenios');
 export const getPrecios         = () => api.get('/precios');
-export const getVideos          = () => api.get('/videos?limit=3&publicado=true');
+export const getVideos          = () => api.get('/videos?page=1&limit=3');
 export const getEstadisticas    = () => api.get('/admin/estadisticas');
