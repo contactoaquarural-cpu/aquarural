@@ -111,7 +111,7 @@ const HomeScreen = () => {
           </View>
           <TouchableOpacity
             style={styles.notifBtn}
-            onPress={() => { navigation.navigate('Perfil', { screen: 'Notificaciones' }); setSinLeer(0); }}
+            onPress={() => { navigation.navigate('Notificaciones'); setSinLeer(0); }}
           >
             <Text style={styles.notifIcon}>🔔</Text>
             {sinLeer > 0 && (

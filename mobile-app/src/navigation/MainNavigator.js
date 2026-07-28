@@ -61,9 +61,11 @@ const stackOptions = {
 
 const HomeStack = () => (
   <Stack.Navigator screenOptions={stackOptions}>
-    <Stack.Screen name="HomeMain"        component={HomeScreen} />
+    <Stack.Screen name="HomeMain"         component={HomeScreen} />
     <Stack.Screen name="EstadoFinanciero" component={EstadoFinancieroScreen} />
     <Stack.Screen name="HistorialPagos"   component={HistorialPagosScreen} />
+    <Stack.Screen name="Notificaciones"   component={NotificacionesScreen} />
+    <Stack.Screen name="Eventos"          component={EventosScreen} />
   </Stack.Navigator>
 );
 
@@ -87,11 +89,11 @@ const ExplorarStack = () => (
 
 const PerfilStack = () => (
   <Stack.Navigator screenOptions={stackOptions}>
-    <Stack.Screen name="PerfilMain"      component={PerfilScreen} />
-    <Stack.Screen name="EditarPerfil"    component={EditarPerfilScreen} />
-    <Stack.Screen name="DatosFinca"      component={DatosFincaScreen} />
-    <Stack.Screen name="UbicacionFinca"  component={UbicacionFincaScreen} />
-    <Stack.Screen name="Notificaciones"  component={NotificacionesScreen} />
+    <Stack.Screen name="PerfilMain"       component={PerfilScreen} />
+    <Stack.Screen name="EditarPerfil"     component={EditarPerfilScreen} />
+    <Stack.Screen name="DatosFinca"       component={DatosFincaScreen} />
+    <Stack.Screen name="UbicacionFinca"   component={UbicacionFincaScreen} />
+    <Stack.Screen name="Notificaciones"   component={NotificacionesScreen} />
     <Stack.Screen name="Eventos"          component={EventosScreen} />
     <Stack.Screen name="MisPublicaciones" component={MisPublicacionesScreen} />
     <Stack.Screen name="MisDocumentos"    component={MisDocumentosScreen} />
@@ -157,6 +159,11 @@ const MainNavigator = () => {
             <TabIcon symbol="person" label="Perfil" focused={focused} />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: () => {
+            navigation.navigate('Perfil', { screen: 'PerfilMain' });
+          },
+        })}
       />
     </Tab.Navigator>
   );
