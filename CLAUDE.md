@@ -139,8 +139,9 @@ plataforma-digital-ganadera/
 | Fase 7 | Modo claro/oscuro (web admin + app móvil) | ✅ Completado |
 | Fase 8 | Estadísticas, pruebas y despliegue | ⬜ Pendiente |
 | Fase 9 | Ganadero TV — series de video (backend + web-admin + app) | ✅ Completado |
-| Fase 10 | Mercado ganadero — avisos de compraventa (backend + web-admin + app) | 🔄 En progreso |
+| Fase 10 | Mercado ganadero — avisos de compraventa (backend + web-admin + app) | ✅ Completado |
 | Fase 11 | GanaderoPro — producto replicable + landing page institucional | 🔄 En progreso |
+| Fase 12 | Eventos y Convocatorias — invitaciones push con confirmación de asistencia | ✅ Completado |
 | v2.0 | Ubicación de finca con Google Maps API | ⬜ Versión 2.0 |
 
 **Leyenda:** ⬜ Pendiente — 🔄 En progreso — ✅ Completado
