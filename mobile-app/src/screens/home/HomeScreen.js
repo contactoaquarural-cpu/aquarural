@@ -66,8 +66,13 @@ const HomeScreen = () => {
     try {
       const id = user?._id;
       if (!id) return;
-      const { data } = await api.get(`/asociados/${id}/notificaciones`, { params: { leido: false, limit: 50 } });
-      setSinLeer(data.data?.length ?? 0);
+      const [notifRes, eventosRes] = await Promise.all([
+        api.get(`/asociados/${id}/notificaciones`, { params: { leido: false, limit: 50 } }),
+        api.get('/eventos/pendientes'),
+      ]);
+      const totalNotif   = notifRes.data?.data?.length ?? 0;
+      const totalEventos = eventosRes.data?.data?.length ?? 0;
+      setSinLeer(totalNotif + totalEventos);
     } catch {
       // Sin conexión — no mostrar badge
     }

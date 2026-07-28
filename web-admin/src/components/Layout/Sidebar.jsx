@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { to: '/precios',   icon: 'trending_up',  label: 'Precios' },
   { to: '/mercado',     icon: 'storefront',   label: 'Mercado' },
   { to: '/ganadero-tv', icon: 'live_tv',      label: 'Ganadero TV' },
+  { to: '/eventos',     icon: 'event',        label: 'Eventos' },
   { to: '/reportes',       icon: 'query_stats',  label: 'Reportes' },
   { to: '/configuracion',  icon: 'settings',     label: 'Configuración' },
 ];

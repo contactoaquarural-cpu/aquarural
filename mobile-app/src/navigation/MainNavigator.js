@@ -18,6 +18,7 @@ import EditarPerfilScreen        from '../screens/perfil/EditarPerfilScreen';
 import DatosFincaScreen          from '../screens/perfil/DatosFincaScreen';
 import UbicacionFincaScreen      from '../screens/perfil/UbicacionFincaScreen';
 import NotificacionesScreen      from '../screens/notificaciones/NotificacionesScreen';
+import EventosScreen            from '../screens/eventos/EventosScreen';
 import MisDocumentosScreen       from '../screens/perfil/MisDocumentosScreen';
 import NoticiasScreen            from '../screens/noticias/NoticiasScreen';
 import DetalleNoticiaScreen      from '../screens/noticias/DetalleNoticiaScreen';
@@ -91,6 +92,7 @@ const PerfilStack = () => (
     <Stack.Screen name="DatosFinca"      component={DatosFincaScreen} />
     <Stack.Screen name="UbicacionFinca"  component={UbicacionFincaScreen} />
     <Stack.Screen name="Notificaciones"  component={NotificacionesScreen} />
+    <Stack.Screen name="Eventos"          component={EventosScreen} />
     <Stack.Screen name="MisPublicaciones" component={MisPublicacionesScreen} />
     <Stack.Screen name="MisDocumentos"    component={MisDocumentosScreen} />
   </Stack.Navigator>

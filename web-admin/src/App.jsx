@@ -15,6 +15,7 @@ import PreciosPage   from './pages/Precios/PreciosPage';
 import MercadoPage       from './pages/Mercado/MercadoPage';
 import GanaderoTVPage    from './pages/GanaderoTV/GanaderoTVPage';
 import ConfiguracionPage from './pages/Configuracion/ConfiguracionPage';
+import EventosPage       from './pages/Eventos/EventosPage';
 
 // Protege rutas que requieren autenticación
 const ProtectedRoute = ({ children }) => {
@@ -57,6 +58,7 @@ const App = () => {
           <Route path="precios"      element={<PreciosPage />} />
           <Route path="mercado"        element={<MercadoPage />} />
           <Route path="ganadero-tv"   element={<GanaderoTVPage />} />
+          <Route path="eventos"       element={<EventosPage />} />
           <Route path="configuracion" element={<ConfiguracionPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

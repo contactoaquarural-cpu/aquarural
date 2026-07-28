@@ -129,6 +129,8 @@ const PerfilScreen = ({ navigation }) => {
               onPress={() => navigation.navigate('UbicacionFinca')} colors={colors} typography={typography} />
             <MenuRow icon="notifications" label="Notificaciones" sublabel="Historial de avisos"
               onPress={() => navigation.navigate('Notificaciones')} colors={colors} typography={typography} />
+            <MenuRow icon="event" label="Eventos y Convocatorias" sublabel="Reuniones, comités, capacitaciones"
+              onPress={() => navigation.navigate('Eventos')} colors={colors} typography={typography} />
             <MenuRow icon="folder" label="Mis documentos" sublabel="Vacunación, título, registro ICA"
               onPress={() => navigation.navigate('MisDocumentos')} colors={colors} typography={typography} />
           </View>

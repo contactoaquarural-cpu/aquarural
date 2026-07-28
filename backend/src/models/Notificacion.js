@@ -23,7 +23,17 @@ const notificacionSchema = new mongoose.Schema(
     },
     tipo: {
       type: String,
-      enum: ['MORA', 'NOTICIA', 'CONVENIO', 'GANADERO_TV', 'PRECIO', 'MERCADO', 'SISTEMA'],
+      enum: ['MORA', 'NOTICIA', 'CONVENIO', 'GANADERO_TV', 'PRECIO', 'MERCADO', 'SISTEMA', 'EVENTO'],
+    },
+    eventoId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref:  'Evento',
+      default: null,
+    },
+    // Para eventos: solo se marca leído con acción explícita del asociado
+    requiereConfirmacion: {
+      type:    Boolean,
+      default: false,
     },
   },
   {

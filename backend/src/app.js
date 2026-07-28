@@ -16,6 +16,7 @@ const publicacionesRoutes   = require('./routes/publicaciones.routes');
 const capitulosRoutes       = require('./routes/capitulos.routes');
 const configuracionRoutes   = require('./routes/configuracion.routes');
 const documentosRoutes      = require('./routes/documentos.routes');
+const eventosRoutes         = require('./routes/eventos.routes');
 
 const app = express();
 
@@ -65,6 +66,7 @@ app.use('/publicaciones',  publicacionesRoutes);
 app.use('/capitulos',      capitulosRoutes);
 app.use('/configuracion',  configuracionRoutes);
 app.use('/documentos',     documentosRoutes);
+app.use('/eventos',        eventosRoutes);
 
 // 404 — ruta no encontrada
 app.use((req, res) => {

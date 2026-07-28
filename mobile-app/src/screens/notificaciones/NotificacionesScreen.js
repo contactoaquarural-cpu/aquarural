@@ -59,15 +59,20 @@ const NotificacionesScreen = () => {
   const navigation = useNavigation();
   const user       = useAuthStore((s) => s.user);
 
-  const [notifs,     setNotifs]     = useState([]);
-  const [loading,    setLoading]    = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [selected,   setSelected]   = useState(null); // notif seleccionada para el menú
+  const [notifs,          setNotifs]          = useState([]);
+  const [eventosPendientes, setEventosPendientes] = useState(0);
+  const [loading,         setLoading]         = useState(true);
+  const [refreshing,      setRefreshing]      = useState(false);
+  const [selected,        setSelected]        = useState(null);
 
   const cargarNotifs = async () => {
     try {
-      const { data } = await api.get(`/asociados/${user?._id}/notificaciones`);
-      setNotifs(data.data ?? []);
+      const [notifRes, eventosRes] = await Promise.all([
+        api.get(`/asociados/${user?._id}/notificaciones`),
+        api.get('/eventos/pendientes'),
+      ]);
+      setNotifs(notifRes.data.data ?? []);
+      setEventosPendientes(eventosRes.data?.data?.length ?? 0);
     } catch {
       // silencioso
     } finally {
@@ -155,6 +160,26 @@ const NotificacionesScreen = () => {
         )}
       </View>
 
+      {/* Banner eventos pendientes de confirmar */}
+      {eventosPendientes > 0 && (
+        <TouchableOpacity
+          style={styles.eventoBanner}
+          onPress={() => navigation.navigate('Eventos')}
+          activeOpacity={0.85}
+        >
+          <View style={styles.eventoBannerLeft}>
+            <Text style={styles.eventoBannerIcon}>📅</Text>
+            <View>
+              <Text style={styles.eventoBannerTitle}>
+                {eventosPendientes} convocatoria{eventosPendientes > 1 ? 's' : ''} pendiente{eventosPendientes > 1 ? 's' : ''}
+              </Text>
+              <Text style={styles.eventoBannerSub}>Toca para confirmar lectura</Text>
+            </View>
+          </View>
+          <MaterialIcons name="chevron-right" size={22} color={colors.primary} />
+        </TouchableOpacity>
+      )}
+
       {sinLeer > 0 && (
         <Text style={styles.hint}>Mantén presionada una notificación para marcarla como leída</Text>
       )}
@@ -206,6 +231,23 @@ const makeStyles = (colors, typography) => StyleSheet.create({
   badgeText:      { ...typography.label, color: colors.tertiaryContainer, fontSize: 10 },
   leerTodas:      { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm },
   leerTodasText:  { ...typography.label, color: colors.primary, fontWeight: '700' },
+
+  eventoBanner: {
+    flexDirection:     'row',
+    alignItems:        'center',
+    justifyContent:    'space-between',
+    backgroundColor:   colors.primaryContainer + '33',
+    borderWidth:       1,
+    borderColor:       colors.primary + '44',
+    marginHorizontal:  spacing.lg,
+    marginBottom:      spacing.sm,
+    borderRadius:      radius.xl,
+    padding:           spacing.md,
+  },
+  eventoBannerLeft:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 },
+  eventoBannerIcon:  { fontSize: 24 },
+  eventoBannerTitle: { ...typography.bodyBold, color: colors.primary },
+  eventoBannerSub:   { ...typography.small, color: colors.onSurfaceVariant, marginTop: 2 },
 
   hint: {
     ...typography.small,
