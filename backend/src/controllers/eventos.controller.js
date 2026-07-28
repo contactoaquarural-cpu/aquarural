@@ -18,21 +18,27 @@ exports.listar = async (req, res) => {
   try {
     const eventos = await Evento.find().sort({ fecha: -1 });
 
-    // Para cada evento, contar cuántos asociados confirmaron lectura
     const eventoIds = eventos.map((e) => e._id);
-    const confirmados = await Notificacion.aggregate([
-      { $match: { eventoId: { $in: eventoIds }, leido: true, tipo: 'EVENTO' } },
-      { $group: { _id: '$eventoId', total: { $sum: 1 } } },
+
+    // Conteo por respuesta para cada evento
+    const respuestas = await Notificacion.aggregate([
+      { $match: { eventoId: { $in: eventoIds }, tipo: 'EVENTO', leido: true } },
+      { $group: { _id: { eventoId: '$eventoId', respuesta: '$respuesta' }, total: { $sum: 1 } } },
     ]);
 
-    const totalAsociados = await Asociado.countDocuments({ activo: true });
+    const totalAsociados = await Asociado.countDocuments({ estado: { $ne: 'INACTIVO' } });
 
-    const confirmadosMap = {};
-    confirmados.forEach((c) => { confirmadosMap[c._id.toString()] = c.total; });
+    const respuestasMap = {};
+    respuestas.forEach(({ _id, total }) => {
+      const eid = _id.eventoId.toString();
+      if (!respuestasMap[eid]) respuestasMap[eid] = { ASISTIRE: 0, NO_ASISTIRE: 0 };
+      if (_id.respuesta) respuestasMap[eid][_id.respuesta] = total;
+    });
 
     const data = eventos.map((e) => ({
       ...e.toObject(),
-      confirmados:     confirmadosMap[e._id.toString()] || 0,
+      asistiran:    respuestasMap[e._id.toString()]?.ASISTIRE    || 0,
+      noAsistiran:  respuestasMap[e._id.toString()]?.NO_ASISTIRE || 0,
       totalAsociados,
     }));
 
@@ -48,21 +54,24 @@ exports.misEventos = async (req, res) => {
   try {
     const eventos = await Evento.find().sort({ fecha: -1 });
 
-    // Verificar cuáles ya confirmó este asociado
     const eventoIds = eventos.map((e) => e._id);
-    const leidas = await Notificacion.find({
+    const notifs = await Notificacion.find({
       asociadoId: req.user.id,
       eventoId:   { $in: eventoIds },
       tipo:       'EVENTO',
-      leido:      true,
-    }).select('eventoId');
+    }).select('eventoId leido respuesta');
 
-    const leidasSet = new Set(leidas.map((n) => n.eventoId.toString()));
+    const notifMap = {};
+    notifs.forEach((n) => { notifMap[n.eventoId.toString()] = n; });
 
-    const data = eventos.map((e) => ({
-      ...e.toObject(),
-      confirmada: leidasSet.has(e._id.toString()),
-    }));
+    const data = eventos.map((e) => {
+      const notif = notifMap[e._id.toString()];
+      return {
+        ...e.toObject(),
+        respondida: notif?.leido    || false,
+        respuesta:  notif?.respuesta || null,
+      };
+    });
 
     res.status(200).json({ success: true, data, message: 'Eventos obtenidos exitosamente' });
   } catch (error) {
@@ -157,12 +166,17 @@ exports.eliminar = async (req, res) => {
   }
 };
 
-// POST /eventos/:id/confirmar — asociado confirma lectura del evento
+// POST /eventos/:id/confirmar — asociado responde al evento (ASISTIRE | NO_ASISTIRE)
 exports.confirmar = async (req, res) => {
   try {
+    const { respuesta } = req.body;
+    if (!['ASISTIRE', 'NO_ASISTIRE'].includes(respuesta)) {
+      return res.status(400).json({ success: false, data: null, message: 'Respuesta inválida. Use ASISTIRE o NO_ASISTIRE' });
+    }
+
     const notif = await Notificacion.findOneAndUpdate(
       { eventoId: req.params.id, asociadoId: req.user.id, tipo: 'EVENTO' },
-      { leido: true },
+      { leido: true, respuesta },
       { new: true }
     );
 
@@ -170,7 +184,8 @@ exports.confirmar = async (req, res) => {
       return res.status(404).json({ success: false, data: null, message: 'Notificación no encontrada' });
     }
 
-    res.status(200).json({ success: true, data: notif, message: 'Lectura confirmada' });
+    const mensaje = respuesta === 'ASISTIRE' ? '¡Confirmado! Te esperamos.' : 'Respuesta registrada.';
+    res.status(200).json({ success: true, data: notif, message: mensaje });
   } catch (error) {
     logger.error('Error al confirmar evento', { error: error.message });
     res.status(500).json({ success: false, data: null, message: 'Error interno del servidor' });

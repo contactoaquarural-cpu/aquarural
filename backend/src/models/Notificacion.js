@@ -35,6 +35,12 @@ const notificacionSchema = new mongoose.Schema(
       type:    Boolean,
       default: false,
     },
+    // Respuesta del asociado al evento
+    respuesta: {
+      type:    String,
+      enum:    ['ASISTIRE', 'NO_ASISTIRE', null],
+      default: null,
+    },
   },
   {
     timestamps: true,

@@ -21,10 +21,10 @@ const TIPO_CONFIG = {
 const EventosScreen = ({ navigation }) => {
   const { colors, typography } = useTheme();
   const { show, toastProps } = useToast();
-  const [eventos,    setEventos]    = useState([]);
-  const [loading,    setLoading]    = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [confirmando, setConfirmando] = useState(null);
+  const [eventos,     setEventos]     = useState([]);
+  const [loading,     setLoading]     = useState(true);
+  const [refreshing,  setRefreshing]  = useState(false);
+  const [respondiendo, setRespondiendo] = useState(null);
 
   const cargar = async () => {
     try {
@@ -40,30 +40,21 @@ const EventosScreen = ({ navigation }) => {
 
   useFocusEffect(useCallback(() => { cargar(); }, []));
 
-  const confirmarLectura = async (evento) => {
-    if (evento.confirmada) return;
-    Alert.alert(
-      'Confirmar lectura',
-      `¿Confirmas que leíste la convocatoria para "${evento.titulo}"?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Confirmar',
-          onPress: async () => {
-            setConfirmando(evento._id);
-            try {
-              await api.post(`/eventos/${evento._id}/confirmar`);
-              show('success', '¡Lectura confirmada!', 'Tu confirmación fue registrada.');
-              cargar();
-            } catch {
-              show('error', 'Error', 'No se pudo confirmar. Intenta de nuevo.');
-            } finally {
-              setConfirmando(null);
-            }
-          },
-        },
-      ]
-    );
+  const responder = async (evento, respuesta) => {
+    if (evento.respondida) return;
+    setRespondiendo(evento._id);
+    try {
+      await api.post(`/eventos/${evento._id}/confirmar`, { respuesta });
+      const msg = respuesta === 'ASISTIRE'
+        ? '¡Genial! Tu asistencia fue registrada.'
+        : 'Gracias por responder. Tu ausencia fue registrada.';
+      show('success', respuesta === 'ASISTIRE' ? '¡Asistiré! ✅' : 'No podré asistir ❌', msg);
+      cargar();
+    } catch {
+      show('error', 'Error', 'No se pudo registrar tu respuesta. Intenta de nuevo.');
+    } finally {
+      setRespondiendo(null);
+    }
   };
 
   const styles = makeStyles(colors, typography);
@@ -72,26 +63,34 @@ const EventosScreen = ({ navigation }) => {
     const cfg = TIPO_CONFIG[item.tipo] || TIPO_CONFIG.OTRO;
     const fecha = new Date(item.fecha);
     const pasado = fecha < new Date();
+    const cargando = respondiendo === item._id;
 
     return (
-      <View style={[styles.card, item.confirmada && styles.cardConfirmada, pasado && styles.cardPasada]}>
-        {/* Header tipo + badge */}
+      <View style={[styles.card, item.respondida && styles.cardRespondida, pasado && styles.cardPasada]}>
+        {/* Header tipo + badge respuesta */}
         <View style={styles.cardHeader}>
           <View style={[styles.tipoBadge, { backgroundColor: cfg.color + '22' }]}>
             <Text style={styles.tipoIcon}>{cfg.icon}</Text>
             <Text style={[styles.tipoLabel, { color: cfg.color }]}>{cfg.label}</Text>
           </View>
-          {item.confirmada ? (
-            <View style={styles.confirmadaBadge}>
+          {item.respondida && item.respuesta === 'ASISTIRE' && (
+            <View style={styles.asistireBadge}>
               <MaterialIcons name="check-circle" size={14} color={colors.primary} />
-              <Text style={styles.confirmadaText}>Leída</Text>
+              <Text style={styles.asistireText}>Asistiré</Text>
             </View>
-          ) : !pasado ? (
+          )}
+          {item.respondida && item.respuesta === 'NO_ASISTIRE' && (
+            <View style={styles.noAsistireBadge}>
+              <MaterialIcons name="cancel" size={14} color={colors.error} />
+              <Text style={styles.noAsistireText}>No asistiré</Text>
+            </View>
+          )}
+          {!item.respondida && !pasado && (
             <View style={styles.pendienteBadge}>
-              <MaterialIcons name="notifications-active" size={14} color={colors.error} />
-              <Text style={styles.pendienteText}>Pendiente</Text>
+              <MaterialIcons name="notifications-active" size={14} color="#f59e0b" />
+              <Text style={styles.pendienteText}>Sin responder</Text>
             </View>
-          ) : null}
+          )}
         </View>
 
         {/* Título */}
@@ -118,25 +117,43 @@ const EventosScreen = ({ navigation }) => {
           </View>
         )}
 
-        {/* Botón confirmar */}
-        {!item.confirmada && !pasado && (
-          <TouchableOpacity
-            style={[styles.btnConfirmar, confirmando === item._id && styles.btnDisabled]}
-            onPress={() => confirmarLectura(item)}
-            disabled={confirmando === item._id}
-            activeOpacity={0.8}
-          >
-            <MaterialIcons name="check-circle-outline" size={18} color="#fff" />
-            <Text style={styles.btnConfirmarText}>
-              {confirmando === item._id ? 'Confirmando...' : 'Confirmar lectura'}
-            </Text>
-          </TouchableOpacity>
+        {/* Botones de respuesta */}
+        {!item.respondida && !pasado && (
+          <View style={styles.botonesRow}>
+            <TouchableOpacity
+              style={[styles.btnAsistire, cargando && styles.btnDisabled]}
+              onPress={() => responder(item, 'ASISTIRE')}
+              disabled={cargando}
+              activeOpacity={0.8}
+            >
+              <MaterialIcons name="check-circle-outline" size={18} color="#fff" />
+              <Text style={styles.btnAsistireText}>
+                {cargando ? 'Enviando...' : 'Sí, asistiré'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.btnNoAsistire, cargando && styles.btnDisabled]}
+              onPress={() => responder(item, 'NO_ASISTIRE')}
+              disabled={cargando}
+              activeOpacity={0.8}
+            >
+              <MaterialIcons name="cancel" size={18} color={colors.error} />
+              <Text style={styles.btnNoAsistireText}>No puedo</Text>
+            </TouchableOpacity>
+          </View>
         )}
 
-        {item.confirmada && (
+        {/* Ya respondió */}
+        {item.respondida && (
           <View style={styles.leidaRow}>
-            <MaterialIcons name="check-circle" size={16} color={colors.primary} />
-            <Text style={styles.leidaText}>Lectura confirmada</Text>
+            <MaterialIcons
+              name={item.respuesta === 'ASISTIRE' ? 'check-circle' : 'cancel'}
+              size={16}
+              color={item.respuesta === 'ASISTIRE' ? colors.primary : colors.error}
+            />
+            <Text style={[styles.leidaText, { color: item.respuesta === 'ASISTIRE' ? colors.primary : colors.error }]}>
+              {item.respuesta === 'ASISTIRE' ? 'Confirmaste asistencia' : 'Registraste que no asistirás'}
+            </Text>
           </View>
         )}
       </View>
@@ -198,7 +215,7 @@ const makeStyles = (colors, typography) => StyleSheet.create({
     padding:         spacing.md,
     gap:             spacing.sm,
   },
-  cardConfirmada: { opacity: 0.85 },
+  cardRespondida: { opacity: 0.85 },
   cardPasada:     { opacity: 0.65 },
 
   cardHeader:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
@@ -206,10 +223,12 @@ const makeStyles = (colors, typography) => StyleSheet.create({
   tipoIcon:      { fontSize: 13 },
   tipoLabel:     { ...typography.small, fontWeight: '700' },
 
-  confirmadaBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: colors.primaryContainer + '44', paddingHorizontal: 8, paddingVertical: 4, borderRadius: radius.full },
-  confirmadaText:  { ...typography.small, color: colors.primary, fontWeight: '700' },
-  pendienteBadge:  { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: colors.errorContainer + '44', paddingHorizontal: 8, paddingVertical: 4, borderRadius: radius.full },
-  pendienteText:   { ...typography.small, color: colors.error, fontWeight: '700' },
+  asistireBadge:   { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: colors.primaryContainer + '44', paddingHorizontal: 8, paddingVertical: 4, borderRadius: radius.full },
+  asistireText:    { ...typography.small, color: colors.primary, fontWeight: '700' },
+  noAsistireBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: colors.errorContainer + '44', paddingHorizontal: 8, paddingVertical: 4, borderRadius: radius.full },
+  noAsistireText:  { ...typography.small, color: colors.error, fontWeight: '700' },
+  pendienteBadge:  { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#f59e0b22', paddingHorizontal: 8, paddingVertical: 4, borderRadius: radius.full },
+  pendienteText:   { ...typography.small, color: '#f59e0b', fontWeight: '700' },
 
   titulo:      { ...typography.bodyBold },
   descripcion: { ...typography.body, color: colors.onSurfaceVariant },
@@ -217,7 +236,9 @@ const makeStyles = (colors, typography) => StyleSheet.create({
   metaRow:  { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   metaText: { ...typography.small, color: colors.outline, flex: 1 },
 
-  btnConfirmar: {
+  botonesRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.xs },
+  btnAsistire: {
+    flex:            1,
     flexDirection:   'row',
     alignItems:      'center',
     justifyContent:  'center',
@@ -225,13 +246,25 @@ const makeStyles = (colors, typography) => StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius:    radius.lg,
     paddingVertical: spacing.sm,
-    marginTop:       spacing.xs,
   },
-  btnDisabled:      { opacity: 0.6 },
-  btnConfirmarText: { ...typography.bodyBold, color: colors.onPrimary },
+  btnAsistireText:  { ...typography.bodyBold, color: colors.onPrimary, fontSize: 13 },
+  btnNoAsistire: {
+    flex:            1,
+    flexDirection:   'row',
+    alignItems:      'center',
+    justifyContent:  'center',
+    gap:             spacing.xs,
+    backgroundColor: colors.errorContainer + '33',
+    borderRadius:    radius.lg,
+    paddingVertical: spacing.sm,
+    borderWidth:     1,
+    borderColor:     colors.error + '55',
+  },
+  btnNoAsistireText: { ...typography.bodyBold, color: colors.error, fontSize: 13 },
+  btnDisabled:       { opacity: 0.6 },
 
   leidaRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, justifyContent: 'center', marginTop: spacing.xs },
-  leidaText: { ...typography.small, color: colors.primary, fontWeight: '600' },
+  leidaText: { ...typography.small, fontWeight: '600' },
 
   empty:      { alignItems: 'center', paddingTop: 80, paddingHorizontal: spacing.xl },
   emptyIcon:  { fontSize: 52, marginBottom: spacing.md },

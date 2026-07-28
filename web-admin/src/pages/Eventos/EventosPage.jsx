@@ -142,17 +142,32 @@ const EventosPage = () => {
                   )}
                 </div>
 
-                {/* Confirmaciones */}
-                <div className="flex items-center gap-2 bg-surface-container rounded-xl px-3 py-2 mb-4">
-                  <span className="material-symbols-outlined text-primary text-sm">how_to_reg</span>
-                  <span className="text-xs font-semibold text-on-surface">
-                    {ev.confirmados} / {ev.totalAsociados} confirmaron lectura
-                  </span>
-                  <div className="flex-1 h-1.5 bg-surface-container-high rounded-full overflow-hidden ml-1">
-                    <div
-                      className="h-full bg-primary rounded-full transition-all"
-                      style={{ width: ev.totalAsociados > 0 ? `${Math.round((ev.confirmados / ev.totalAsociados) * 100)}%` : '0%' }}
-                    />
+                {/* Respuestas */}
+                <div className="bg-surface-container rounded-xl px-3 py-2.5 mb-4 space-y-2">
+                  <div className="flex items-center justify-between text-xs text-on-surface-variant mb-1">
+                    <span className="font-semibold">Respuestas</span>
+                    <span>{ev.asistiran + ev.noAsistiran} / {ev.totalAsociados}</span>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-primary inline-block" />
+                      <span className="text-xs text-on-surface font-semibold">{ev.asistiran} asistirán</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-error inline-block" />
+                      <span className="text-xs text-on-surface font-semibold">{ev.noAsistiran} no asistirán</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-outline-variant inline-block" />
+                      <span className="text-xs text-on-surface-variant">{ev.totalAsociados - ev.asistiran - ev.noAsistiran} sin responder</span>
+                    </div>
+                  </div>
+                  {/* Barra de progreso compuesta */}
+                  <div className="h-1.5 bg-surface-container-high rounded-full overflow-hidden flex">
+                    <div className="h-full bg-primary transition-all"
+                      style={{ width: ev.totalAsociados > 0 ? `${Math.round((ev.asistiran / ev.totalAsociados) * 100)}%` : '0%' }} />
+                    <div className="h-full bg-error transition-all"
+                      style={{ width: ev.totalAsociados > 0 ? `${Math.round((ev.noAsistiran / ev.totalAsociados) * 100)}%` : '0%' }} />
                   </div>
                 </div>
 
