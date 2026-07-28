@@ -27,6 +27,10 @@ npm run preview    # Preview del build de producción
 > - Cédula: `000000001`
 > - Contraseña: `Admin2024*`
 
+> Credenciales de asociado de prueba (app móvil):
+> - Cédula: `12203639`
+> - Contraseña: `Admin1234`
+
 ## App Móvil
 
 ```bash
@@ -60,6 +64,21 @@ cp backend/.env.example backend/.env
 # App móvil
 cp mobile-app/.env.example mobile-app/.env
 ```
+
+## Landing Page (GanaderoPro)
+
+```bash
+cd landing
+
+npm install        # Instalar dependencias (primera vez)
+npm run dev        # Servidor de desarrollo (http://localhost:5174)
+npm run build      # Build de producción
+npm run preview    # Preview del build
+```
+
+> Variables de entorno en `landing/.env`:
+> - `VITE_API_URL` → URL del backend
+> - `VITE_ADMIN_URL` → URL del panel admin
 
 ## Orden recomendado para desarrollo local
 
