@@ -8,12 +8,17 @@
 
 | Campo | Valor |
 |---|---|
-| **Proyecto** | Plataforma Digital Ganadera |
+| **Producto** | GanaderoPro |
+| **Descripción** | Plataforma digital replicable para asociaciones ganaderas de Colombia |
 | **Empresa** | MetaDevelopment Ltd |
 | **Desarrollador principal** | Julián Andrés Trujillo Morales |
-| **Cliente** | Asociación de Ganaderos de Garzón – Huila, Colombia |
+| **Cliente demo** | Asociación de Ganaderos de Garzón – Huila, Colombia |
+| **Modelo de negocio** | Pack por asociación: Landing + Admin + App (instancia independiente por cliente) |
 | **Versión actual** | 1.0 — MVP |
 | **Repositorio** | GitHub privado (monorepo) |
+
+> **Nota de personalización:** El nombre "ASOGACENTRO", logo y colores son configurables desde el panel admin.
+> Al vender a una nueva asociación se ajusta: nombre, logo, color primario, municipio y teléfono.
 
 ---
 
@@ -41,6 +46,8 @@ plataforma-digital-ganadera/
 │   └── src/
 ├── mobile-app/             ← App React Native + Expo
 │   ├── CLAUDE.md           ← Contexto específico de la app móvil
+│   └── src/
+├── landing/                ← Landing page pública de la asociación (React + Vite + Tailwind)
 │   └── src/
 └── docs/                   ← Documentación técnica y manuales
 ```
@@ -133,9 +140,52 @@ plataforma-digital-ganadera/
 | Fase 8 | Estadísticas, pruebas y despliegue | ⬜ Pendiente |
 | Fase 9 | Ganadero TV — series de video (backend + web-admin + app) | ✅ Completado |
 | Fase 10 | Mercado ganadero — avisos de compraventa (backend + web-admin + app) | 🔄 En progreso |
+| Fase 11 | GanaderoPro — producto replicable + landing page institucional | 🔄 En progreso |
 | v2.0 | Ubicación de finca con Google Maps API | ⬜ Versión 2.0 |
 
 **Leyenda:** ⬜ Pendiente — 🔄 En progreso — ✅ Completado
+
+---
+
+## 🚀 Fase 11 — GanaderoPro: Producto Replicable + Landing Page
+
+### Objetivo
+Convertir el sistema en un producto vendible a cualquier asociación ganadera de Colombia.
+Cada asociación recibe su propia instancia con nombre, logo y colores personalizados.
+
+### Tareas
+
+| # | Tarea | Archivos principales | Estado |
+|---|---|---|---|
+| 11.1 | Agregar `colorPrimario` y `logoUrl` a modelo `Configuracion` | `backend/src/models/Configuracion.js`, `configuracion.controller.js` | ⬜ |
+| 11.2 | Admin: subir logo y elegir color primario desde Configuración | `web-admin/src/pages/Configuracion/ConfiguracionPage.jsx` | ⬜ |
+| 11.3 | Limpiar hardcodes "ASOGACENTRO" en app móvil → usar `nombreAsociacion` dinámico | `mobile-app/src/` (múltiples screens) | ⬜ |
+| 11.4 | Limpiar hardcodes "ASOGACENTRO" en web-admin → usar `nombreAsociacion` dinámico | `web-admin/src/` (múltiples componentes) | ⬜ |
+| 11.5 | Crear landing page (`landing/`) — React + Vite + Tailwind | `landing/` (carpeta nueva) | ⬜ |
+| 11.6 | Landing: secciones Hero, Nosotros, Convenios, Noticias, Precios, Ganadero TV, Contacto | `landing/src/` | ⬜ |
+| 11.7 | Landing: formulario "Quiero asociarme" → WhatsApp/email de la asociación | `landing/src/components/FormularioContacto.jsx` | ⬜ |
+| 11.8 | Landing: consumir datos reales del backend (noticias, convenios, precios, configuracion) | `landing/src/services/` | ⬜ |
+| 11.9 | Deploy landing en Vercel (junto al web-admin o proyecto separado) | `vercel.json` | ⬜ |
+
+### Secciones de la landing vinculadas al backend
+
+| Sección | Endpoint | Editable desde admin |
+|---|---|---|
+| Hero (nombre, logo, slogan) | `GET /configuracion` | ✅ Configuración |
+| Noticias recientes | `GET /noticias?limit=3` | ✅ Módulo Noticias |
+| Convenios activos | `GET /convenios` | ✅ Módulo Convenios |
+| Precios del ganado | `GET /precios` | ✅ Módulo Precios |
+| Ganadero TV | `GET /videos?limit=3` | ✅ Módulo Ganadero TV |
+| Estadísticas (socios, años) | `GET /estadisticas` | ✅ Automático |
+| Contacto / WhatsApp | `GET /configuracion` → `telefonoContacto` | ✅ Configuración |
+
+### Personalización por asociación (al vender)
+1. Cambiar `MONGODB_URI` → nueva BD en Atlas
+2. Subir logo desde panel admin → Configuración
+3. Cambiar color primario desde panel admin → Configuración
+4. Actualizar `nombreAsociacion` y `municipio` desde panel admin
+5. Actualizar `telefonoContacto` desde panel admin
+6. Configurar dominio en Vercel/Railway
 
 ---
 
