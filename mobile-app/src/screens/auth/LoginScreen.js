@@ -63,7 +63,8 @@ const LoginScreen = ({ navigation }) => {
             <View style={styles.logoBox}>
               <Text style={styles.logoIcon}>🐄</Text>
             </View>
-            <Text style={styles.orgName}>{nombreAsociacion}</Text>
+            <Text style={styles.orgName}>GanaderoPro</Text>
+            <Text style={styles.heroSub}>{nombreAsociacion}</Text>
           </LinearGradient>
 
           {/* Formulario */}
