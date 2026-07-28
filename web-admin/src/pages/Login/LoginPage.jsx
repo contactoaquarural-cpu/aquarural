@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth.store';
+import { useConfigStore } from '../../store/config.store';
 import api from '../../services/api.service';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const login = useAuthStore((s) => s.login);
+  const nombreAsociacion = useConfigStore((s) => s.nombreAsociacion);
 
   const [form, setForm] = useState({ cedula: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
@@ -95,7 +97,7 @@ const LoginPage = () => {
                   Plataforma Digital Ganadera
                 </h2>
                 <p className="text-on-surface-variant font-medium">
-                  Bienvenido al panel administrativo de ASOGACENTRO.
+                  Bienvenido al panel administrativo de {nombreAsociacion}.
                 </p>
               </div>
             </div>
@@ -187,7 +189,7 @@ const LoginPage = () => {
       {/* Footer */}
       <footer className="fixed bottom-6 text-center w-full pointer-events-none opacity-40">
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-          ASOGACENTRO • Seguridad Certificada • MetaDevelopment Ltd
+          {nombreAsociacion} • Seguridad Certificada • MetaDevelopment Ltd
         </p>
       </footer>
     </div>

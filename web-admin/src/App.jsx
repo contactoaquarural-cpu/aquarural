@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useAuthStore } from './store/auth.store';
+import { useConfigStore } from './store/config.store';
 import MainLayout from './components/Layout/MainLayout';
 import LoginPage from './pages/Login/LoginPage';
 import ResetPasswordPage from './pages/Login/ResetPasswordPage';
@@ -21,6 +23,9 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const App = () => {
+  const cargarConfig = useConfigStore((s) => s.cargarConfig);
+  useEffect(() => { cargarConfig(); }, []);
+
   return (
     <BrowserRouter>
       <Routes>

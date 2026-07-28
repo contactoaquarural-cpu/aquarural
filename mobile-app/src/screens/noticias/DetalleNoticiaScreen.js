@@ -7,10 +7,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../utils/ThemeContext';
 import { spacing, radius } from '../../utils/theme';
+import { useConfigStore } from '../../store/config.store';
 
 const DetalleNoticiaScreen = ({ route, navigation }) => {
   const { colors, typography } = useTheme();
   const { noticia } = route.params;
+  const { nombreAsociacion, municipio } = useConfigStore();
 
   const CATEGORIA_CONFIG = {
     GOBIERNO:      { icon: '🏛️', color: '#60a5fa', bg: '#1e3a5f' },
@@ -27,7 +29,7 @@ const DetalleNoticiaScreen = ({ route, navigation }) => {
     try {
       await Share.share({
         title:   noticia.titulo,
-        message: `${noticia.titulo}\n\nASSOGACENTRO — ${noticia.categoria}\n\n${noticia.contenido.slice(0, 200)}...`,
+        message: `${noticia.titulo}\n\n${nombreAsociacion} — ${noticia.categoria}\n\n${noticia.contenido.slice(0, 200)}...`,
       });
     } catch {
       // usuario canceló
@@ -74,7 +76,7 @@ const DetalleNoticiaScreen = ({ route, navigation }) => {
           {/* Fuente */}
           <View style={styles.fuenteRow}>
             <Text style={styles.fuenteIcon}>🐄</Text>
-            <Text style={styles.fuente}>ASOGACENTRO · Garzón, Huila</Text>
+            <Text style={styles.fuente}>{nombreAsociacion} · {municipio}</Text>
           </View>
 
           {/* Separador */}

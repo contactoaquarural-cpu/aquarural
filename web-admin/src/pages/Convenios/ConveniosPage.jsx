@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../services/api.service';
+import { useConfigStore } from '../../store/config.store';
 
 const TIPO_MAP = {
   AGROPECUARIO: { cls: 'bg-secondary-container/30 text-on-secondary-container', label: 'Agropecuario' },
@@ -13,6 +14,7 @@ const FORM_INIT = { nombre: '', tipo: 'AGROPECUARIO', descuentoPorcentaje: '', d
 
 const ConveniosPage = () => {
   const queryClient = useQueryClient();
+  const nombreAsociacion = useConfigStore((s) => s.nombreAsociacion);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [form, setForm] = useState(FORM_INIT);
@@ -63,7 +65,7 @@ const ConveniosPage = () => {
             Configuración de Convenios
           </h2>
           <p className="text-on-surface-variant text-lg font-light leading-relaxed">
-            Gestiona las alianzas estratégicas y beneficios exclusivos para los asociados de ASOGACENTRO.
+            Gestiona las alianzas estratégicas y beneficios exclusivos para los asociados de {nombreAsociacion}.
           </p>
         </div>
         <button

@@ -8,10 +8,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../../utils/ThemeContext';
 import { spacing, radius } from '../../utils/theme';
+import { useConfigStore } from '../../store/config.store';
 
 const DetalleConvenioScreen = ({ route, navigation }) => {
   const { colors, typography } = useTheme();
   const { convenio } = route.params;
+  const nombreAsociacion = useConfigStore((s) => s.nombreAsociacion);
 
   const TIPO_CONFIG = {
     AGROPECUARIO: { icon: '🌾', color: colors.primary,   bg: colors.primaryContainer },
@@ -60,7 +62,7 @@ const DetalleConvenioScreen = ({ route, navigation }) => {
               <Text style={styles.descuentoNum}>{convenio.descuentoPorcentaje}%</Text>
               <View>
                 <Text style={styles.descuentoLabel}>Descuento exclusivo</Text>
-                <Text style={styles.descuentoSub}>Para socios activos de ASOGACENTRO</Text>
+                <Text style={styles.descuentoSub}>Para socios activos de {nombreAsociacion}</Text>
               </View>
             </View>
           )}
@@ -103,7 +105,7 @@ const DetalleConvenioScreen = ({ route, navigation }) => {
             </View>
             <View style={styles.stepRow}>
               <Text style={styles.stepNum}>2</Text>
-              <Text style={styles.stepText}>El comercio verificará tu membresía en ASOGACENTRO.</Text>
+              <Text style={styles.stepText}>El comercio verificará tu membresía en {nombreAsociacion}.</Text>
             </View>
             <View style={styles.stepRow}>
               <Text style={styles.stepNum}>3</Text>

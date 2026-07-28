@@ -12,9 +12,11 @@ import EstadoBadge from '../../components/EstadoBadge';
 import { Toast, useToast } from '../../components/AppToast';
 import { useTheme } from '../../utils/ThemeContext';
 import { spacing, radius } from '../../utils/theme';
+import { useConfigStore } from '../../store/config.store';
 
 const MiCarneScreen = ({ navigation }) => {
   const { colors, typography } = useTheme();
+  const nombreAsociacion = useConfigStore((s) => s.nombreAsociacion);
   const user     = useAuthStore((s) => s.user);
   const { asociado, cargarDatos } = useAsociadoStore();
   const { show, toastProps } = useToast();
@@ -87,8 +89,7 @@ const MiCarneScreen = ({ navigation }) => {
           <View style={styles.carneHeader}>
             <Text style={styles.carneLogoIcon}>🐄</Text>
             <View>
-              <Text style={styles.carneOrgName}>ASOGACENTRO</Text>
-              <Text style={styles.carneOrgSub}>Asociación de Ganaderos del Centro</Text>
+              <Text style={styles.carneOrgName}>{nombreAsociacion}</Text>
             </View>
           </View>
 

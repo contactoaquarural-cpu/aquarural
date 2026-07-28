@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth.store';
+import { useConfigStore } from '../../store/config.store';
 
 const NAV_ITEMS = [
   { to: '/dashboard', icon: 'dashboard',    label: 'Dashboard' },
@@ -16,6 +17,7 @@ const NAV_ITEMS = [
 const Sidebar = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const nombreAsociacion = useConfigStore((s) => s.nombreAsociacion);
 
   const handleLogout = () => {
     logout();
@@ -27,7 +29,7 @@ const Sidebar = () => {
       {/* Brand */}
       <div className="px-6 mb-10">
         <h1 className="text-2xl font-bold tracking-tighter text-emerald-50 font-headline">
-          ASOGACENTRO
+          {nombreAsociacion}
         </h1>
         <p className="text-[10px] uppercase tracking-widest text-emerald-500/60 font-semibold mt-1">
           Administración Central

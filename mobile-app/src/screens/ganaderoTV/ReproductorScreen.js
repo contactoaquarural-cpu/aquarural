@@ -6,6 +6,7 @@ import {
 import { WebView } from 'react-native-webview';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useThemeColors } from '../../utils/ThemeContext';
+import { useConfigStore } from '../../store/config.store';
 
 const { width: W } = Dimensions.get('window');
 
@@ -19,6 +20,7 @@ const formatDuracion = (seg) => {
 const ReproductorScreen = ({ route, navigation }) => {
   const { capitulo } = route.params;
   const colors = useThemeColors();
+  const nombreAsociacion = useConfigStore((s) => s.nombreAsociacion);
   const s = styles(colors);
 
   const html = `
@@ -93,7 +95,7 @@ const ReproductorScreen = ({ route, navigation }) => {
 
         <View style={s.brand}>
           <MaterialIcons name="live-tv" size={16} color={colors.primary} />
-          <Text style={s.brandText}>Ganadero TV · Asogacentro</Text>
+          <Text style={s.brandText}>Ganadero TV · {nombreAsociacion}</Text>
         </View>
       </ScrollView>
     </View>

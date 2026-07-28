@@ -11,9 +11,11 @@ import { useAsociadoStore } from '../../store/asociado.store';
 import { Toast, useToast } from '../../components/AppToast';
 import { useTheme } from '../../utils/ThemeContext';
 import { spacing, radius } from '../../utils/theme';
+import { useConfigStore } from '../../store/config.store';
 
 const LoginScreen = ({ navigation }) => {
   const { colors, typography } = useTheme();
+  const nombreAsociacion = useConfigStore((s) => s.nombreAsociacion);
   const [cedula,   setCedula]   = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
@@ -61,8 +63,7 @@ const LoginScreen = ({ navigation }) => {
             <View style={styles.logoBox}>
               <Text style={styles.logoIcon}>🐄</Text>
             </View>
-            <Text style={styles.orgName}>ASOGACENTRO</Text>
-            <Text style={styles.heroSub}>Asociación de Ganaderos del Centro</Text>
+            <Text style={styles.orgName}>{nombreAsociacion}</Text>
           </LinearGradient>
 
           {/* Formulario */}

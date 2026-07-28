@@ -10,6 +10,7 @@ import api from '../../services/api.service';
 import { useAuthStore }     from '../../store/auth.store';
 import { useAsociadoStore } from '../../store/asociado.store';
 import { useTheme }         from '../../utils/ThemeContext';
+import { useConfigStore }   from '../../store/config.store';
 import EstadoBadge from '../../components/EstadoBadge';
 import { Toast, ConfirmModal, useToast } from '../../components/AppToast';
 import { spacing, radius } from '../../utils/theme';
@@ -21,18 +22,13 @@ const PerfilScreen = ({ navigation }) => {
   const { asociado, cargarDatos } = useAsociadoStore();
   const { show, toastProps } = useToast();
   const [confirmLogout, setConfirmLogout] = useState(false);
-  const [telefono, setTelefono] = useState('3166160377');
-
-  useEffect(() => {
-    api.get('/configuracion').then((r) => {
-      if (r.data.data?.telefonoContacto) setTelefono(r.data.data.telefonoContacto);
-    }).catch(() => {});
-  }, []);
+  const { nombreAsociacion, telefonoContacto } = useConfigStore();
+  const telefono = telefonoContacto;
 
   const handleContactar = () => {
     const numero = telefono.replace(/\D/g, '');
     Alert.alert(
-      'Contactar a ASOGACENTRO',
+      `Contactar a ${nombreAsociacion}`,
       `¿Cómo deseas comunicarte?\n📞 ${telefono}`,
       [
         { text: '📞 Llamar',      onPress: () => Linking.openURL(`tel:${numero}`) },
@@ -168,7 +164,7 @@ const PerfilScreen = ({ navigation }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Soporte</Text>
           <View style={styles.menuCard}>
-            <MenuRow icon="phone" label="Contactar a ASOGACENTRO" sublabel={telefono}
+            <MenuRow icon="phone" label={`Contactar a ${nombreAsociacion}`} sublabel={telefono}
               onPress={handleContactar} colors={colors} typography={typography} />
           </View>
         </View>
@@ -181,7 +177,7 @@ const PerfilScreen = ({ navigation }) => {
           </View>
         </View>
 
-        <Text style={styles.version}>ASOGACENTRO v1.0 · MetaDevelopment Ltd</Text>
+        <Text style={styles.version}>{nombreAsociacion} v1.0 · MetaDevelopment Ltd</Text>
         <View style={{ height: spacing.xxl }} />
       </ScrollView>
     </SafeAreaView>
