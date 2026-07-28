@@ -2,7 +2,7 @@ const { z } = require('zod');
 const Evento       = require('../models/Evento');
 const Asociado     = require('../models/Asociado');
 const Notificacion = require('../models/Notificacion');
-const { enviarNotificacionMasiva } = require('../services/firebase.service');
+const { enviarExpoPush } = require('../services/expo.push.service');
 const logger = require('../utils/logger');
 
 const eventoSchema = z.object({
@@ -85,8 +85,8 @@ exports.crear = async (req, res) => {
       creadoPor: req.user.id,
     });
 
-    // Enviar notificación push a todos los asociados activos
-    const asociados = await Asociado.find({ activo: true }).select('_id fcmToken');
+    // Obtener todos los asociados (no hay campo activo — se usan todos)
+    const asociados = await Asociado.find({ estado: { $ne: 'INACTIVO' } }).select('_id fcmToken');
     const tokens = asociados.map((a) => a.fcmToken).filter(Boolean);
 
     const TIPO_LABEL = { COMITE: 'Comité', REUNION: 'Reunión', CAPACITACION: 'Capacitación', OTRO: 'Evento' };
@@ -96,7 +96,7 @@ exports.crear = async (req, res) => {
       : new Date(evento.fecha).toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
 
     if (tokens.length > 0) {
-      await enviarNotificacionMasiva(tokens, pushTitulo, pushMensaje);
+      await enviarExpoPush(tokens, pushTitulo, pushMensaje, { tipo: 'EVENTO', eventoId: evento._id.toString() });
     }
 
     // Crear notificación persistente en BD para cada asociado (requiere confirmación)
