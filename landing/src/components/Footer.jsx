@@ -6,7 +6,6 @@ const Footer = ({ config }) => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-3">
           <img src="/images/logo.png" alt="GanaderoPro" className="h-10 w-auto" />
-          <span className="text-sm text-gray-400">{nombre}</span>
         </div>
 
         <p className="text-xs text-gray-600 text-center">
