@@ -23,8 +23,16 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const App = () => {
-  const cargarConfig = useConfigStore((s) => s.cargarConfig);
+  const cargarConfig    = useConfigStore((s) => s.cargarConfig);
+  const nombreAsociacion = useConfigStore((s) => s.nombreAsociacion);
+
   useEffect(() => { cargarConfig(); }, []);
+
+  useEffect(() => {
+    if (nombreAsociacion) {
+      document.title = `${nombreAsociacion} — Panel Administrativo`;
+    }
+  }, [nombreAsociacion]);
 
   return (
     <BrowserRouter>

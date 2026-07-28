@@ -20,7 +20,8 @@ const Navbar = ({ config }) => {
     { label: 'Contacto',  href: '#contacto' },
   ];
 
-  const adminUrl = import.meta.env.VITE_ADMIN_URL || 'http://localhost:5173';
+  const adminBase = import.meta.env.VITE_ADMIN_URL || 'http://localhost:5173';
+  const adminUrl = `${adminBase}?theme=${isDark ? 'dark' : 'light'}`;
 
   const navBg = scrolled
     ? isDark

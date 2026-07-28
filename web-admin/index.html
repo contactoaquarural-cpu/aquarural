@@ -3,7 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ASOGACENTRO — Panel Administrativo</title>
+    <title>GanaderoPro — Panel Administrativo</title>
+    <script>
+      // Aplica el tema antes del primer render para evitar flash
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var fromUrl = params.get('theme');
+        var saved = fromUrl || localStorage.getItem('ganadero-theme');
+        var isDark = saved !== 'light';
+        document.documentElement.className = isDark ? 'dark' : 'light';
+        // Actualiza title desde cache si existe
+        try {
+          var cfg = JSON.parse(localStorage.getItem('ganadero-config') || '{}');
+          if (cfg.nombreAsociacion) {
+            document.title = cfg.nombreAsociacion + ' — Panel Administrativo';
+          }
+        } catch (e) {}
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

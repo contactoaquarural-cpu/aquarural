@@ -6,6 +6,10 @@ const THEME_KEY = 'ganadero-theme';
 
 export const ThemeProvider = ({ children }) => {
   const [isDark, setIsDark] = useState(() => {
+    // Si viene ?theme= desde la landing, tiene prioridad
+    const params = new URLSearchParams(window.location.search);
+    const fromUrl = params.get('theme');
+    if (fromUrl === 'light' || fromUrl === 'dark') return fromUrl === 'dark';
     const saved = localStorage.getItem(THEME_KEY);
     return saved !== null ? saved === 'dark' : true;
   });
