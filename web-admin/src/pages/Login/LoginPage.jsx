@@ -57,11 +57,11 @@ const LoginPage = () => {
           </p>
 
           {/* Tarjeta de Marca Oficial con Eslogan */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl backdrop-blur-xl flex flex-col items-center">
+          <div className="relative rounded-3xl overflow-hidden border border-cyan-500/30 bg-slate-900/90 p-2 shadow-2xl shadow-cyan-500/10 backdrop-blur-xl group hover:border-cyan-500/50 transition-all">
             <img
               src="/logo.png"
               alt="AquaRural — Gestión y Recaudo para Acueductos Veredales"
-              className="w-full h-auto max-h-64 object-contain rounded-2xl border border-slate-800/80 shadow-lg"
+              className="w-full h-auto object-cover rounded-2xl"
             />
           </div>
 
