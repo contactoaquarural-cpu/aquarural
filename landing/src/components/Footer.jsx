@@ -8,7 +8,7 @@ const Footer = ({ config }) => {
           <img
             src="/logo.png"
             alt="AquaRural — Gestión y Recaudo para Acueductos Veredales"
-            className="h-[78px] md:h-[86px] w-auto object-contain drop-shadow-[0_4px_12px_rgba(6,182,212,0.35)]"
+            className="h-[94px] md:h-[104px] w-auto object-contain drop-shadow-[0_4px_12px_rgba(6,182,212,0.35)]"
           />
         </div>
 

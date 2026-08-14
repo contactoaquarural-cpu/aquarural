@@ -6,7 +6,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative pt-32 pb-20 overflow-hidden bg-slate-950">
+    <section className="relative pt-36 md:pt-40 pb-20 overflow-hidden bg-slate-950">
       {/* Glow Effects */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-1/3 right-10 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none" />
