@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { z } = require('zod');
+const Suscriptor = require('../models/Suscriptor');
 const Asociado = require('../models/Asociado');
 const {
   generateAccessToken,
@@ -35,7 +36,7 @@ const cambiarPasswordSchema = z.object({
 exports.login = async (req, res) => {
   try {
     const { cedula, email, correo, password } = req.body;
-    const identifier = cedula || email || correo;
+    const identifier = (cedula || email || correo || '').trim();
     if (!identifier || !password) {
       return res.status(400).json({
         success: false,
@@ -44,13 +45,23 @@ exports.login = async (req, res) => {
       });
     }
 
-    const asociado = await Asociado.findOne({
+    // Buscar en Suscriptor (AquaRural) o Asociado (fallback)
+    let asociado = await Suscriptor.findOne({
       $or: [
         { cedula: identifier },
-        { correo: identifier },
-        { email: identifier },
+        { correo: identifier.toLowerCase() },
+        { email: identifier.toLowerCase() },
       ],
     });
+
+    if (!asociado) {
+      asociado = await Asociado.findOne({
+        $or: [
+          { cedula: identifier },
+          { correo: identifier.toLowerCase() },
+        ],
+      });
+    }
 
     if (!asociado) {
       return res.status(401).json({
