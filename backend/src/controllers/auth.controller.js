@@ -32,6 +32,8 @@ const cambiarPasswordSchema = z.object({
 
 // ─── POST /auth/login ────────────────────────────────────────────────────────
 
+exports.login = async (req, res) => {
+  try {
     const { cedula, email, correo, password } = req.body;
     const identifier = cedula || email || correo;
     if (!identifier || !password) {
