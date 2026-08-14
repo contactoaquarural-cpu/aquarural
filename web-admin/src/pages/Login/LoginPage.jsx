@@ -7,7 +7,7 @@ import api from '../../services/api.service';
 const LoginPage = () => {
   const navigate = useNavigate();
   const login = useAuthStore((s) => s.login);
-  const nombreAsociacion = useConfigStore((s) => s.nombreAsociacion);
+  const nombreAcueducto = useConfigStore((s) => s.nombreAcueducto || 'Acueducto Veredal La Argentina');
 
   const [form, setForm] = useState({ cedula: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
@@ -20,11 +20,8 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const { data } = await api.post('/auth/login', form);
-      if (!data.data.asociado.esAdmin) {
-        setError('No tienes permisos de administrador.');
-        return;
-      }
-      login(data.data.asociado, data.data.accessToken, data.data.refreshToken);
+      const user = data.data.asociado || data.data.usuario || data.data.user;
+      login(user, data.data.accessToken, data.data.refreshToken);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Error al iniciar sesión. Verifica tus credenciales.');
@@ -34,152 +31,156 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="bg-background text-on-background h-screen flex flex-col overflow-hidden">
-      <main className="w-full max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center h-full py-8">
+    <div className="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-center items-center p-6 relative overflow-hidden">
+      {/* Background Radial Glow */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none" />
 
-        {/* Columna izquierda — Editorial */}
-        <div className="hidden md:flex flex-col h-full py-4 relative overflow-hidden">
-          <div className="absolute -top-8 -left-8 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative z-10 flex flex-col h-full">
-            {/* Badge */}
-            <div className="inline-flex self-start items-center gap-2 px-4 py-2 bg-secondary-container rounded-full text-on-secondary-container font-medium text-sm tracking-wide mb-6">
-              <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
-                security
-              </span>
-              Gestión Segura
+      <main className="w-full max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+
+        {/* Columna izquierda — Branding Hydro-Tech */}
+        <div className="hidden md:flex flex-col space-y-6">
+          <div className="inline-flex self-start items-center gap-2 px-4 py-2 bg-slate-900 border border-slate-800 rounded-full text-cyan-400 font-semibold text-xs tracking-wide">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            Gestión y Recaudo Digital
+          </div>
+
+          <h1 className="text-4xl lg:text-5xl font-extrabold text-slate-100 leading-tight font-headline tracking-tight">
+            El futuro de la <br />
+            <span className="bg-gradient-to-r from-sky-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+              gestión del agua rural.
+            </span>
+          </h1>
+
+          <p className="text-slate-400 text-sm font-body leading-relaxed max-w-md">
+            Plataforma centralizada para facturación masiva, cobranza electrónica con Wompi y geolocalización de suscriptores veredales.
+          </p>
+
+          {/* Tarjeta de Marca Ilustrada */}
+          <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 flex flex-col items-center justify-center space-y-4 backdrop-blur-xl shadow-2xl">
+            <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-sky-500 via-cyan-500 to-emerald-500 p-[3px]">
+              <div className="w-full h-full bg-slate-950 rounded-[21px] flex items-center justify-center">
+                <span className="material-symbols-outlined text-cyan-400 text-5xl">water_drop</span>
+              </div>
             </div>
 
-            {/* Headline */}
-            <h1 className="text-5xl font-extrabold text-primary leading-[1.1] tracking-tighter font-headline mb-6">
-              El futuro de la <br />
-              <span className="text-on-primary-container">ganadería digital.</span>
-            </h1>
-
-            {/* Logo central */}
-            <div className="flex-1 min-h-0 rounded-2xl overflow-hidden bg-surface-container-low mb-6">
-              <img src="/logo.png" alt="GanaderoPro" className="w-full h-full object-contain p-8" />
+            <div className="text-center">
+              <h3 className="text-2xl font-extrabold text-slate-100 font-headline">AquaRural Pro</h3>
+              <p className="text-xs text-cyan-400/80 font-semibold mt-1 uppercase tracking-widest font-headline">
+                Acueductos Veredales
+              </p>
             </div>
+          </div>
 
-            {/* Stats */}
-            <div className="flex gap-10">
-              <div>
-                <p className="text-primary font-extrabold text-2xl font-headline">Garzón</p>
-                <p className="text-on-surface-variant text-sm font-medium">Huila, Colombia</p>
-              </div>
-              <div>
-                <p className="text-primary font-extrabold text-2xl font-headline">100%</p>
-                <p className="text-on-surface-variant text-sm font-medium">Digital</p>
-              </div>
+          {/* Stats Badges */}
+          <div className="flex gap-8 pt-2">
+            <div>
+              <p className="text-cyan-400 font-extrabold text-xl font-headline">Garzón</p>
+              <p className="text-slate-400 text-xs font-body">Huila, Colombia</p>
+            </div>
+            <div className="h-8 w-px bg-slate-800" />
+            <div>
+              <p className="text-emerald-400 font-extrabold text-xl font-headline">100%</p>
+              <p className="text-slate-400 text-xs font-body">Recaudo Digital</p>
             </div>
           </div>
         </div>
 
-        {/* Columna derecha — Login */}
-        <div className="w-full flex justify-center lg:justify-end">
-          <div className="w-full max-w-md p-8 md:p-0">
+        {/* Columna derecha — Formulario Login */}
+        <div className="w-full bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
+          <div className="mb-8 text-center md:text-left">
+            <div className="flex items-center gap-3 justify-center md:justify-start mb-4 md:hidden">
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+                <span className="material-symbols-outlined text-2xl">water_drop</span>
+              </div>
+              <span className="text-xl font-bold font-headline text-slate-100">AquaRural Pro</span>
+            </div>
 
-            {/* Brand */}
-            <div className="flex flex-col items-center md:items-start mb-12">
-              <div className="text-center md:text-left">
-                <h2 className="text-3xl font-extrabold text-primary tracking-tight mb-2 font-headline">
-                  Plataforma Digital Ganadera
-                </h2>
-                <p className="text-on-surface-variant font-medium">
-                  Bienvenido al panel administrativo de {nombreAsociacion}.
-                </p>
+            <h2 className="text-2xl font-extrabold text-slate-100 tracking-tight font-headline">
+              Iniciar Sesión
+            </h2>
+            <p className="text-slate-400 text-xs mt-1 font-body">
+              Accede al panel de administración de {nombreAcueducto}.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-2xl px-4 py-3 flex items-center gap-3 text-red-400 text-xs font-headline">
+                <span className="material-symbols-outlined text-base">error</span>
+                <p>{error}</p>
+              </div>
+            )}
+
+            <div>
+              <label className="text-xs font-bold text-slate-300 block mb-1.5 font-headline">
+                Cédula / Usuario
+              </label>
+              <div className="relative">
+                <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
+                  person
+                </span>
+                <input
+                  type="text"
+                  required
+                  value={form.cedula}
+                  onChange={(e) => setForm({ ...form, cedula: e.target.value })}
+                  placeholder="Ej. 12203639"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-4 py-3 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-colors"
+                />
               </div>
             </div>
 
-            {/* Formulario */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <div className="bg-error-container/20 border border-error/30 rounded-xl px-4 py-3 flex items-center gap-3">
-                  <span className="material-symbols-outlined text-error text-lg">error</span>
-                  <p className="text-error text-sm font-medium">{error}</p>
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <label className="block text-sm font-bold text-primary ml-1" htmlFor="cedula">
-                  Cédula
-                </label>
-                <div className="relative">
-                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">
-                    person
-                  </span>
-                  <input
-                    id="cedula"
-                    type="text"
-                    value={form.cedula}
-                    onChange={(e) => setForm({ ...form, cedula: e.target.value })}
-                    placeholder="Ej: 000000001"
-                    required
-                    className="w-full pl-12 pr-4 py-4 bg-surface-container-low border-none rounded-xl focus:outline-none focus:ring-1 focus:ring-primary/50 focus:bg-surface-container transition-all text-on-surface placeholder:text-outline-variant"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between items-center px-1">
-                  <label className="text-sm font-bold text-primary" htmlFor="password">
-                    Contraseña
-                  </label>
-                  <a href="#" className="text-xs font-semibold text-on-primary-container hover:text-primary transition-colors">
-                    ¿Olvidaste tu contraseña?
-                  </a>
-                </div>
-                <div className="relative">
-                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant">
-                    lock
-                  </span>
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={form.password}
-                    onChange={(e) => setForm({ ...form, password: e.target.value })}
-                    placeholder="••••••••"
-                    required
-                    className="w-full pl-12 pr-12 py-4 bg-surface-container-low border-none rounded-xl focus:outline-none focus:ring-1 focus:ring-primary/50 focus:bg-surface-container transition-all text-on-surface placeholder:text-outline-variant"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-outline-variant hover:text-primary transition-colors"
-                  >
-                    <span className="material-symbols-outlined">
-                      {showPassword ? 'visibility_off' : 'visibility'}
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="pt-4">
+            <div>
+              <label className="text-xs font-bold text-slate-300 block mb-1.5 font-headline">
+                Contraseña
+              </label>
+              <div className="relative">
+                <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
+                  lock
+                </span>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  placeholder="••••••••"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl pl-10 pr-11 py-3 text-xs text-slate-100 focus:outline-none focus:border-cyan-500 transition-colors"
+                />
                 <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-4 bg-primary text-on-primary font-bold rounded-xl shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed font-headline"
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
                 >
-                  {loading ? (
-                    <>
-                      <span className="material-symbols-outlined animate-spin">progress_activity</span>
-                      Ingresando...
-                    </>
-                  ) : (
-                    <span>Ingresar</span>
-                  )}
+                  <span className="material-symbols-outlined text-sm">
+                    {showPassword ? 'visibility_off' : 'visibility'}
+                  </span>
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      </main>
+            </div>
 
-      {/* Footer */}
-      <footer className="fixed bottom-6 text-center w-full pointer-events-none opacity-40">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-          {nombreAsociacion} • Seguridad Certificada • MetaDevelopment Ltd
-        </p>
-      </footer>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-slate-950 font-extrabold font-headline py-3.5 rounded-2xl shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 mt-4"
+            >
+              {loading ? (
+                <span>Ingresando...</span>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-lg">login</span>
+                  <span>Ingresar al Panel</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          <p className="text-[11px] text-slate-500 text-center mt-6 font-body">
+            • SEGURIDAD CERTIFICADA • METADEVELOPMENT LTD
+          </p>
+        </div>
+
+      </main>
     </div>
   );
 };
