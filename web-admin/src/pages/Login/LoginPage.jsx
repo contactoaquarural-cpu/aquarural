@@ -59,21 +59,14 @@ const LoginPage = () => {
       {/* Main Grid — 2 Contenedores Compactos Nivelados Lado a Lado */}
       <main className="w-full max-w-5xl mx-auto my-6 grid md:grid-cols-12 gap-6 items-stretch relative z-10">
 
-        {/* Contenedor 1 (Izquierdo): Tarjeta de Marca con Isotipo Vectorial Transparente (7 Columnas) */}
+        {/* Contenedor 1 (Izquierdo): Tarjeta de Marca con Logo PNG 100% Transparente (7 Columnas) */}
         <div className="md:col-span-7 bg-slate-900/80 border border-slate-800/90 rounded-3xl p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between items-center hover:border-cyan-500/30 transition-all duration-300 group">
-          <div className="w-full my-auto flex flex-col items-center justify-center p-4 text-center">
-            {/* Isotipo Vectorial 100% Libre y Transparente sin Círculos */}
-            <div className="w-28 h-28 flex items-center justify-center drop-shadow-[0_10px_25px_rgba(6,182,212,0.4)] group-hover:scale-105 transition-transform duration-300">
-              <img src="/favicon.svg" alt="AquaRural Logo" className="w-full h-full object-contain" />
-            </div>
-
-            {/* Tipografía Nítida Vectorial */}
-            <h2 className="text-4xl font-black text-slate-100 font-headline tracking-tight mt-5">
-              AquaRural
-            </h2>
-            <p className="text-xs text-cyan-400 font-bold uppercase tracking-widest font-headline mt-1.5">
-              Gestión y Recaudo para Acueductos Veredales
-            </p>
+          <div className="w-full my-auto flex items-center justify-center p-2">
+            <img
+              src="/logo.png"
+              alt="AquaRural — Gestión y Recaudo para Acueductos Veredales"
+              className="w-full max-w-md h-auto object-contain drop-shadow-[0_15px_30px_rgba(6,182,212,0.25)] group-hover:scale-[1.02] transition-transform duration-300"
+            />
           </div>
 
           {/* Stats Bar Inferior del Contenedor 1 */}
