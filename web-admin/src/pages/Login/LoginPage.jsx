@@ -59,14 +59,23 @@ const LoginPage = () => {
       {/* Main Grid — 2 Contenedores Compactos Nivelados Lado a Lado */}
       <main className="w-full max-w-5xl mx-auto my-6 grid md:grid-cols-12 gap-6 items-stretch relative z-10">
 
-        {/* Contenedor 1 (Izquierdo): Tarjeta de Marca con Logo Oficial (7 Columnas) */}
+        {/* Contenedor 1 (Izquierdo): Tarjeta de Marca con Isotipo Vectorial Transparente (7 Columnas) */}
         <div className="md:col-span-7 bg-slate-900/80 border border-slate-800/90 rounded-3xl p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between items-center hover:border-cyan-500/30 transition-all duration-300 group">
-          <div className="w-full my-auto flex items-center justify-center p-2">
-            <img
-              src="/logo.png"
-              alt="AquaRural — Gestión y Recaudo para Acueductos Veredales"
-              className="w-full max-w-sm h-auto object-contain rounded-2xl drop-shadow-2xl group-hover:scale-[1.02] transition-transform duration-300"
-            />
+          <div className="w-full my-auto flex flex-col items-center justify-center p-4 text-center">
+            {/* Isotipo Vectorial Transparente con Resplandor */}
+            <div className="w-28 h-28 rounded-3xl bg-gradient-to-tr from-sky-500 via-cyan-500 to-emerald-500 p-[3px] shadow-2xl shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300">
+              <div className="w-full h-full bg-slate-950 rounded-[21px] flex items-center justify-center p-3">
+                <img src="/favicon.svg" alt="AquaRural Logo" className="w-full h-full object-contain" />
+              </div>
+            </div>
+
+            {/* Tipografía Nítida Vectorial */}
+            <h2 className="text-4xl font-black text-slate-100 font-headline tracking-tight mt-5">
+              AquaRural
+            </h2>
+            <p className="text-xs text-cyan-400 font-bold uppercase tracking-widest font-headline mt-1.5">
+              Gestión y Recaudo para Acueductos Veredales
+            </p>
           </div>
 
           {/* Stats Bar Inferior del Contenedor 1 */}
