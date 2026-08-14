@@ -44,24 +44,24 @@ const LoginPage = () => {
       {/* Spacing top */}
       <div className="pt-4" />
 
-      {/* Main Centered Login Card — Ultra-Clean & Sleek */}
+      {/* Main Centered Login Card — Ultra-Clean & Compact */}
       <main className="w-full max-w-md mx-auto my-auto relative z-10">
-        <div className="bg-slate-900/90 border border-slate-800/90 rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl space-y-6">
+        <div className="bg-slate-900/90 border border-slate-800/90 rounded-3xl p-6 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl space-y-3.5">
 
           {/* Logo Oficial Transparente al Centro Superior */}
-          <div className="flex flex-col items-center justify-center text-center">
+          <div className="flex flex-col items-center justify-center text-center pb-1">
             <img
               src="/logo.png"
               alt="AquaRural — Gestión y Recaudo para Acueductos Veredales"
-              className="w-full max-w-[280px] h-auto object-contain drop-shadow-[0_10px_25px_rgba(6,182,212,0.3)] hover:scale-105 transition-transform duration-300"
+              className="w-full max-w-[200px] sm:max-w-[230px] h-auto object-contain drop-shadow-[0_10px_25px_rgba(6,182,212,0.3)] hover:scale-105 transition-transform duration-300"
             />
           </div>
 
-          <div className="border-t border-slate-800/80 pt-4 text-center">
-            <h2 className="text-xl font-extrabold text-slate-100 font-headline tracking-tight">
+          <div className="border-t border-slate-800/80 pt-2.5 text-center">
+            <h2 className="text-lg font-extrabold text-slate-100 font-headline tracking-tight">
               Acceso Administrativo
             </h2>
-            <p className="text-slate-400 text-xs mt-1 font-body">
+            <p className="text-slate-400 text-xs mt-0.5 font-body">
               {nombreAcueducto}
             </p>
           </div>
