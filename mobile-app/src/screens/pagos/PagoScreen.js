@@ -54,7 +54,7 @@ const buildCheckoutHtml = ({ publicKey, amountInCents, reference, currency, acce
         data-reference="${reference}"
         data-signature:integrity="${integritySignature}"
         data-acceptance-token="${acceptanceToken}"
-        data-redirect-url="https://asogacentro.app/pago-resultado"
+        data-redirect-url="https://aquarural.app/pago-resultado"
       ></script>
     </form>
     <p class="loader" id="loader-text">Cargando pasarela segura de pago...</p>

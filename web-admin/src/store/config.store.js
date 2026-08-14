@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import api from '../services/api.service';
 
-const CONFIG_KEY = 'ganadero-config';
+const CONFIG_KEY = 'aquarural-config';
 
 const cargarCache = () => {
   try {
@@ -13,7 +13,7 @@ const cargarCache = () => {
 const cache = cargarCache();
 
 export const useConfigStore = create((set) => ({
-  nombreAsociacion: cache?.nombreAsociacion || 'GanaderoPro',
+  nombreAcueducto:  cache?.nombreAcueducto  || 'AquaRural Pro',
   municipio:        cache?.municipio        || 'Colombia',
   telefonoContacto: cache?.telefonoContacto || '3166160377',
 
@@ -23,7 +23,7 @@ export const useConfigStore = create((set) => ({
       const d = r.data.data;
       if (d) {
         const vals = {
-          nombreAsociacion: d.nombreAsociacion || 'GanaderoPro',
+          nombreAcueducto:  d.nombreAcueducto  || 'AquaRural Pro',
           municipio:        d.municipio        || 'Colombia',
           telefonoContacto: d.telefonoContacto || '3166160377',
         };

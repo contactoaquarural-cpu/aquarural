@@ -3,20 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GanaderoPro — Panel Administrativo</title>
+    <title>AquaRural — Panel Administrativo</title>
     <script>
       // Aplica el tema antes del primer render para evitar flash
       (function () {
         var params = new URLSearchParams(window.location.search);
         var fromUrl = params.get('theme');
-        var saved = fromUrl || localStorage.getItem('ganadero-theme');
+        var saved = fromUrl || localStorage.getItem('aquarural-theme');
         var isDark = saved !== 'light';
         document.documentElement.className = isDark ? 'dark' : 'light';
         // Actualiza title desde cache si existe
         try {
-          var cfg = JSON.parse(localStorage.getItem('ganadero-config') || '{}');
-          if (cfg.nombreAsociacion) {
-            document.title = cfg.nombreAsociacion + ' — Panel Administrativo';
+          var cfg = JSON.parse(localStorage.getItem('aquarural-config') || '{}');
+          if (cfg.nombreAcueducto) {
+            document.title = cfg.nombreAcueducto + ' — AquaRural Admin';
           }
         } catch (e) {}
       })();
@@ -24,7 +24,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link

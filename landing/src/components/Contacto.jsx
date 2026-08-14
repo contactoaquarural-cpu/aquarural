@@ -1,158 +1,141 @@
 import { useState } from 'react';
 
-const Contacto = ({ config }) => {
-  const telefono  = config?.telefonoContacto || '';
-  const nombre    = config?.nombreAsociacion || 'la asociación';
-  const municipio = config?.municipio || '';
-
-  const [form, setForm]       = useState({ nombre: '', cedula: '', telefono: '', finca: '', mensaje: '' });
+const Contacto = () => {
+  const [nombre, setNombre] = useState('');
+  const [acueducto, setAcueducto] = useState('');
+  const [municipio, setMunicipio] = useState('');
+  const [celular, setCelular] = useState('');
+  const [suscriptores, setSuscriptores] = useState('');
   const [enviado, setEnviado] = useState(false);
-  const [sending, setSending] = useState(false);
-
-  const handleChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!telefono) return;
-    setSending(true);
-
-    const texto = encodeURIComponent(
-      `*Solicitud de membresía — ${nombre}*\n\n` +
-      `👤 Nombre: ${form.nombre}\n` +
-      `🪪 Cédula: ${form.cedula}\n` +
-      `📞 Teléfono: ${form.telefono}\n` +
-      `🌾 Finca: ${form.finca}\n` +
-      `💬 Mensaje: ${form.mensaje || 'Sin mensaje adicional'}`
-    );
-
-    const numero = telefono.replace(/\D/g, '');
-    window.open(`https://wa.me/57${numero}?text=${texto}`, '_blank');
     setEnviado(true);
-    setSending(false);
+
+    const msg = encodeURIComponent(
+      `Hola! Soy ${nombre} del ${acueducto} (${municipio}). Tenemos aprox. ${suscriptores} suscriptores y me gustaría agendar una demo de AquaRural Pro. Celular: ${celular}`
+    );
+    window.open(`https://wa.me/573166160377?text=${msg}`, '_blank');
   };
 
   return (
-    <section id="contacto" className="section-pad bg-dark-card border-t border-dark-border">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <span className="text-primary text-sm font-semibold uppercase tracking-widest">Únete</span>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white mt-2">Quiero asociarme</h2>
-          <p className="text-gray-400 mt-3 max-w-xl mx-auto">
-            Completa el formulario y te contactaremos para iniciar tu proceso de vinculación
-            {municipio ? ` a ${nombre}` : ''}.
-          </p>
-        </div>
+    <section id="contacto" className="py-20 bg-slate-950 relative">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Info Comercial Izquierda */}
+          <div className="lg:col-span-6 space-y-6">
+            <span className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-xs font-semibold px-4 py-1.5 rounded-full font-headline">
+              Contacto Comercial B2B
+            </span>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          {/* Info de contacto */}
-          <div className="space-y-6">
-            <div className="bg-dark border border-dark-border rounded-2xl p-6 space-y-5">
-              <h3 className="text-base font-bold text-white">Información de contacto</h3>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-100 font-headline leading-tight">
+              ¿Listo para Digitalizar el Recaudo de tu Acueducto Veredal?
+            </h2>
 
-              {telefono && (
-                <>
-                  <a href={`tel:${telefono}`}
-                    className="flex items-center gap-3 text-gray-300 hover:text-primary transition-colors group">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary/20 transition-all">
-                      📞
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Llámanos</p>
-                      <p className="font-semibold">{telefono}</p>
-                    </div>
-                  </a>
+            <p className="text-slate-400 text-sm md:text-base font-body leading-relaxed">
+              Déjanos los datos de tu comunidad o escríbenos directamente por WhatsApp. Te ayudamos a configurar tu acueducto e importar tu plantilla de Excel sin costo inicial.
+            </p>
 
-                  <a href={`https://wa.me/57${telefono.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-gray-300 hover:text-primary transition-colors group">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:bg-primary/20 transition-all">
-                      💬
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">WhatsApp</p>
-                      <p className="font-semibold">{telefono}</p>
-                    </div>
-                  </a>
-                </>
-              )}
-
-              {municipio && (
-                <div className="flex items-center gap-3 text-gray-300">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-                    📍
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Ubicación</p>
-                    <p className="font-semibold">{municipio}</p>
-                  </div>
+            <div className="space-y-4 pt-4 border-t border-slate-900">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-2xl">call</span>
                 </div>
-              )}
-            </div>
+                <div>
+                  <p className="text-xs text-slate-400 font-headline">Línea Directa & WhatsApp</p>
+                  <p className="text-base font-bold text-slate-100 font-headline">+57 316 616 0377</p>
+                </div>
+              </div>
 
-            <div className="bg-primary/10 border border-primary/30 rounded-2xl p-5">
-              <p className="text-sm text-primary font-semibold mb-1">¿Ya eres asociado?</p>
-              <p className="text-sm text-gray-400">Descarga la app móvil y gestiona tu membresía desde tu celular.</p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-2xl">mail</span>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 font-headline">Correo Electrónico</p>
+                  <p className="text-base font-bold text-slate-100 font-headline">contactoaquarural@gmail.com</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Formulario */}
-          <div className="bg-dark border border-dark-border rounded-2xl p-6">
-            {enviado ? (
-              <div className="text-center py-8">
-                <div className="text-5xl mb-4">✅</div>
-                <h3 className="text-lg font-bold text-white mb-2">¡Mensaje enviado!</h3>
-                <p className="text-gray-400 text-sm">Te redirigimos a WhatsApp. Pronto te contactaremos.</p>
-                <button onClick={() => setEnviado(false)}
-                  className="mt-6 text-sm text-primary hover:underline">
-                  Enviar otro mensaje
-                </button>
+          {/* Formulario Derecha */}
+          <div className="lg:col-span-6">
+            <form onSubmit={handleSubmit} className="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 space-y-4 shadow-2xl">
+              <h3 className="text-xl font-bold text-slate-100 font-headline mb-4">Solicitar Demostración y Asesoria</h3>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-400 block mb-1 font-headline">Tu Nombre</label>
+                <input
+                  type="text"
+                  required
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                  placeholder="ej. Julián Trujillo"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                />
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Nombre completo *</label>
-                    <input name="nombre" value={form.nombre} onChange={handleChange} required
-                      placeholder="Juan Pérez"
-                      className="mt-1 w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-primary transition-colors" />
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Cédula *</label>
-                    <input name="cedula" value={form.cedula} onChange={handleChange} required
-                      placeholder="12345678"
-                      className="mt-1 w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-primary transition-colors" />
-                  </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-semibold text-slate-400 block mb-1 font-headline">Nombre del Acueducto</label>
+                  <input
+                    type="text"
+                    required
+                    value={acueducto}
+                    onChange={(e) => setAcueducto(e.target.value)}
+                    placeholder="ej. Acueducto La Argentina"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                  />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Teléfono *</label>
-                  <input name="telefono" value={form.telefono} onChange={handleChange} required
-                    placeholder="300 123 4567"
-                    className="mt-1 w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-primary transition-colors" />
+                  <label className="text-xs font-semibold text-slate-400 block mb-1 font-headline">Municipio / Departamento</label>
+                  <input
+                    type="text"
+                    required
+                    value={municipio}
+                    onChange={(e) => setMunicipio(e.target.value)}
+                    placeholder="ej. Garzón, Huila"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-semibold text-slate-400 block mb-1 font-headline">Teléfono / WhatsApp</label>
+                  <input
+                    type="tel"
+                    required
+                    value={celular}
+                    onChange={(e) => setCelular(e.target.value)}
+                    placeholder="3166160377"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                  />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Nombre de la finca</label>
-                  <input name="finca" value={form.finca} onChange={handleChange}
-                    placeholder="El Paraíso"
-                    className="mt-1 w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-primary transition-colors" />
+                  <label className="text-xs font-semibold text-slate-400 block mb-1 font-headline">N° Aproximado de Suscriptores</label>
+                  <input
+                    type="text"
+                    required
+                    value={suscriptores}
+                    onChange={(e) => setSuscriptores(e.target.value)}
+                    placeholder="ej. 150 usuarios"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                  />
                 </div>
+              </div>
 
-                <div>
-                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Mensaje (opcional)</label>
-                  <textarea name="mensaje" value={form.mensaje} onChange={handleChange} rows={3}
-                    placeholder="Cuéntanos un poco sobre tu finca..."
-                    className="mt-1 w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-primary transition-colors resize-none" />
-                </div>
-
-                <button type="submit" disabled={sending}
-                  className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-primary/20 disabled:opacity-50 flex items-center justify-center gap-2">
-                  💬 Enviar por WhatsApp
-                </button>
-                <p className="text-xs text-gray-500 text-center">
-                  Al enviar, serás redirigido a WhatsApp con tu información prellenada.
-                </p>
-              </form>
-            )}
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-slate-950 font-extrabold font-headline py-3.5 rounded-2xl shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 mt-4"
+              >
+                <span className="material-symbols-outlined text-xl">send</span>
+                <span>Enviar y Agendar Demo por WhatsApp</span>
+              </button>
+            </form>
           </div>
         </div>
       </div>

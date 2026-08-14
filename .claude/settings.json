@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ' *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git commit -m 'fix: sincronizar tema y nombre entre landing y admin *)",
+      "Bash(git commit -m 'feat: reemplazar cuadro verde e icono por logo en login del admin *)",
+      "PowerShell(Rename-Item \"C:\\\\Users\\\\Julian Andres\\\\OneDrive\\\\Documents\\\\Asoganadera\\\\Asogacentro\\\\web-admin\\\\public\\\\logo.png.png\" \"logo.png\")",
+      "Bash(git commit -m 'fix: logo ocupa todo el contenedor izquierdo y eliminar logo pequeño del brand *)",
+      "Bash(git commit -m 'feat: modulo de eventos y convocatorias \\(Fase 12\\) *)",
+      "Bash(git commit -m 'fix: corregir navegacion campana que bloqueaba tab Perfil *)",
+      "Bash(node check-eventos.js)",
+      "Bash(del \"C:\\\\Users\\\\Julian Andres\\\\OneDrive\\\\Documents\\\\Asoganadera\\\\Asogacentro\\\\backend\\\\check-eventos.js\")",
+      "Bash(git commit *)",
+      "Bash(powershell -Command \"[Convert]::ToBase64String\\([IO.File]::ReadAllBytes\\('C:\\\\Users\\\\Julian Andres\\\\OneDrive\\\\Documents\\\\Asoganadera\\\\Asogacentro\\\\web-admin\\\\public\\\\logo.png'\\)\\)\")",
+      "Bash(node check-login.js)",
+      "Bash(ls \"C:\\\\Users\\\\Julian Andres\\\\OneDrive\\\\Documents\\\\Comunidad+\" 2>/dev/null || echo \"DIRECTORY NOT FOUND\")",
+      "Read(//c/Users/Julian Andres/OneDrive/Documents/Comunidad\\\\+/**)",
+      "Bash(ls -la \"C:\\\\Users\\\\Julian Andres\\\\OneDrive\\\\Documents\\\\Comunidad+\" 2>/dev/null)",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"C:\\\\Users\\\\Julian Andres\\\\OneDrive\\\\Documents\\\\Comunidad+\\\\docs\")",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Julian Andres\\\\OneDrive\\\\Documents\\\\Comunidad+\\\\mobile-app\" -Directory | Where-Object { $_.Name -eq \"src\" } | ForEach-Object { Get-ChildItem $_.FullName -Directory | Select-Object Name })",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Julian Andres\\\\OneDrive\\\\Documents\\\\Comunidad+\\\\mobile-app\" | Where-Object { $_.PSIsContainer } | Select-Object Name)",
+      "Read(//c/Users/Julian Andres/OneDrive/Documents/Comunidad\\\\+/mobile-app/**)",
+      "Read(//c/Users/Julian Andres/OneDrive/Documents/Comunidad\\\\+/mobile-app/src/**)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\Julian Andres\\AppData\\Local\\Temp",
+      "C:\\Users\\Julian Andres\\OneDrive\\Documents\\Comunidad+",
+      "C:\\Users\\Julian Andres\\OneDrive\\Documents\\Comunidad+\\docs"
+    ]
+  }
+}

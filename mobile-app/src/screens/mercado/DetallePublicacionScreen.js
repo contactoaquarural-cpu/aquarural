@@ -22,7 +22,7 @@ const DetallePublicacionScreen = ({ route, navigation }) => {
     const num = publicacion.contacto?.whatsapp || publicacion.contacto?.telefono;
     if (!num) return;
     const tel = num.replace(/\D/g, '');
-    Linking.openURL(`https://wa.me/57${tel}?text=Hola, vi tu publicación "${publicacion.titulo}" en Asogacentro y me interesa.`);
+    Linking.openURL(`https://wa.me/57${tel}?text=Hola, vi tu publicación "${publicacion.titulo}" en AquaRural y me interesa.`);
   };
 
   const llamar = () => {

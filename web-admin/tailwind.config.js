@@ -5,55 +5,59 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ── Modo oscuro (clase .dark) ──────────────────────────────────────────
-        'background':               '#111414',
-        'surface':                  '#111414',
-        'surface-dim':              '#111414',
-        'surface-container-lowest': '#0c0f0e',
-        'surface-container-low':    '#191c1c',
-        'surface-container':        '#1d2020',
-        'surface-container-high':   '#282a2a',
-        'surface-container-highest':'#333535',
-        'surface-bright':           '#373a39',
-        'surface-variant':          '#333535',
-        'surface-tint':             '#a5d0b9',
+        // ── Paleta Hydro-Tech AquaRural ──────────────────────────────────────
+        'background':               '#090D16', // Deep Slate / Obsidian Blue
+        'surface':                  '#0F172A', // Slate 900
+        'surface-dim':              '#0F172A',
+        'surface-container-lowest': '#050913',
+        'surface-container-low':    '#111827', // Gray 900
+        'surface-container':        '#1E293B', // Slate 800
+        'surface-container-high':   '#334155', // Slate 700
+        'surface-container-highest':'#475569', // Slate 600
+        'surface-bright':           '#38BDF8', // Cyan 400
+        'surface-variant':          '#1E293B',
+        'surface-tint':             '#0EA5E9',
 
-        'primary':                  '#a5d0b9',
-        'primary-container':        '#1b4332',
-        'on-primary':               '#0e3727',
-        'on-primary-container':     '#86af99',
+        'primary':                  '#0EA5E9', // Cyan Hydro 500
+        'primary-container':        '#0369A1', // Cyan 700
+        'on-primary':               '#FFFFFF',
+        'on-primary-container':     '#E0F2FE',
 
-        'secondary':                '#c4c9b1',
-        'secondary-container':      '#444937',
-        'on-secondary':             '#2e3222',
-        'on-secondary-container':   '#b3b8a1',
+        'secondary':                '#10B981', // Emerald Fresh 500
+        'secondary-container':      '#047857', // Emerald 700
+        'on-secondary':             '#FFFFFF',
+        'on-secondary-container':   '#D1FAE5',
 
-        'tertiary':                 '#f7ba8b',
-        'tertiary-container':       '#59320e',
-        'on-tertiary':              '#4c2704',
-        'on-tertiary-container':    '#d39a6e',
+        'tertiary':                 '#06B6D4', // Electric Aqua
+        'tertiary-container':       '#0E7490',
+        'on-tertiary':              '#FFFFFF',
+        'on-tertiary-container':    '#CFFAFE',
 
-        'error':                    '#ffb4ab',
-        'error-container':          '#93000a',
-        'on-error':                 '#690005',
-        'on-error-container':       '#ffdad6',
+        'error':                    '#F87171', // Red 400
+        'error-container':          '#991B1B',
+        'on-error':                 '#FFFFFF',
+        'on-error-container':       '#FEE2E2',
 
-        'on-surface':               '#e1e3e2',
-        'on-surface-variant':       '#c1c8c2',
-        'on-background':            '#e1e3e2',
-        'outline':                  '#8b938d',
-        'outline-variant':          '#414844',
+        'on-surface':               '#F8FAFC', // Slate 50
+        'on-surface-variant':       '#94A3B8', // Slate 400
+        'on-background':            '#F8FAFC',
+        'outline':                  '#334155',
+        'outline-variant':          '#1E293B',
 
-        // Sidebar — igual en ambos modos
-        'sidebar':                  '#022c22',
+        // Estado del suscriptor / factura
+        'alDia':    '#10B981',
+        'enMora':   '#F59E0B',
+        'inactivo': '#EF4444',
+
+        'sidebar':                  '#0A1120', // Ultra Deep Hydro
       },
       fontFamily: {
-        headline: ['Manrope', 'sans-serif'],
+        headline: ['Outfit', 'sans-serif'],
         body:     ['Inter', 'sans-serif'],
         label:    ['Inter', 'sans-serif'],
       },
       borderRadius: {
-        DEFAULT: '0.25rem',
+        DEFAULT: '0.375rem',
         lg:      '0.5rem',
         xl:      '0.75rem',
         '2xl':   '1rem',

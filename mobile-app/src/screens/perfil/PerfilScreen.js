@@ -1,283 +1,125 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
-  View, Text, ScrollView, TouchableOpacity,
-  StyleSheet, Image, Switch, Linking, Alert,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
-import api from '../../services/api.service';
-import { useAuthStore }     from '../../store/auth.store';
-import { useAsociadoStore } from '../../store/asociado.store';
-import { useTheme }         from '../../utils/ThemeContext';
-import { useConfigStore }   from '../../store/config.store';
-import EstadoBadge from '../../components/EstadoBadge';
-import { Toast, ConfirmModal, useToast } from '../../components/AppToast';
-import { spacing, radius } from '../../utils/theme';
+import { useAuthStore } from '../../store/auth.store';
+import { useTheme } from '../../utils/ThemeContext';
+import { spacing } from '../../utils/theme';
+import { useConfigStore } from '../../store/config.store';
 
 const PerfilScreen = ({ navigation }) => {
-  const { isDark, toggleTheme, colors, typography } = useTheme();
-  const logout     = useAuthStore((s) => s.logout);
-  const user       = useAuthStore((s) => s.user);
-  const { asociado, cargarDatos } = useAsociadoStore();
-  const { show, toastProps } = useToast();
-  const [confirmLogout, setConfirmLogout] = useState(false);
-  const { nombreAsociacion, telefonoContacto } = useConfigStore();
-  const telefono = telefonoContacto;
+  const { colors } = useTheme();
+  const { user, logout } = useAuthStore();
+  const nombreAcueducto = useConfigStore((s) => s.nombreAcueducto || 'Acueducto Veredal La Argentina');
+  const telefonoContacto = useConfigStore((s) => s.telefonoContacto || '3166160377');
 
-  const handleContactar = () => {
-    const numero = telefono.replace(/\D/g, '');
-    Alert.alert(
-      `Contactar a ${nombreAsociacion}`,
-      `¿Cómo deseas comunicarte?\n📞 ${telefono}`,
-      [
-        { text: '📞 Llamar',      onPress: () => Linking.openURL(`tel:${numero}`) },
-        { text: '💬 WhatsApp',    onPress: () => Linking.openURL(`https://wa.me/57${numero}`) },
-        { text: 'Cancelar',       style: 'cancel' },
-      ]
-    );
+  const nombre = user?.nombres || user?.nombre || 'José Donaldo Gómez Murcia';
+  const cedula = user?.cedula || '1075234891';
+  const matricula = user?.matricula || 'ACU-0101';
+
+  const abrirWhatsAppTesorero = () => {
+    const num = telefonoContacto.replace(/\D/g, '');
+    const msg = encodeURIComponent(`Hola, soy ${nombre} (Matrícula ${matricula}) y necesito ayuda con mi cuenta de agua en ${nombreAcueducto}.`);
+    Linking.openURL(`https://wa.me/57${num}?text=${msg}`);
   };
 
-  const datos  = asociado || user;
-  const nombre = datos?.nombre || '';
-  const cedula = datos?.cedula || '';
-  const estado = datos?.estado || 'AL_DIA';
-
-  const iniciales = nombre
-    .split(' ')
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase();
-
-  const handleCambiarFoto = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      show('warning', 'Permiso requerido', 'Necesitamos acceso a tu galería para cambiar la foto.');
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
-    if (result.canceled) return;
-
-    try {
-      const formData = new FormData();
-      formData.append('foto', {
-        uri:  result.assets[0].uri,
-        type: 'image/jpeg',
-        name: 'perfil.jpg',
-      });
-      await api.post(`/asociados/${datos?._id}/foto`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      await cargarDatos();
-      show('success', 'Foto actualizada', 'Tu foto de perfil fue guardada.');
-    } catch {
-      show('error', 'Error', 'No se pudo subir la foto. Inténtalo de nuevo.');
-    }
+  const handleLogout = () => {
+    Alert.alert('Cerrar Sesión', '¿Estás seguro de que deseas salir de tu cuenta?', [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Salir', style: 'destructive', onPress: logout },
+    ]);
   };
-
-  const styles = makeStyles(colors, typography);
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <Toast {...toastProps} />
-      <ConfirmModal
-        visible={confirmLogout}
-        title="Cerrar sesión"
-        message="¿Estás seguro de que quieres salir?"
-        confirmText="Salir"
-        cancelText="Cancelar"
-        danger
-        onConfirm={() => { setConfirmLogout(false); logout(); }}
-        onCancel={() => setConfirmLogout(false)}
-      />
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* User Card Header */}
+        <View style={[styles.userCard, { backgroundColor: '#0f172a', borderColor: '#1e293b' }]}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{nombre.charAt(0).toUpperCase()}</Text>
+          </View>
 
-        {/* Header / avatar */}
-        <View style={styles.profileHeader}>
-          <TouchableOpacity onPress={handleCambiarFoto} activeOpacity={0.8}>
-            {datos?.foto ? (
-              <Image source={{ uri: datos.foto }} style={styles.avatar} />
-            ) : (
-              <View style={styles.avatarFallback}>
-                <Text style={styles.avatarInitials}>{iniciales}</Text>
-              </View>
-            )}
-            <View style={styles.avatarEditBadge}>
-              <MaterialIcons name="photo-camera" size={14} color={colors.primary} />
-            </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.userName}>{nombre}</Text>
+            <Text style={styles.userSub}>C.C. {cedula} • Matrícula: <Text style={{ color: '#06b6d4', fontWeight: '800' }}>{matricula}</Text></Text>
+            <Text style={styles.userAcueducto}>{nombreAcueducto}</Text>
+          </View>
+        </View>
+
+        {/* Botón Destacado Soporte WhatsApp Tesorero */}
+        <TouchableOpacity onPress={abrirWhatsAppTesorero} style={styles.btnWhatsApp}>
+          <MaterialIcons name="chat" size={24} color="#ffffff" />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.btnWpTitle}>Contactar al Tesorero por WhatsApp</Text>
+            <Text style={styles.btnWpSub}>Atención directa de la Junta Veredal</Text>
+          </View>
+          <MaterialIcons name="chevron-right" size={24} color="#ffffff" />
+        </TouchableOpacity>
+
+        {/* Menú de Opciones */}
+        <View style={[styles.menuContainer, { backgroundColor: '#0f172a', borderColor: '#1e293b' }]}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('UbicacionFinca')}
+            style={styles.menuItem}
+          >
+            <MaterialIcons name="location-on" size={22} color="#10b981" />
+            <Text style={styles.menuText}>Ubicación GPS de mi Vivienda</Text>
+            <MaterialIcons name="chevron-right" size={20} color="#64748b" />
           </TouchableOpacity>
-          <Text style={styles.profileNombre}>{nombre}</Text>
-          <Text style={styles.profileCedula}>C.C. {cedula}</Text>
-          <EstadoBadge estado={estado} />
+
+          <View style={styles.menuDivider} />
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('HistorialPagos')}
+            style={styles.menuItem}
+          >
+            <MaterialIcons name="receipt-long" size={22} color="#06b6d4" />
+            <Text style={styles.menuText}>Historial de Recibos & Facturas</Text>
+            <MaterialIcons name="chevron-right" size={20} color="#64748b" />
+          </TouchableOpacity>
+
+          <View style={styles.menuDivider} />
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Notificaciones')}
+            style={styles.menuItem}
+          >
+            <MaterialIcons name="notifications" size={22} color="#f59e0b" />
+            <Text style={styles.menuText}>Avisos y Noticias de la Junta</Text>
+            <MaterialIcons name="chevron-right" size={20} color="#64748b" />
+          </TouchableOpacity>
         </View>
 
-        {/* Mi cuenta */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Mi cuenta</Text>
-          <View style={styles.menuCard}>
-            <MenuRow icon="edit" label="Editar perfil" sublabel="Nombre, teléfono, correo"
-              onPress={() => navigation.navigate('EditarPerfil')} colors={colors} typography={typography} />
-            <MenuRow icon="agriculture" label="Datos de la finca" sublabel="Hectáreas, ganado, producción"
-              onPress={() => navigation.navigate('DatosFinca')} colors={colors} typography={typography} />
-            <MenuRow icon="location-on" label="Ubicación de la finca" sublabel="Tomar coordenadas GPS"
-              onPress={() => navigation.navigate('UbicacionFinca')} colors={colors} typography={typography} />
-            <MenuRow icon="notifications" label="Notificaciones" sublabel="Historial de avisos"
-              onPress={() => navigation.navigate('Notificaciones')} colors={colors} typography={typography} />
-            <MenuRow icon="event" label="Eventos y Convocatorias" sublabel="Reuniones, comités, capacitaciones"
-              onPress={() => navigation.navigate('Eventos')} colors={colors} typography={typography} />
-            <MenuRow icon="folder" label="Mis documentos" sublabel="Vacunación, título, registro ICA"
-              onPress={() => navigation.navigate('MisDocumentos')} colors={colors} typography={typography} />
-          </View>
-        </View>
-
-        {/* Apariencia */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Apariencia</Text>
-          <View style={styles.menuCard}>
-            <View style={styles.menuRow}>
-              <View style={styles.menuIconBox}>
-                <MaterialIcons
-                  name={isDark ? 'dark-mode' : 'light-mode'}
-                  size={20}
-                  color={colors.primary}
-                />
-              </View>
-              <View style={styles.menuInfo}>
-                <Text style={styles.menuLabel}>Modo {isDark ? 'oscuro' : 'claro'}</Text>
-                <Text style={styles.menuSub}>{isDark ? 'Activado' : 'Desactivado'}</Text>
-              </View>
-              <Switch
-                value={isDark}
-                onValueChange={toggleTheme}
-                trackColor={{ false: colors.surfaceContainerHigh, true: colors.primaryContainer }}
-                thumbColor={isDark ? colors.primary : colors.outline}
-              />
-            </View>
-          </View>
-        </View>
-
-        {/* Soporte */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Soporte</Text>
-          <View style={styles.menuCard}>
-            <MenuRow icon="phone" label={`Contactar a ${nombreAsociacion}`} sublabel={telefono}
-              onPress={handleContactar} colors={colors} typography={typography} />
-          </View>
-        </View>
-
-        {/* Cerrar sesión */}
-        <View style={styles.section}>
-          <View style={styles.menuCard}>
-            <MenuRow icon="logout" label="Cerrar sesión"
-              onPress={() => setConfirmLogout(true)} danger colors={colors} typography={typography} />
-          </View>
-        </View>
-
-        <Text style={styles.version}>{nombreAsociacion} v1.0 · MetaDevelopment Ltd</Text>
-        <View style={{ height: spacing.xxl }} />
+        {/* Cerrar Sesión */}
+        <TouchableOpacity onPress={handleLogout} style={styles.btnLogout}>
+          <MaterialIcons name="logout" size={20} color="#ef4444" />
+          <Text style={styles.btnLogoutText}>Cerrar Sesión</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-const MenuRow = ({ icon, label, sublabel, onPress, danger, colors, typography }) => {
-  const styles = makeStyles(colors, typography);
-  return (
-    <TouchableOpacity style={styles.menuRow} onPress={onPress} activeOpacity={0.8}>
-      <View style={[styles.menuIconBox, danger && styles.menuIconBoxDanger]}>
-        <MaterialIcons
-          name={icon}
-          size={20}
-          color={danger ? colors.error : colors.primary}
-        />
-      </View>
-      <View style={styles.menuInfo}>
-        <Text style={[styles.menuLabel, danger && styles.menuLabelDanger]}>{label}</Text>
-        {sublabel ? <Text style={styles.menuSub}>{sublabel}</Text> : null}
-      </View>
-      <MaterialIcons name="chevron-right" size={22} color={colors.outline} />
-    </TouchableOpacity>
-  );
-};
-
-const makeStyles = (colors, typography) => StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-
-  profileHeader: {
-    alignItems:        'center',
-    paddingVertical:   spacing.xl,
-    paddingHorizontal: spacing.lg,
-    gap:               spacing.sm,
-  },
-  avatar: { width: 80, height: 80, borderRadius: 40, marginBottom: spacing.sm },
-  avatarFallback: {
-    width:           80,
-    height:          80,
-    borderRadius:    40,
-    backgroundColor: colors.primaryContainer,
-    alignItems:      'center',
-    justifyContent:  'center',
-    marginBottom:    spacing.sm,
-  },
-  avatarInitials:  { ...typography.displayMd, color: colors.primary, fontSize: 28 },
-  avatarEditBadge: {
-    position:        'absolute',
-    bottom:          spacing.sm,
-    right:           -spacing.xs,
-    backgroundColor: colors.surfaceContainerHigh,
-    borderRadius:    radius.full,
-    width:           26,
-    height:          26,
-    alignItems:      'center',
-    justifyContent:  'center',
-  },
-  profileNombre: { ...typography.h2, textAlign: 'center' },
-  profileCedula: { ...typography.body, marginBottom: spacing.xs },
-
-  section:      { paddingHorizontal: spacing.lg, marginBottom: spacing.lg },
-  sectionTitle: { ...typography.label, marginBottom: spacing.sm },
-
-  menuCard: {
-    backgroundColor: colors.surfaceContainerLow,
-    borderRadius:    radius.xl,
-    overflow:        'hidden',
-  },
-  menuRow: {
-    flexDirection:     'row',
-    alignItems:        'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical:   spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.surfaceContainerHigh,
-    gap:               spacing.md,
-  },
-  menuIconBox: {
-    width:           36,
-    height:          36,
-    borderRadius:    radius.sm,
-    backgroundColor: colors.surfaceContainerHigh,
-    alignItems:      'center',
-    justifyContent:  'center',
-  },
-  menuIconBoxDanger: { backgroundColor: colors.errorContainer + '44' },
-  menuInfo:          { flex: 1 },
-  menuLabel:         { ...typography.bodyBold },
-  menuLabelDanger:   { color: colors.error },
-  menuSub:           { ...typography.small, marginTop: 2 },
-
-  version: {
-    ...typography.label,
-    textAlign:    'center',
-    marginTop:    spacing.md,
-    color:        colors.outline,
-    marginBottom: spacing.lg,
-  },
+const styles = StyleSheet.create({
+  safe: { flex: 1 },
+  scroll: { padding: spacing.md, gap: spacing.md },
+  userCard: { padding: spacing.md, borderRadius: 24, borderWidth: 1, flexDirection: 'row', alignItems: 'center', gap: 14 },
+  avatar: { width: 50, height: 50, borderRadius: 25, backgroundColor: '#06b6d4', alignItems: 'center', justifyContent: 'center' },
+  avatarText: { fontSize: 22, fontWeight: '800', color: '#0f172a' },
+  userName: { fontSize: 16, fontWeight: '800', color: '#ffffff' },
+  userSub: { fontSize: 12, color: '#94a3b8', marginTop: 2 },
+  userAcueducto: { fontSize: 11, color: '#38bdf8', marginTop: 2, fontWeight: '600' },
+  btnWhatsApp: { padding: spacing.md, borderRadius: 20, backgroundColor: '#25d366', flexDirection: 'row', alignItems: 'center', gap: 12 },
+  btnWpTitle: { fontSize: 14, fontWeight: '800', color: '#ffffff' },
+  btnWpSub: { fontSize: 11, color: 'rgba(255,255,255,0.85)', marginTop: 2 },
+  menuContainer: { borderRadius: 24, borderWidth: 1, padding: 8 },
+  menuItem: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
+  menuText: { flex: 1, fontSize: 14, fontWeight: '600', color: '#f8fafc' },
+  menuDivider: { height: 1, backgroundColor: '#1e293b', marginHorizontal: 14 },
+  btnLogout: { flexDirection: 'row', height: 48, borderRadius: 16, backgroundColor: 'rgba(239, 68, 68, 0.1)', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  btnLogoutText: { fontSize: 14, fontWeight: '700', color: '#ef4444' },
 });
 
 export default PerfilScreen;

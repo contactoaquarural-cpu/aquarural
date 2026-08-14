@@ -33,7 +33,7 @@ exports.crear = async (req, res) => {
     }
 
     const publicId = `ganadero-tv/capitulo-${numero}-${Date.now()}`;
-    const { videoUrl, thumbnailUrl, duracion: duracionAuto } = await subirVideo(req.file.buffer, 'asogacentro/ganadero-tv', publicId);
+    const { videoUrl, thumbnailUrl, duracion: duracionAuto } = await subirVideo(req.file.buffer, 'aquarural/videos', publicId);
 
     const capitulo = await Capitulo.create({
       numero,

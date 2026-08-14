@@ -1,188 +1,219 @@
-import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
-import api from '../../services/api.service';
-
-const MetricCard = ({ label, value, sub, subColor = 'text-primary', icon, iconColor = 'text-primary' }) => (
-  <div className="bg-surface-container-low p-6 rounded-2xl relative overflow-hidden group">
-    <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity ${iconColor}`}>
-      <span className="material-symbols-outlined text-6xl">{icon}</span>
-    </div>
-    <p className="text-on-surface-variant text-sm font-medium mb-1">{label}</p>
-    <h3 className="text-3xl font-bold font-headline text-on-surface">{value}</h3>
-    <div className={`mt-4 flex items-center gap-2 ${subColor}`}>
-      <span className="text-xs font-semibold">{sub}</span>
-    </div>
-  </div>
-);
-
 const DashboardPage = () => {
-  const { data: asociadosData } = useQuery({
-    queryKey: ['dashboard-asociados'],
-    queryFn: () => api.get('/asociados?limit=5').then((r) => r.data),
-  });
-
-  const asociados = asociadosData?.data ?? [];
-  const total = asociadosData?.pagination?.total ?? 0;
-
-  const estadoBadge = (estado) => {
-    const map = {
-      AL_DIA:   { cls: 'bg-emerald-950 text-emerald-400 border border-emerald-900/50', label: 'AL DÍA' },
-      EN_MORA:  { cls: 'bg-tertiary-container/30 text-tertiary border border-tertiary-container', label: 'EN MORA' },
-      INACTIVO: { cls: 'bg-surface-container-highest text-outline border border-outline-variant/30', label: 'INACTIVO' },
-    };
-    const { cls, label } = map[estado] ?? map.INACTIVO;
-    return <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${cls}`}>{label}</span>;
-  };
-
   return (
-    <div className="pt-8 pb-12 px-8 max-w-7xl mx-auto space-y-8">
-
-      {/* Métricas */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricCard
-          label="Total de asociados"
-          value={total || '—'}
-          sub="Plataforma activa"
-          icon="groups"
-        />
-        <MetricCard
-          label="Recaudación del mes"
-          value="$0 COP"
-          sub="Ver reporte completo"
-          icon="payments"
-        />
-        <MetricCard
-          label="Estado de mora"
-          value="—"
-          sub="Revisar morosos"
-          subColor="text-error"
-          icon="warning"
-          iconColor="text-error"
-        />
-        <MetricCard
-          label="Convenios activos"
-          value="—"
-          sub="Ver convenios"
-          subColor="text-tertiary"
-          icon="handshake"
-          iconColor="text-tertiary"
-        />
-      </section>
-
-      {/* Gráfica + Card visual */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Gráfica de barras simple */}
-        <div className="lg:col-span-2 bg-surface-container-low p-8 rounded-2xl">
-          <div className="flex justify-between items-center mb-10">
-            <div>
-              <h2 className="text-xl font-bold font-headline text-on-surface">Crecimiento de Asociados</h2>
-              <p className="text-sm text-on-surface-variant">Análisis comparativo — Últimos 6 meses</p>
-            </div>
-            <Link
-              to="/reportes"
-              className="bg-primary-container px-3 py-1 rounded text-xs text-on-primary-container font-medium hover:brightness-125 transition-all"
-            >
-              Ver Reporte
-            </Link>
-          </div>
-          <div className="relative h-64 flex items-end justify-between gap-4 pt-4 border-l border-b border-outline-variant/30">
-            {['ENE','FEB','MAR','ABR','MAY','JUN'].map((mes, i) => {
-              const heights = ['40%','55%','65%','80%','85%','95%'];
-              const opacities = ['bg-primary/20','bg-primary/20','bg-primary/30','bg-primary/40','bg-primary/60','bg-primary'];
-              return (
-                <div key={mes} className="flex-1 flex flex-col items-center group">
-                  <div className={`w-full ${opacities[i]} rounded-t-lg transition-all group-hover:brightness-125`} style={{ height: heights[i] }} />
-                  <span className={`mt-4 text-[10px] font-medium ${i === 5 ? 'text-on-surface font-bold' : 'text-on-surface-variant'}`}>
-                    {mes}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Card visual */}
-        <div className="bg-primary-container rounded-2xl p-8 flex flex-col justify-end relative overflow-hidden min-h-[300px]">
-          <div className="absolute inset-0 bg-gradient-to-t from-primary-container via-primary-container/80 to-transparent" />
-          <div className="relative z-10">
-            <span
-              className="material-symbols-outlined text-primary mb-4 block"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              eco
-            </span>
-            <h3 className="text-2xl font-bold font-headline text-primary mb-2">Excelencia Ganadera</h3>
-            <p className="text-on-primary-container text-sm leading-relaxed opacity-90">
-              Impulsamos la productividad y el bienestar de nuestros asociados a través de tecnología y convenios estratégicos.
-            </p>
-            <Link
-              to="/reportes"
-              className="mt-6 inline-block bg-primary text-on-primary px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg hover:scale-105 transition-transform"
-            >
-              Ver Reporte Regional
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Últimos registros */}
-      <section className="bg-surface-container-low rounded-2xl overflow-hidden">
-        <div className="p-8 border-b border-outline-variant/10 flex justify-between items-center">
+    <div className="p-8 space-y-8 max-w-7xl mx-auto">
+      {/* Header Banner Hydro-Tech */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-slate-800 p-8 shadow-2xl">
+        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl" />
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
-            <h2 className="text-xl font-bold font-headline text-on-surface">Últimos Registros</h2>
-            <p className="text-sm text-on-surface-variant">Ingresos recientes a la asociación</p>
-          </div>
-          <Link to="/asociados" className="text-primary text-sm font-semibold hover:underline">
-            Ver todos los asociados
-          </Link>
-        </div>
-
-        <div className="divide-y divide-outline-variant/10">
-          {asociados.length === 0 ? (
-            <div className="p-12 flex flex-col items-center gap-3 text-on-surface-variant">
-              <span className="material-symbols-outlined text-4xl opacity-30">groups</span>
-              <p className="text-sm">No hay asociados registrados aún.</p>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold px-3 py-1 rounded-full font-headline">
+                Acueducto Veredal La Argentina
+              </span>
+              <span className="text-slate-500 text-xs font-headline">• Garzón, Huila</span>
             </div>
-          ) : (
-            asociados.map((a) => (
-              <div key={a._id} className="p-6 flex items-center justify-between hover:bg-surface-container-high transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center">
-                    {a.fotoPerfil ? (
-                      <img src={a.fotoPerfil} alt={a.nombre} className="w-full h-full rounded-full object-cover" />
-                    ) : (
-                      <span className="material-symbols-outlined text-primary">person</span>
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="text-on-surface font-bold">{a.nombre}</h4>
-                    <p className="text-xs text-on-surface-variant">{a.cedula}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-6">
-                  {estadoBadge(a.estado)}
-                  <Link to={`/asociados/${a._id}`}>
-                    <span className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
-                      arrow_forward
-                    </span>
-                  </Link>
-                </div>
-              </div>
-            ))
-          )}
+            <h1 className="text-3xl font-extrabold text-slate-100 font-headline tracking-tight">
+              Panel de Recaudo & Facturación Digital
+            </h1>
+            <p className="text-slate-400 text-sm mt-1 max-w-2xl font-body">
+              Gestión centralizada de suscriptores, cobro de servicios de agua y monitoreo de la cartera en tiempo real.
+            </p>
+          </div>
+          <button className="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-slate-950 font-bold font-headline px-6 py-3 rounded-2xl shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all duration-200 flex items-center gap-2">
+            <span className="material-symbols-outlined text-xl">bolt</span>
+            <span>Generar Facturación del Mes</span>
+          </button>
         </div>
-      </section>
+      </div>
 
-      {/* FAB */}
-      <Link
-        to="/asociados"
-        className="fixed bottom-8 right-8 bg-primary text-on-primary w-14 h-14 rounded-full flex items-center justify-center shadow-2xl shadow-primary/20 hover:scale-110 active:scale-95 transition-all z-40 group"
-      >
-        <span className="material-symbols-outlined">add</span>
-        <span className="absolute right-full mr-4 bg-surface-container px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-          Nuevo Registro
-        </span>
-      </Link>
+      {/* KPI Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Recaudo Total */}
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 relative overflow-hidden group hover:border-cyan-500/40 transition-all duration-300">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+              <span className="material-symbols-outlined text-2xl">payments</span>
+            </div>
+            <span className="text-xs font-headline font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full">
+              +12.4% este mes
+            </span>
+          </div>
+          <p className="text-xs font-headline uppercase tracking-wider text-slate-400 font-semibold">
+            Recaudo Total Mes
+          </p>
+          <h3 className="text-3xl font-extrabold text-slate-100 font-headline mt-1 tracking-tight">
+            $3.750.000 <span className="text-sm font-normal text-slate-400">COP</span>
+          </h3>
+        </div>
+
+        {/* Suscriptores */}
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-300">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <span className="material-symbols-outlined text-2xl">groups</span>
+            </div>
+            <span className="text-xs font-headline font-semibold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-full">
+              150 Registrados
+            </span>
+          </div>
+          <p className="text-xs font-headline uppercase tracking-wider text-slate-400 font-semibold">
+            Suscriptores Activos
+          </p>
+          <h3 className="text-3xl font-extrabold text-slate-100 font-headline mt-1 tracking-tight">
+            142 <span className="text-sm font-normal text-slate-400">Al día</span>
+          </h3>
+        </div>
+
+        {/* Cartera Morosa */}
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 relative overflow-hidden group hover:border-amber-500/40 transition-all duration-300">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+              <span className="material-symbols-outlined text-2xl">warning</span>
+            </div>
+            <span className="text-xs font-headline font-semibold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full">
+              8 En mora
+            </span>
+          </div>
+          <p className="text-xs font-headline uppercase tracking-wider text-slate-400 font-semibold">
+            Cartera en Mora
+          </p>
+          <h3 className="text-3xl font-extrabold text-amber-400 font-headline mt-1 tracking-tight">
+            $240.000 <span className="text-sm font-normal text-slate-400">COP</span>
+          </h3>
+        </div>
+
+        {/* Efectividad Wompi */}
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 relative overflow-hidden group hover:border-sky-500/40 transition-all duration-300">
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+              <span className="material-symbols-outlined text-2xl">credit_card</span>
+            </div>
+            <span className="text-xs font-headline font-semibold text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-full">
+              Wompi API v2
+            </span>
+          </div>
+          <p className="text-xs font-headline uppercase tracking-wider text-slate-400 font-semibold">
+            Pagos Digitales
+          </p>
+          <h3 className="text-3xl font-extrabold text-slate-100 font-headline mt-1 tracking-tight">
+            94.6% <span className="text-sm font-normal text-slate-400">Efectividad</span>
+          </h3>
+        </div>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Tabla Transacciones Recientes (2 Cols) */}
+        <div className="lg:col-span-2 bg-slate-900/90 border border-slate-800 rounded-3xl p-6 space-y-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-lg font-bold text-slate-100 font-headline">Transacciones de Recaudo Recientes</h2>
+              <p className="text-xs text-slate-400 font-body">Últimos pagos procesados en línea (Wompi) y efectivo</p>
+            </div>
+            <button className="text-xs font-headline font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+              <span>Ver todas</span>
+              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-800 text-[11px] font-headline uppercase tracking-wider text-slate-400">
+                  <th className="pb-3 px-3">Suscriptor</th>
+                  <th className="pb-3 px-3">Matrícula</th>
+                  <th className="pb-3 px-3">Periodo</th>
+                  <th className="pb-3 px-3">Valor</th>
+                  <th className="pb-3 px-3">Método</th>
+                  <th className="pb-3 px-3 text-right">Estado</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60 text-xs font-body text-slate-200">
+                <tr>
+                  <td className="py-3.5 px-3 font-semibold text-slate-100">José Donaldo Gómez</td>
+                  <td className="py-3.5 px-3 text-slate-400 font-mono">ACU-0101</td>
+                  <td className="py-3.5 px-3">2026-08</td>
+                  <td className="py-3.5 px-3 font-semibold text-emerald-400">$25.000</td>
+                  <td className="py-3.5 px-3">
+                    <span className="bg-sky-500/10 text-sky-300 border border-sky-500/20 px-2 py-0.5 rounded-full text-[10px] font-semibold">
+                      Wompi PSE
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-3 text-right">
+                    <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full text-[10px] font-semibold">
+                      PAGADA
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-3 font-semibold text-slate-100">Hernando Parra Lasso</td>
+                  <td className="py-3.5 px-3 text-slate-400 font-mono">ACU-0103</td>
+                  <td className="py-3.5 px-3">2026-08</td>
+                  <td className="py-3.5 px-3 font-semibold text-emerald-400">$25.000</td>
+                  <td className="py-3.5 px-3">
+                    <span className="bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 px-2 py-0.5 rounded-full text-[10px] font-semibold">
+                      Efectivo Oficina
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-3 text-right">
+                    <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full text-[10px] font-semibold">
+                      PAGADA
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-3 font-semibold text-slate-100">María Eudoxia Rojas</td>
+                  <td className="py-3.5 px-3 text-slate-400 font-mono">ACU-0102</td>
+                  <td className="py-3.5 px-3">2026-08</td>
+                  <td className="py-3.5 px-3 font-semibold text-amber-400">$30.000</td>
+                  <td className="py-3.5 px-3 text-slate-500">—</td>
+                  <td className="py-3.5 px-3 text-right">
+                    <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-full text-[10px] font-semibold">
+                      PENDIENTE
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Panel de Acciones Rápidas (1 Col) */}
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 space-y-6">
+          <h2 className="text-lg font-bold text-slate-100 font-headline">Accesos Rápidos</h2>
+          <div className="space-y-3">
+            <button className="w-full bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 rounded-2xl p-4 flex items-center gap-4 transition-all group">
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined">upload_file</span>
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-slate-100 font-headline">Cargar Excel de Suscriptores</p>
+                <p className="text-xs text-slate-400">Importar archivo .xlsx</p>
+              </div>
+            </button>
+
+            <button className="w-full bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 rounded-2xl p-4 flex items-center gap-4 transition-all group">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined">point_of_sale</span>
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-slate-100 font-headline">Registrar Pago en Efectivo</p>
+                <p className="text-xs text-slate-400">Recaudo presencial en oficina</p>
+              </div>
+            </button>
+
+            <button className="w-full bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 rounded-2xl p-4 flex items-center gap-4 transition-all group">
+              <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined">map</span>
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-slate-100 font-headline">Mapa GPS de Predios</p>
+                <p className="text-xs text-slate-400">Ver viviendas en Google Maps</p>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -2,45 +2,38 @@ import { useLocation } from 'react-router-dom';
 import { useTheme } from '../../utils/ThemeContext';
 
 const TITLES = {
-  '/dashboard':  'Dashboard',
-  '/asociados':  'Gestión de Asociados',
-  '/convenios':  'Configuración de Convenios',
-  '/reportes':   'Reportes y Análisis',
-  '/noticias':   'Noticias',
-  '/precios':    'Precios del Sector',
+  '/dashboard':     'Dashboard General',
+  '/suscriptores':  'Gestión de Suscriptores & Padrón',
+  '/facturacion':   'Facturación Masiva & Recaudo Wompi',
+  '/mapa':          'Mapa GPS de Viviendas y Predios',
+  '/superadmin':    'Gestión Multi-Acueducto SaaS',
+  '/configuracion': 'Parámetros del Acueducto & Pasarela Wompi',
 };
 
 const TopBar = () => {
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
 
-  const isExpediente = location.pathname.startsWith('/asociados/') && location.pathname !== '/asociados';
-  const subtitle = isExpediente
-    ? 'Expediente del Asociado'
-    : TITLES[location.pathname] ?? '';
+  const subtitle = TITLES[location.pathname] ?? 'Panel de Control';
 
   return (
-    <header className="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 z-40 glass-effect flex justify-between items-center px-8 border-b border-emerald-900/20">
+    <header className="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 z-40 bg-slate-950/80 backdrop-blur-md flex justify-between items-center px-8 border-b border-slate-800/80">
       <div className="flex items-center gap-3">
-        <span className="text-lg font-bold text-on-surface font-headline">Panel Administrativo</span>
-        {subtitle && (
-          <>
-            <span className="text-outline">/</span>
-            <span className="text-sm font-medium text-primary font-body">{subtitle}</span>
-          </>
-        )}
+        <span className="text-base font-bold text-slate-100 font-headline">AquaRural Pro</span>
+        <span className="text-slate-600">/</span>
+        <span className="text-sm font-semibold text-cyan-400 font-headline">{subtitle}</span>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         {/* Búsqueda global */}
         <div className="relative hidden lg:block">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">
             search
           </span>
           <input
             type="text"
-            placeholder="Buscar asociado o predio..."
-            className="bg-surface-container-high border-none rounded-full pl-10 pr-4 py-1.5 text-xs text-on-surface-variant focus:outline-none focus:ring-1 focus:ring-primary/30 w-64 transition-all"
+            placeholder="Buscar suscriptor, cédula o matrícula..."
+            className="bg-slate-900 border border-slate-800 rounded-full pl-10 pr-4 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50 w-72 transition-all"
           />
         </div>
 
@@ -48,24 +41,22 @@ const TopBar = () => {
         <button
           onClick={toggleTheme}
           title={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
-          className="text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded-full p-2 transition-all"
+          className="text-slate-400 hover:text-cyan-300 hover:bg-slate-900 rounded-full p-2 transition-all"
         >
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
             {isDark ? 'light_mode' : 'dark_mode'}
           </span>
         </button>
 
-        <button className="text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded-full p-2 transition-all">
+        <button className="text-slate-400 hover:text-cyan-300 hover:bg-slate-900 rounded-full p-2 transition-all relative">
           <span className="material-symbols-outlined">notifications</span>
-        </button>
-        <button className="text-on-surface-variant hover:text-primary hover:bg-surface-container-high rounded-full p-2 transition-all">
-          <span className="material-symbols-outlined">settings</span>
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
         </button>
 
-        <div className="h-8 w-px bg-outline-variant mx-1" />
-        <span className="text-sm font-body font-medium text-on-surface">
-          Estado:{' '}
-          <span className="text-primary">En Línea</span>
+        <div className="h-6 w-px bg-slate-800 mx-1" />
+        <span className="text-xs font-headline font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+          Servicio Activo
         </span>
       </div>
     </header>

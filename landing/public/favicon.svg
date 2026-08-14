@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="aquaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0EA5E9" />
+      <stop offset="50%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#059669" stop-opacity="0.4" />
+    </linearGradient>
+  </defs>
+  <!-- Background Glow Circle -->
+  <circle cx="256" cy="256" r="240" fill="#090D16" />
+  <circle cx="256" cy="256" r="220" fill="url(#glowGrad)" opacity="0.15" />
+  
+  <!-- Hydro-Leaf Water Drop Icon -->
+  <path d="M256 64 C256 64, 128 220, 128 320 A128 128 0 0 0 384 320 C384 220, 256 64, 256 64 Z" fill="url(#aquaGrad)" />
+  <!-- Inner Wave Accent -->
+  <path d="M256 128 C256 128, 160 250, 160 320 A96 96 0 0 0 320 340 C280 340, 240 310, 240 260 C240 200, 256 128, 256 128 Z" fill="#FFFFFF" opacity="0.25" />
+</svg>

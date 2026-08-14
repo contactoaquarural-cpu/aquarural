@@ -3,22 +3,18 @@ import { useAuthStore } from '../../store/auth.store';
 import { useConfigStore } from '../../store/config.store';
 
 const NAV_ITEMS = [
-  { to: '/dashboard', icon: 'dashboard',    label: 'Dashboard' },
-  { to: '/asociados', icon: 'groups',       label: 'Asociados' },
-  { to: '/convenios', icon: 'handshake',    label: 'Convenios' },
-  { to: '/noticias',  icon: 'newspaper',    label: 'Noticias' },
-  { to: '/precios',   icon: 'trending_up',  label: 'Precios' },
-  { to: '/mercado',     icon: 'storefront',   label: 'Mercado' },
-  { to: '/ganadero-tv', icon: 'live_tv',      label: 'Ganadero TV' },
-  { to: '/eventos',     icon: 'event',        label: 'Eventos' },
-  { to: '/reportes',       icon: 'query_stats',  label: 'Reportes' },
-  { to: '/configuracion',  icon: 'settings',     label: 'Configuración' },
+  { to: '/dashboard',     icon: 'dashboard',             label: 'Dashboard' },
+  { to: '/suscriptores',  icon: 'groups',                label: 'Suscriptores' },
+  { to: '/facturacion',   icon: 'receipt_long',          label: 'Facturación & Cobro' },
+  { to: '/mapa',          icon: 'location_on',           label: 'Mapa GPS Predios' },
+  { to: '/superadmin',    icon: 'admin_panel_settings',  label: 'SuperAdmin SaaS' },
+  { to: '/configuracion', icon: 'settings',              label: 'Configuración' },
 ];
 
 const Sidebar = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
-  const nombreAsociacion = useConfigStore((s) => s.nombreAsociacion);
+  const nombreAcueducto = useConfigStore((s) => s.nombreAcueducto || 'AquaRural Pro');
 
   const handleLogout = () => {
     logout();
@@ -26,53 +22,60 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="h-screen w-64 fixed left-0 top-0 bg-emerald-950 flex flex-col py-6 z-50 shadow-2xl shadow-emerald-900/20">
-      {/* Brand */}
-      <div className="px-6 mb-10">
-        <h1 className="text-2xl font-bold tracking-tighter text-emerald-50 font-headline">
-          {nombreAsociacion}
-        </h1>
-        <p className="text-[10px] uppercase tracking-widest text-emerald-500/60 font-semibold mt-1">
-          Administración Central
-        </p>
+    <aside className="h-screen w-64 fixed left-0 top-0 bg-slate-950 border-r border-slate-800/80 flex flex-col py-6 z-50 shadow-2xl">
+      {/* Brand Header */}
+      <div className="px-6 mb-8 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 via-cyan-500 to-emerald-500 p-[2px]">
+          <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+            <span className="material-symbols-outlined text-cyan-400 text-2xl">water_drop</span>
+          </div>
+        </div>
+        <div>
+          <h1 className="text-lg font-bold tracking-tight text-slate-100 font-headline truncate max-w-[150px]">
+            {nombreAcueducto}
+          </h1>
+          <p className="text-[10px] uppercase tracking-widest text-cyan-400/80 font-semibold">
+            Acueductos Veredales
+          </p>
+        </div>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 space-y-1">
+      {/* Nav List */}
+      <nav className="flex-1 space-y-1.5 px-3">
         {NAV_ITEMS.map(({ to, icon, label }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 mx-2 my-1 rounded-lg font-headline font-semibold tracking-tight transition-all duration-200 ${
+              `flex items-center gap-3.5 px-4 py-3 rounded-xl font-headline text-sm font-semibold tracking-tight transition-all duration-200 ${
                 isActive
-                  ? 'bg-emerald-900/50 text-emerald-100'
-                  : 'text-emerald-400/60 hover:text-emerald-200 hover:bg-emerald-800/30'
+                  ? 'bg-gradient-to-r from-sky-500/20 to-cyan-500/10 text-cyan-300 border border-cyan-500/30 shadow-lg shadow-cyan-500/10'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
               }`
             }
           >
-            <span className="material-symbols-outlined">{icon}</span>
+            <span className="material-symbols-outlined text-xl">{icon}</span>
             <span>{label}</span>
           </NavLink>
         ))}
       </nav>
 
-      {/* User + logout */}
-      <div className="px-4 mt-auto">
-        <div className="bg-emerald-900/20 rounded-xl p-3 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-primary font-bold text-sm font-headline select-none">
-            {user?.nombre?.charAt(0)?.toUpperCase() ?? 'A'}
+      {/* Footer User Info */}
+      <div className="px-3 mt-auto">
+        <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-3 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 flex items-center justify-center text-slate-950 font-bold text-base font-headline select-none">
+            {user?.nombres?.charAt(0)?.toUpperCase() ?? 'A'}
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-bold text-emerald-50 truncate">
-              {user?.nombre ?? 'Administrador'}
+            <p className="text-sm font-bold text-slate-100 truncate">
+              {user?.nombres ?? 'Administrador'}
             </p>
-            <p className="text-xs text-emerald-500/70 truncate">Admin Principal</p>
+            <p className="text-xs text-slate-400 truncate">Tesorero / Junta</p>
           </div>
           <button
             onClick={handleLogout}
             title="Cerrar sesión"
-            className="text-emerald-500/60 hover:text-emerald-200 transition-colors"
+            className="text-slate-400 hover:text-red-400 transition-colors p-1.5 hover:bg-slate-800 rounded-lg"
           >
             <span className="material-symbols-outlined text-xl">logout</span>
           </button>

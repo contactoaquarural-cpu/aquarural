@@ -22,7 +22,7 @@ const CONVENIOS_DEMO = [
     _id: 'demo-1',
     nombre: 'Agropecuaria El Potrero',
     tipo: 'AGROPECUARIO',
-    descripcion: 'Venta de concentrados, sal mineralizada y suplementos para ganado bovino. Descuento especial para asociados de Asogacentro.',
+    descripcion: 'Venta de insumos, tuberías y accesorios para acueductos veredales. Descuento especial para suscriptores de AquaRural.',
     telefono: '318 456 7890',
     descuentoPorcentaje: 10,
     direccion: 'Cra. 5 #8-32, Garzón, Huila',

@@ -4,18 +4,12 @@ import { useAuthStore } from './store/auth.store';
 import { useConfigStore } from './store/config.store';
 import MainLayout from './components/Layout/MainLayout';
 import LoginPage from './pages/Login/LoginPage';
-import ResetPasswordPage from './pages/Login/ResetPasswordPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
-import AsociadosPage from './pages/Asociados/AsociadosPage';
-import ExpedientePage from './pages/Asociados/ExpedientePage';
-import ConveniosPage from './pages/Convenios/ConveniosPage';
-import ReportesPage from './pages/Reportes/ReportesPage';
-import NoticiasPage from './pages/Noticias/NoticiasPage';
-import PreciosPage   from './pages/Precios/PreciosPage';
-import MercadoPage       from './pages/Mercado/MercadoPage';
-import GanaderoTVPage    from './pages/GanaderoTV/GanaderoTVPage';
+import SuscriptoresPage from './pages/Suscriptores/SuscriptoresPage';
+import FacturacionPage from './pages/Facturacion/FacturacionPage';
+import MapaPage from './pages/Mapa/MapaPage';
+import SuperAdminPage from './pages/SuperAdmin/SuperAdminPage';
 import ConfiguracionPage from './pages/Configuracion/ConfiguracionPage';
-import EventosPage       from './pages/Eventos/EventosPage';
 
 // Protege rutas que requieren autenticación
 const ProtectedRoute = ({ children }) => {
@@ -24,22 +18,21 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const App = () => {
-  const cargarConfig    = useConfigStore((s) => s.cargarConfig);
-  const nombreAsociacion = useConfigStore((s) => s.nombreAsociacion);
+  const cargarConfig     = useConfigStore((s) => s.cargarConfig);
+  const nombreAcueducto = useConfigStore((s) => s.nombreAcueducto || 'AquaRural Pro');
 
   useEffect(() => { cargarConfig(); }, []);
 
   useEffect(() => {
-    if (nombreAsociacion) {
-      document.title = `${nombreAsociacion} — Panel Administrativo`;
+    if (nombreAcueducto) {
+      document.title = `${nombreAcueducto} — Panel Administrativo`;
     }
-  }, [nombreAsociacion]);
+  }, [nombreAcueducto]);
 
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/auth/reset/:token" element={<ResetPasswordPage />} />
         <Route
           path="/"
           element={
@@ -49,16 +42,11 @@ const App = () => {
           }
         >
           <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard"    element={<DashboardPage />} />
-          <Route path="asociados"    element={<AsociadosPage />} />
-          <Route path="asociados/:id" element={<ExpedientePage />} />
-          <Route path="convenios"    element={<ConveniosPage />} />
-          <Route path="reportes"     element={<ReportesPage />} />
-          <Route path="noticias"     element={<NoticiasPage />} />
-          <Route path="precios"      element={<PreciosPage />} />
-          <Route path="mercado"        element={<MercadoPage />} />
-          <Route path="ganadero-tv"   element={<GanaderoTVPage />} />
-          <Route path="eventos"       element={<EventosPage />} />
+          <Route path="dashboard"     element={<DashboardPage />} />
+          <Route path="suscriptores"  element={<SuscriptoresPage />} />
+          <Route path="facturacion"   element={<FacturacionPage />} />
+          <Route path="mapa"          element={<MapaPage />} />
+          <Route path="superadmin"    element={<SuperAdminPage />} />
           <Route path="configuracion" element={<ConfiguracionPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

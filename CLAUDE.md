@@ -1,6 +1,5 @@
-# CLAUDE.md — Plataforma Digital Ganadera
-> Este archivo es leído automáticamente por Claude Code al iniciar cualquier sesión.
-> Contiene el contexto completo del proyecto. No eliminarlo ni moverlo.
+# CLAUDE.md — AquaRural Pro (Plataforma de Facturación y Recaudo Digital)
+> Este archivo contiene el contexto completo del proyecto AquaRural.
 
 ---
 
@@ -8,26 +7,24 @@
 
 | Campo | Valor |
 |---|---|
-| **Producto** | GanaderoPro |
-| **Descripción** | Plataforma digital replicable para asociaciones ganaderas de Colombia |
+| **Producto** | **AquaRural Pro** |
+| **Descripción** | Plataforma SaaS multi-inquilino para la administración, facturación masiva y recaudo digital de acueductos veredales en Colombia |
 | **Empresa** | MetaDevelopment Ltd |
 | **Desarrollador principal** | Julián Andrés Trujillo Morales |
-| **Cliente demo** | Asociación de Ganaderos de Garzón – Huila, Colombia |
-| **Modelo de negocio** | Pack por asociación: Landing + Admin + App (instancia independiente por cliente) |
-| **Versión actual** | 1.0 — MVP |
+| **Cliente demo** | Acueducto Veredal La Argentina – Garzón, Huila, Colombia |
+| **Modelo de negocio** | SaaS Multi-empresa (Suscripción por acueducto + comisión por transacción Wompi) |
+| **Versión actual** | 1.0 — AquaRural SaaS |
 | **Repositorio** | GitHub privado (monorepo) |
-
-> **Nota de personalización:** El nombre "ASOGACENTRO", logo y colores son configurables desde el panel admin.
-> Al vender a una nueva asociación se ajusta: nombre, logo, color primario, municipio y teléfono.
 
 ---
 
 ## 🎯 Qué es este proyecto
 
-Sistema de dos plataformas digitales para modernizar la gestión de la Asociación de Ganaderos de Garzón:
+Plataforma integral para digitalizar la gestión administrativa, la facturación masiva y el recaudo electrónico (Wompi) de acueductos veredales en Colombia:
 
-1. **App Móvil** (iOS + Android) — Para los ganaderos asociados
-2. **Panel Web Administrativo** — Para la junta directiva de la asociación
+1. **App Móvil / Portal de Suscriptor** (iOS + Android) — Consulta exprés de deuda, carné QR, geolocalización GPS y pago Wompi.
+2. **Panel Web Administrativo** — Gestión de suscriptores, carga masiva Excel, facturación en 1-clic y mapa de predios.
+3. **SuperAdmin SaaS** — Control global de acueductos afiliados y llaves Wompi cifradas AES-256.
 
 Ambas consumen una **API REST centralizada** en Node.js con base de datos MongoDB Atlas.
 

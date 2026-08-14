@@ -55,7 +55,7 @@ const subir = async (req, res) => {
       asociado.documentos = asociado.documentos.filter((d) => d.tipo !== tipo);
     }
 
-    const folder   = `asogacentro/documentos/${asociadoId}`;
+    const folder   = `aquarural/documentos/${asociadoId}`;
     const publicId = `${tipo.toLowerCase()}_${Date.now()}`;
     const { url, publicId: cloudinaryPublicId } = await subirDocumento(req.file.buffer, folder, publicId);
 

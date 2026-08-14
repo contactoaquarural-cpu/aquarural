@@ -1,76 +1,80 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// ─── Paleta oscura (actual) ───────────────────────────────────────────────────
+// ─── Paleta oscura Hydro-Tech (AquaRural) ──────────────────────────────────────
 export const darkColors = {
-  background:               '#111414',
-  surface:                  '#161A1A',
-  surfaceContainerLow:      '#191c1c',
-  surfaceContainer:         '#1d2020',
-  surfaceContainerHigh:     '#282a2a',
-  surfaceContainerHighest:  '#333535',
+  background:               '#090D16', // Deep Slate
+  surface:                  '#0F172A', // Slate 900
+  surfaceContainerLow:      '#111827',
+  surfaceContainer:         '#1E293B', // Slate 800
+  surfaceContainerHigh:     '#334155', // Slate 700
+  surfaceContainerHighest:  '#475569', // Slate 600
 
-  primary:            '#a5d0b9',
-  primaryContainer:   '#1b4332',
-  onPrimary:          '#00200f',
-  onPrimaryContainer: '#c2e8d4',
+  primary:            '#0EA5E9', // Cyan Hydro 500
+  primaryContainer:   '#0369A1', // Cyan 700
+  onPrimary:          '#FFFFFF',
+  onPrimaryContainer: '#E0F2FE',
 
-  tertiary:            '#f7ba8b',
-  tertiaryContainer:   '#59320e',
-  onTertiary:          '#33180a',
-  onTertiaryContainer: '#ffdcc2',
+  tertiary:            '#06B6D4', // Electric Aqua
+  tertiaryContainer:   '#0E7490',
+  onTertiary:          '#FFFFFF',
+  onTertiaryContainer: '#CFFAFE',
 
-  onSurface:        '#e1e3e2',
-  onSurfaceVariant: '#c1c8c2',
+  secondary:           '#10B981', // Emerald Fresh
 
-  error:          '#ffb4ab',
-  errorContainer: '#93000a',
+  onSurface:        '#F8FAFC', // Slate 50
+  onSurfaceVariant: '#94A3B8', // Slate 400
 
-  outline:        '#8b9490',
-  outlineVariant: '#414946',
+  error:          '#F87171',
+  errorContainer: '#991B1B',
 
-  alDia:    '#4ade80',
-  enMora:   '#f7ba8b',
-  inactivo: '#ffb4ab',
+  outline:        '#334155',
+  outlineVariant: '#1E293B',
 
-  sidebar: '#022c22',
-  white:   '#ffffff',
+  alDia:    '#10B981',
+  enMora:   '#F59E0B',
+  inactivo: '#EF4444',
+
+  sidebar: '#0A1120',
+  white:   '#FFFFFF',
   black:   '#000000',
 };
 
-// ─── Paleta clara ─────────────────────────────────────────────────────────────
+// ─── Paleta clara Hydro-Tech (AquaRural) ──────────────────────────────────────
 export const lightColors = {
-  background:               '#f0f2f0',
-  surface:                  '#ffffff',
-  surfaceContainerLow:      '#f5f7f5',
-  surfaceContainer:         '#eaeeeb',
-  surfaceContainerHigh:     '#dde3de',
-  surfaceContainerHighest:  '#d0d8d2',
+  background:               '#F0F9FF', // Ice Blue Mist
+  surface:                  '#FFFFFF',
+  surfaceContainerLow:      '#F8FAFC',
+  surfaceContainer:         '#E2E8F0',
+  surfaceContainerHigh:     '#CBD5E1',
+  surfaceContainerHighest:  '#94A3B8',
 
-  primary:            '#1b4332',
-  primaryContainer:   '#d4ede2',
-  onPrimary:          '#ffffff',
-  onPrimaryContainer: '#00200f',
+  primary:            '#0284C7', // Cyan 600
+  primaryContainer:   '#E0F2FE', // Cyan 100
+  onPrimary:          '#FFFFFF',
+  onPrimaryContainer: '#0369A1',
 
-  tertiary:            '#8b4a1a',
-  tertiaryContainer:   '#ffdcc2',
-  onTertiary:          '#ffffff',
-  onTertiaryContainer: '#33180a',
+  tertiary:            '#0891B2', // Cyan 600
+  tertiaryContainer:   '#CFFAFE',
+  onTertiary:          '#FFFFFF',
+  onTertiaryContainer: '#0E7490',
 
-  onSurface:        '#111414',
-  onSurfaceVariant: '#3d4a42',
+  secondary:           '#059669', // Emerald 600
 
-  error:          '#ba1a1a',
-  errorContainer: '#ffdad6',
+  onSurface:        '#0F172A', // Slate 900
+  onSurfaceVariant: '#475569', // Slate 600
 
-  outline:        '#6f7970',
-  outlineVariant: '#bec9c0',
+  error:          '#DC2626',
+  errorContainer: '#FEE2E2',
 
-  alDia:    '#1b6b3a',
-  enMora:   '#8b4a1a',
-  inactivo: '#ba1a1a',
+  outline:        '#CBD5E1',
+  outlineVariant: '#E2E8F0',
 
-  sidebar: '#022c22',
-  white:   '#ffffff',
+  alDia:    '#059669',
+  enMora:   '#D97706',
+  inactivo: '#DC2626',
+
+  sidebar: '#0F172A',
+  white:   '#FFFFFF',
   black:   '#000000',
 };
 

@@ -52,7 +52,7 @@ exports.crear = async (req, res) => {
       for (let i = 0; i < req.files.length; i++) {
         const file = req.files[i];
         const publicId = `mercado/${req.user.id}_${Date.now()}_${i}`;
-        const url = await subirImagenMercado(file.buffer, 'asogacentro/mercado', publicId);
+        const url = await subirImagenMercado(file.buffer, 'aquarural/mercado', publicId);
         urlsFotos.push(url);
       }
     }
