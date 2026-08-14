@@ -32,25 +32,29 @@ const cambiarPasswordSchema = z.object({
 
 // ─── POST /auth/login ────────────────────────────────────────────────────────
 
-exports.login = async (req, res) => {
-  try {
-    const resultado = loginSchema.safeParse(req.body);
-    if (!resultado.success) {
+    const { cedula, email, correo, password } = req.body;
+    const identifier = cedula || email || correo;
+    if (!identifier || !password) {
       return res.status(400).json({
         success: false,
         data: null,
-        message: resultado.error.errors[0].message,
+        message: 'El usuario/correo y la contraseña son obligatorios.',
       });
     }
 
-    const { cedula, password } = resultado.data;
-    const asociado = await Asociado.findOne({ cedula });
+    const asociado = await Asociado.findOne({
+      $or: [
+        { cedula: identifier },
+        { correo: identifier },
+        { email: identifier },
+      ],
+    });
 
     if (!asociado) {
       return res.status(401).json({
         success: false,
         data: null,
-        message: 'Cédula o contraseña incorrectos',
+        message: 'Usuario/Correo o contraseña incorrectos.',
       });
     }
 
