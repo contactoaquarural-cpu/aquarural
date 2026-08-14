@@ -69,8 +69,8 @@ const Hero = () => {
               {/* Header Mockup */}
               <div className="flex justify-between items-center border-b border-slate-800 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
-                    <span className="material-symbols-outlined">water_drop</span>
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 p-2 flex items-center justify-center">
+                    <img src="/favicon.svg" alt="AquaRural" className="w-full h-full object-contain" />
                   </div>
                   <div>
                     <p className="text-xs font-bold text-slate-100 font-headline">Acueducto La Argentina</p>

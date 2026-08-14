@@ -4,9 +4,9 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Brand Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 via-cyan-500 to-emerald-500 p-[2px]">
-            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-              <span className="material-symbols-outlined text-cyan-400 text-2xl">water_drop</span>
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 via-cyan-500 to-emerald-500 p-[2px] shadow-lg shadow-cyan-500/20">
+            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center p-1.5">
+              <img src="/favicon.svg" alt="AquaRural" className="w-full h-full object-contain" />
             </div>
           </div>
           <div>
