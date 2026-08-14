@@ -1,95 +1,115 @@
-# Comandos del Monorepo — Plataforma Digital Ganadera
+# Comandos del Monorepo — AquaRural Pro
 
-## Backend (API REST)
+Guía de comandos para ejecutar, sembrar datos y compilar la plataforma AquaRural en entorno local.
+
+---
+
+## ⚡ 1. Backend (API REST Node.js / Express)
 
 ```bash
 cd backend
 
-npm run dev        # Servidor de desarrollo con nodemon (puerto 3000)
-npm start          # Servidor de producción
-npm test           # Ejecutar suite de tests con cobertura
-npm run test:watch # Tests en modo watch
-npm run seed       # Poblar base de datos con datos de prueba
-node src/utils/seed-contenido.js  # Subir convenios y noticias demo a MongoDB
+# Instalar dependencias (primera vez)
+npm install
+
+# Servidor de desarrollo con nodemon (http://localhost:3000)
+npm run dev
+
+# Poblar la base de datos de AquaRural en MongoDB Atlas (crea Acueductos, Suscriptores, Facturas)
+npm run seed:aquarural
+
+# Servidor de producción
+npm start
 ```
 
-## Panel Web Administrativo
+---
+
+## 🏛️ 2. Panel Web Administrativo (React 18 + Vite)
 
 ```bash
 cd web-admin
 
-npm install        # Instalar dependencias (primera vez)
-npm run dev        # Servidor de desarrollo (http://localhost:5173)
-npm run build      # Build de producción (genera carpeta dist/)
-npm run preview    # Preview del build de producción
+# Instalar dependencias (primera vez)
+npm install
+
+# Servidor de desarrollo (http://localhost:5173)
+npm run dev
+
+# Compilar para producción (genera carpeta dist/)
+npm run build
+
+# Vista previa del build compilado
+npm run preview
 ```
 
-> Credenciales de acceso al panel:
-> - Cédula: `000000001`
-> - Contraseña: `Admin2024*`
+> **Credenciales de Acceso Demo al Panel Web:**
+> - **SuperAdmin SaaS:** `superadmin@aquarural.com` / Contraseña: `SuperAdmin2026*`
+> - **Admin / Tesorero Acueducto Veredal:** Cédula: `12203639` / Contraseña: `Admin2026*`
 
-> Credenciales de asociado de prueba (app móvil):
-> - Cédula: `12203639`
-> - Contraseña: `Admin1234`
+---
 
-## App Móvil
+## 📱 3. App Móvil (React Native + Expo)
 
 ```bash
 cd mobile-app
 
-npm install                    # Instalar dependencias (primera vez)
-npx expo start                 # Iniciar servidor Metro
-npx expo start --tunnel        # Modo túnel (para dispositivo físico con Expo Go)
-npx expo start --android       # Abrir en emulador Android
-npx expo start --ios           # Abrir en simulador iOS (solo Mac)
+# Instalar dependencias (primera vez)
+npm install
+
+# Iniciar servidor Metro de Expo
+npx expo start
+
+# Modo túnel (para probar en tu celular físico con la App Expo Go)
+npx expo start --tunnel
+
+# Iniciar en emulador Android o simulador iOS
+npx expo start --android
+npx expo start --ios
+
+# Limpiar caché de bundler
 npx expo start --clear
-
-# Conectar desde Expo Go (ingresar URL manual en la app)
-# exp://192.168.100.133:8081
-
-# Builds con EAS
-eas login                                          # Iniciar sesión en Expo (primera vez)
-eas build --platform android --profile preview     # APK de prueba (10-15 min)
-eas build --platform android --profile production  # Build Play Store
-eas submit --platform android                      # Subir a Google Play
 ```
 
-## Variables de entorno
+> **Builds para Tiendas de Aplicaciones (EAS):**
+> ```bash
+> eas login                                          # Iniciar sesión en Expo
+> eas build --platform android --profile preview     # Generar archivo APK de prueba
+> eas build --platform android --profile production  # Build para Google Play Store
+> ```
 
-Antes de ejecutar cualquier módulo, copia el archivo de ejemplo y completa los valores:
+---
 
-```bash
-# Backend
-cp backend/.env.example backend/.env
-
-# App móvil
-cp mobile-app/.env.example mobile-app/.env
-```
-
-## Landing Page (GanaderoPro)
+## 🌐 4. Landing Page Comercial (React 18 + Vite)
 
 ```bash
 cd landing
 
-npm install        # Instalar dependencias (primera vez)
-npm run dev        # Servidor de desarrollo (http://localhost:5174)
-npm run build      # Build de producción
-npm run preview    # Preview del build
+# Instalar dependencias (primera vez)
+npm install
+
+# Servidor de desarrollo (http://localhost:5174 o 5175)
+npm run dev
+
+# Compilar para producción
+npm run build
 ```
 
-> Variables de entorno en `landing/.env`:
-> - `VITE_API_URL` → URL del backend
-> - `VITE_ADMIN_URL` → URL del panel admin
+---
 
-## Orden recomendado para desarrollo local
+## 🚀 Orden Recomendado para Ejecución Local
+
+Para probar todo el ecosistema al mismo tiempo, abre 3 terminales separadas:
 
 ```bash
-# Terminal 1 — Backend
+# Terminal 1 — Backend API REST (Puerto 3000)
 cd backend && npm run dev
 
-# Terminal 2 — Panel Web
+# Terminal 2 — Panel Web Admin (Puerto 5173)
 cd web-admin && npm run dev
 
-# Terminal 3 — App Móvil
+# Terminal 3 — Landing Page Comercial (Puerto 5174)
+cd landing && npm run dev
+
+# Terminal 4 (Opcional) — App Móvil Expo
 cd mobile-app && npx expo start --tunnel
 ```
