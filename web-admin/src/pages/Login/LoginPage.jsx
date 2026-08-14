@@ -36,55 +36,46 @@ const LoginPage = () => {
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none" />
 
-      <main className="w-full max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+      {/* Grid de 2 Contenedores Perfectamente Nivelados y Simétricos */}
+      <main className="w-full max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-stretch relative z-10">
 
-        {/* Columna izquierda — Branding Hydro-Tech */}
-        <div className="hidden md:flex flex-col space-y-6">
-          <div className="inline-flex self-start items-center gap-2 px-4 py-2 bg-slate-900 border border-slate-800 rounded-full text-cyan-400 font-semibold text-xs tracking-wide">
+        {/* Contenedor Izquierdo — Marca & Logo Oficial */}
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl flex flex-col justify-between items-center text-center">
+          {/* Top Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-slate-950 border border-slate-800 rounded-full text-cyan-400 font-semibold text-xs tracking-wide font-headline">
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
             Gestión y Recaudo Digital
           </div>
 
-          <h1 className="text-4xl lg:text-5xl font-extrabold text-slate-100 leading-tight font-headline tracking-tight">
-            El futuro de la <br />
-            <span className="bg-gradient-to-r from-sky-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
-              gestión del agua rural.
-            </span>
-          </h1>
-
-          <p className="text-slate-400 text-sm font-body leading-relaxed max-w-md">
-            Plataforma centralizada para facturación masiva, cobranza electrónica con Wompi y geolocalización de suscriptores veredales.
-          </p>
-
-          {/* Tarjeta de Marca Oficial con Eslogan */}
-          <div className="relative rounded-3xl overflow-hidden border border-cyan-500/30 bg-slate-900/90 p-2 shadow-2xl shadow-cyan-500/10 backdrop-blur-xl group hover:border-cyan-500/50 transition-all">
+          {/* Logo Oficial Amplio */}
+          <div className="w-full my-auto py-4 flex items-center justify-center">
             <img
               src="/logo.png"
               alt="AquaRural — Gestión y Recaudo para Acueductos Veredales"
-              className="w-full h-auto object-cover rounded-2xl"
+              className="w-full max-w-sm h-auto object-contain rounded-2xl drop-shadow-2xl"
             />
           </div>
 
-          {/* Stats Badges */}
-          <div className="flex gap-8 pt-2">
+          {/* Bottom Stats */}
+          <div className="w-full pt-4 border-t border-slate-800/80 flex justify-around text-center">
             <div>
-              <p className="text-cyan-400 font-extrabold text-xl font-headline">Garzón</p>
-              <p className="text-slate-400 text-xs font-body">Huila, Colombia</p>
+              <p className="text-cyan-400 font-extrabold text-sm font-headline">Garzón, Huila</p>
+              <p className="text-slate-400 text-[11px] font-body">Colombia</p>
             </div>
             <div className="h-8 w-px bg-slate-800" />
             <div>
-              <p className="text-emerald-400 font-extrabold text-xl font-headline">100%</p>
-              <p className="text-slate-400 text-xs font-body">Recaudo Digital</p>
+              <p className="text-emerald-400 font-extrabold text-sm font-headline">100% Digital</p>
+              <p className="text-slate-400 text-[11px] font-body">Recaudo por Wompi</p>
             </div>
           </div>
         </div>
 
-        {/* Columna derecha — Formulario Login */}
-        <div className="w-full bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
-          <div className="mb-8 text-center md:text-left">
-            <div className="flex items-center gap-3 justify-center md:justify-start mb-4 md:hidden">
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
-                <span className="material-symbols-outlined text-2xl">water_drop</span>
+        {/* Contenedor Derecho — Formulario de Login Nivelado */}
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl flex flex-col justify-between">
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-4 md:hidden">
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 p-2 flex items-center justify-center">
+                <img src="/favicon.svg" alt="AquaRural" className="w-full h-full object-contain" />
               </div>
               <span className="text-xl font-bold font-headline text-slate-100">AquaRural Pro</span>
             </div>
@@ -97,7 +88,7 @@ const LoginPage = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4 my-auto">
             {error && (
               <div className="bg-red-500/10 border border-red-500/30 rounded-2xl px-4 py-3 flex items-center gap-3 text-red-400 text-xs font-headline">
                 <span className="material-symbols-outlined text-base">error</span>
@@ -168,7 +159,7 @@ const LoginPage = () => {
             </button>
           </form>
 
-          <p className="text-[11px] text-slate-500 text-center mt-6 font-body">
+          <p className="text-[11px] text-slate-500 text-center mt-6 pt-4 border-t border-slate-800/80 font-body">
             • SEGURIDAD CERTIFICADA • METADEVELOPMENT LTD
           </p>
         </div>
