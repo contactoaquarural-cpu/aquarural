@@ -56,20 +56,13 @@ const LoginPage = () => {
             Plataforma centralizada para facturación masiva, cobranza electrónica con Wompi y geolocalización de suscriptores veredales.
           </p>
 
-          {/* Tarjeta de Marca Ilustrada */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 flex flex-col items-center justify-center space-y-4 backdrop-blur-xl shadow-2xl">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-sky-500 via-cyan-500 to-emerald-500 p-[3px]">
-              <div className="w-full h-full bg-slate-950 rounded-[21px] flex items-center justify-center">
-                <span className="material-symbols-outlined text-cyan-400 text-5xl">water_drop</span>
-              </div>
-            </div>
-
-            <div className="text-center">
-              <h3 className="text-2xl font-extrabold text-slate-100 font-headline">AquaRural Pro</h3>
-              <p className="text-xs text-cyan-400/80 font-semibold mt-1 uppercase tracking-widest font-headline">
-                Acueductos Veredales
-              </p>
-            </div>
+          {/* Tarjeta de Marca Oficial con Eslogan */}
+          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl backdrop-blur-xl flex flex-col items-center">
+            <img
+              src="/logo.png"
+              alt="AquaRural — Gestión y Recaudo para Acueductos Veredales"
+              className="w-full h-auto max-h-64 object-contain rounded-2xl border border-slate-800/80 shadow-lg"
+            />
           </div>
 
           {/* Stats Badges */}
