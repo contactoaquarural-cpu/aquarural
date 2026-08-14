@@ -2,13 +2,13 @@ const Footer = ({ config }) => {
   const nombre = config?.nombreAcueducto || 'AquaRural Pro';
 
   return (
-    <footer className="bg-slate-950 border-t border-slate-800 py-5 px-6">
+    <footer className="bg-slate-950 border-t border-slate-800 py-7 px-6">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <img
             src="/logo.png"
             alt="AquaRural — Gestión y Recaudo para Acueductos Veredales"
-            className="h-[54px] md:h-[60px] w-auto object-contain drop-shadow-[0_4px_12px_rgba(6,182,212,0.35)]"
+            className="h-[72px] md:h-[78px] w-auto object-contain drop-shadow-[0_4px_12px_rgba(6,182,212,0.35)]"
           />
         </div>
 
