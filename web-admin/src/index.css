@@ -93,10 +93,77 @@
   html.light .text-outline           { color: #6f7970 !important; }
   html.light .text-neutral-100       { color: #111414 !important; }
   html.light .text-neutral-400       { color: #4a5550 !important; }
-  html.light .text-neutral-500       { color: #6f7970 !important; }
-
   html.light .border-outline-variant { border-color: #bec9c0 !important; }
   html.light .border-emerald-900\/20 { border-color: #1b433230 !important; }
+
+  /* ── Sobrescrituras de Slate para Sidebar, TopBar, Login y Vistas ─────────── */
+  html.light .bg-slate-950,
+  html.light .bg-slate-950\/90,
+  html.light .bg-slate-950\/80,
+  html.light [class*="bg-slate-950"]   { background-color: #f8fafc !important; }
+
+  html.light .bg-slate-900,
+  html.light .bg-slate-900\/95,
+  html.light .bg-slate-900\/90,
+  html.light .bg-slate-900\/80,
+  html.light .bg-slate-900\/60,
+  html.light .bg-slate-900\/50,
+  html.light [class*="bg-slate-900"]   { background-color: #ffffff !important; }
+
+  html.light .bg-slate-800,
+  html.light .bg-slate-800\/90,
+  html.light .bg-slate-800\/80,
+  html.light [class*="bg-slate-800"]   { background-color: #f1f5f9 !important; }
+
+  html.light .border-slate-800,
+  html.light .border-slate-800\/90,
+  html.light .border-slate-800\/80,
+  html.light .border-slate-800\/60,
+  html.light [class*="border-slate-800"] { border-color: #e2e8f0 !important; }
+
+  html.light .text-slate-100,
+  html.light .text-slate-200,
+  html.light .text-white             { color: #0f172a !important; }
+  html.light .text-slate-300,
+  html.light .text-slate-400         { color: #475569 !important; }
+  html.light .text-slate-500         { color: #64748b !important; }
+
+  /* Form inputs en modo claro */
+  html.light input,
+  html.light select,
+  html.light textarea {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+  }
+  html.light input::placeholder,
+  html.light textarea::placeholder {
+    color: #94a3b8 !important;
+  }
+
+  /* ── Badges y Textos de Estado con Alto Contraste en Modo Claro ── */
+  html.light .text-emerald-400,
+  html.light .text-emerald-300 { color: #047857 !important; }
+
+  html.light .text-amber-400,
+  html.light .text-amber-300 { color: #b45309 !important; }
+
+  html.light .text-cyan-400,
+  html.light .text-cyan-300 { color: #0284c7 !important; }
+
+  html.light .text-sky-400,
+  html.light .text-sky-300 { color: #0369a1 !important; }
+
+  /* Mantener texto brillante en la tarjeta MRR destacada */
+  html.light .mrr-card-highlight {
+    background: linear-gradient(135deg, #0f172a 0%, #0369a1 100%) !important;
+  }
+  html.light .mrr-card-highlight .text-cyan-300 {
+    color: #e0f2fe !important;
+  }
+  html.light .mrr-card-highlight .text-slate-400 {
+    color: #bae6fd !important;
+  }
 
   /* ── Botón CTA principal ─────────────────────────────────────────────── */
   .btn-cta {

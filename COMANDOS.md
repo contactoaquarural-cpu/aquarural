@@ -43,7 +43,7 @@ npm run preview
 ```
 
 > **Credenciales de Acceso Demo al Panel Web:**
-> - **SuperAdmin SaaS:** `superadmin@aquarural.com` / Contraseña: `SuperAdmin2026*`
+> - **SuperAdmin SaaS:** `contactoaquarural@gmail.com` / Contraseña: `SuperAdmin2026*`
 > - **Admin / Tesorero Acueducto Veredal:** Cédula: `12203639` / Contraseña: `Admin2026*`
 
 ---

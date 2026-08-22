@@ -6,11 +6,13 @@ import Modulos from './components/Modulos';
 import PlanesSaaS from './components/PlanesSaaS';
 import Contacto from './components/Contacto';
 import Footer from './components/Footer';
+import WaterRippleEffect from './components/WaterRippleEffect';
 
 const App = () => {
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-slate-950 text-slate-100 font-body selection:bg-cyan-500 selection:text-slate-950">
+        <WaterRippleEffect />
         <Navbar />
         <Hero />
         <SimuladorRecaudo />

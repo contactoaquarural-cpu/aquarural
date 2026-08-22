@@ -25,7 +25,7 @@ const SimuladorRecaudo = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Sliders de Ajuste */}
-          <div className="lg:col-span-6 bg-slate-950 border border-slate-800 rounded-3xl p-8 space-y-8 shadow-xl">
+          <div className="lg:col-span-6 hydro-shimmer-card rounded-3xl p-8 space-y-8 shadow-xl">
             {/* Slider Suscriptores */}
             <div className="space-y-3">
               <div className="flex justify-between items-center font-headline">
@@ -73,7 +73,7 @@ const SimuladorRecaudo = () => {
 
           {/* Resultado de la Simulación */}
           <div className="lg:col-span-6 space-y-6">
-            <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-8 space-y-6 shadow-2xl">
+            <div className="hydro-shimmer-card rounded-3xl p-8 space-y-6 shadow-2xl">
               <div>
                 <p className="text-xs font-headline uppercase tracking-wider text-slate-400 font-semibold">
                   Recaudo Mensual Estimado

@@ -29,13 +29,15 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
-              <button
-                onClick={abrirWhatsAppDemo}
-                className="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-slate-950 font-extrabold font-headline px-8 py-4 rounded-2xl shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all flex items-center justify-center gap-3"
+              <a
+                href="https://wa.me/573166160377?text=Hola!%20Me%20interesa%20solicitar%20una%20demostraci%C3%B3n%20de%20AquaRural%20Pro%20para%20nuestro%20Acueducto%20Veredal."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hydro-shimmer-btn bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-slate-950 font-extrabold font-headline px-8 py-4 rounded-2xl shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all flex items-center justify-center gap-3"
               >
                 <span className="material-symbols-outlined text-2xl">chat</span>
                 <span>Solicitar Demo para mi Acueducto</span>
-              </button>
+              </a>
 
               <a
                 href="#simulador"
@@ -65,7 +67,7 @@ const Hero = () => {
 
           {/* Columna Derecha — Glassmorphism Mockup Card */}
           <div className="lg:col-span-5 relative">
-            <div className="relative mx-auto max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl shadow-cyan-500/10 backdrop-blur-xl space-y-6">
+            <div className="relative mx-auto max-w-md hydro-shimmer-card rounded-3xl p-6 shadow-2xl shadow-cyan-500/10 backdrop-blur-xl space-y-6">
               {/* Header Mockup */}
               <div className="flex justify-between items-center border-b border-slate-800 pb-4">
                 <div className="flex items-center gap-3">

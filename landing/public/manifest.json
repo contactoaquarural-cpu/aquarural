@@ -1,0 +1,18 @@
+{
+  "short_name": "AquaRural",
+  "name": "AquaRural — Gestión de Acueductos Veredales",
+  "description": "Plataforma de gestión, lectura de medidores, facturación masiva y recaudo digital para acueductos veredales en Colombia.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#020617",
+  "theme_color": "#0f172a",
+  "display": "standalone",
+  "orientation": "portrait"
+}

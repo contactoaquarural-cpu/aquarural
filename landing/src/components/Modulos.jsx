@@ -20,9 +20,9 @@ const MODULOS_AQUARURAL = [
     desc: 'Visualización satelital de cada acometida de agua con estado moratorio en tiempo real.',
   },
   {
-    icon: 'qr_code_2',
-    titulo: 'App Móvil & Carné Digital QR',
-    desc: 'App para suscriptores con lectura rápida por código QR y canal de WhatsApp con el tesorero.',
+    icon: 'smartphone',
+    titulo: 'App Móvil',
+    desc: 'App para suscriptores con consulta de saldo, pagos en línea, avisos push y respuestas a convocatorias.',
   },
   {
     icon: 'verified_user',

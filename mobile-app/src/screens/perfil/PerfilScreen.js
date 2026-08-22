@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Alert, Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -10,7 +10,7 @@ import { spacing } from '../../utils/theme';
 import { useConfigStore } from '../../store/config.store';
 
 const PerfilScreen = ({ navigation }) => {
-  const { colors } = useTheme();
+  const { isDark, toggleTheme, colors } = useTheme();
   const { user, logout } = useAuthStore();
   const nombreAcueducto = useConfigStore((s) => s.nombreAcueducto || 'Acueducto Veredal La Argentina');
   const telefonoContacto = useConfigStore((s) => s.telefonoContacto || '3166160377');
@@ -36,14 +36,14 @@ const PerfilScreen = ({ navigation }) => {
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         {/* User Card Header */}
-        <View style={[styles.userCard, { backgroundColor: '#0f172a', borderColor: '#1e293b' }]}>
+        <View style={[styles.userCard, { backgroundColor: colors.surface, borderColor: colors.outline }]}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>{nombre.charAt(0).toUpperCase()}</Text>
           </View>
 
           <View style={{ flex: 1 }}>
-            <Text style={styles.userName}>{nombre}</Text>
-            <Text style={styles.userSub}>C.C. {cedula} • Matrícula: <Text style={{ color: '#06b6d4', fontWeight: '800' }}>{matricula}</Text></Text>
+            <Text style={[styles.userName, { color: colors.onSurface }]}>{nombre}</Text>
+            <Text style={[styles.userSub, { color: colors.onSurfaceVariant }]}>C.C. {cedula} • Matrícula: <Text style={{ color: '#06b6d4', fontWeight: '800' }}>{matricula}</Text></Text>
             <Text style={styles.userAcueducto}>{nombreAcueducto}</Text>
           </View>
         </View>
@@ -59,14 +59,30 @@ const PerfilScreen = ({ navigation }) => {
         </TouchableOpacity>
 
         {/* Menú de Opciones */}
-        <View style={[styles.menuContainer, { backgroundColor: '#0f172a', borderColor: '#1e293b' }]}>
+        <View style={[styles.menuContainer, { backgroundColor: colors.surface, borderColor: colors.outline }]}>
+          {/* Conmutador de Tema Claro / Oscuro */}
+          <View style={styles.menuItem}>
+            <MaterialIcons name={isDark ? "wb-sunny" : "brightness-3"} size={22} color={isDark ? "#f59e0b" : "#0284c7"} />
+            <Text style={[styles.menuText, { color: colors.onSurface, flex: 1 }]}>
+              {isDark ? 'Modo Oscuro Activo' : 'Modo Claro Activo'}
+            </Text>
+            <Switch
+              value={isDark}
+              onValueChange={toggleTheme}
+              trackColor={{ false: '#cbd5e1', true: '#0ea5e9' }}
+              thumbColor={isDark ? '#0284c7' : '#f8fafc'}
+            />
+          </View>
+
+          <View style={styles.menuDivider} />
+
           <TouchableOpacity
             onPress={() => navigation.navigate('UbicacionFinca')}
             style={styles.menuItem}
           >
             <MaterialIcons name="location-on" size={22} color="#10b981" />
-            <Text style={styles.menuText}>Ubicación GPS de mi Vivienda</Text>
-            <MaterialIcons name="chevron-right" size={20} color="#64748b" />
+            <Text style={[styles.menuText, { color: colors.onSurface }]}>Ubicación GPS de mi Vivienda</Text>
+            <MaterialIcons name="chevron-right" size={20} color={colors.onSurfaceVariant} />
           </TouchableOpacity>
 
           <View style={styles.menuDivider} />
@@ -76,8 +92,8 @@ const PerfilScreen = ({ navigation }) => {
             style={styles.menuItem}
           >
             <MaterialIcons name="receipt-long" size={22} color="#06b6d4" />
-            <Text style={styles.menuText}>Historial de Recibos & Facturas</Text>
-            <MaterialIcons name="chevron-right" size={20} color="#64748b" />
+            <Text style={[styles.menuText, { color: colors.onSurface }]}>Historial de Recibos & Facturas</Text>
+            <MaterialIcons name="chevron-right" size={20} color={colors.onSurfaceVariant} />
           </TouchableOpacity>
 
           <View style={styles.menuDivider} />
@@ -87,8 +103,8 @@ const PerfilScreen = ({ navigation }) => {
             style={styles.menuItem}
           >
             <MaterialIcons name="notifications" size={22} color="#f59e0b" />
-            <Text style={styles.menuText}>Avisos y Noticias de la Junta</Text>
-            <MaterialIcons name="chevron-right" size={20} color="#64748b" />
+            <Text style={[styles.menuText, { color: colors.onSurface }]}>Avisos y Noticias de la Junta</Text>
+            <MaterialIcons name="chevron-right" size={20} color={colors.onSurfaceVariant} />
           </TouchableOpacity>
         </View>
 

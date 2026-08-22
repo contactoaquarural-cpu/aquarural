@@ -12,8 +12,21 @@ export const useAuthStore = create(
       login: (user, token, refreshToken) =>
         set({ user, token, refreshToken, isAuthenticated: true }),
 
-      logout: () =>
-        set({ user: null, token: null, refreshToken: null, isAuthenticated: false }),
+      logout: () => {
+        try {
+          localStorage.removeItem('asoga-auth');
+          localStorage.removeItem('token');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('aquarural-config');
+          localStorage.removeItem('aquarural-config-form-v1');
+          localStorage.removeItem('aquarural-acueductos-saas-v1');
+        } catch (e) {}
+        try {
+          const { useConfigStore } = require('./config.store');
+          useConfigStore.getState().resetConfig();
+        } catch (e) {}
+        set({ user: null, token: null, refreshToken: null, isAuthenticated: false });
+      },
 
       setUser: (user) => set({ user }),
     }),

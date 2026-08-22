@@ -37,6 +37,6 @@ export const ThemeProvider = ({ children }) => {
 
 export const useTheme = () => {
   const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useTheme debe usarse dentro de ThemeProvider');
+  if (!ctx) return { isDark: true, toggleTheme: () => {} };
   return ctx;
 };

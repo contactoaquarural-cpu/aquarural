@@ -2,36 +2,96 @@ import { create } from 'zustand';
 import api from '../services/api.service';
 
 const CONFIG_KEY = 'aquarural-config';
+const FORM_KEY = 'aquarural-config-form-v1';
+
+const defaultVals = {
+  nombreAcueducto: 'AquaRural Pro',
+  nit: '',
+  departamento: 'Huila',
+  municipio: 'Garzón',
+  telefonoContacto: '',
+  planSaaS: 'CAUDAL',
+  frecuenciaPagoSaaS: 'MENSUAL',
+  costoMensualSaaS: 100000,
+};
+
+const esNombreValido = (n) => n && typeof n === 'string' && !n.toUpperCase().includes('DFDFDF') && n.trim().length > 2;
 
 const cargarCache = () => {
   try {
     const raw = localStorage.getItem(CONFIG_KEY);
-    return raw ? JSON.parse(raw) : null;
+    if (raw) {
+      const p = JSON.parse(raw);
+      if (p && esNombreValido(p.nombreAcueducto)) return p;
+    }
+    return null;
   } catch { return null; }
 };
 
 const cache = cargarCache();
 
 export const useConfigStore = create((set) => ({
-  nombreAcueducto:  cache?.nombreAcueducto  || 'AquaRural Pro',
-  municipio:        cache?.municipio        || 'Colombia',
-  telefonoContacto: cache?.telefonoContacto || '3166160377',
+  nombreAcueducto:  cache?.nombreAcueducto  || defaultVals.nombreAcueducto,
+  nit:              cache?.nit              || defaultVals.nit,
+  departamento:     cache?.departamento     || defaultVals.departamento,
+  municipio:        cache?.municipio        || defaultVals.municipio,
+  telefonoContacto: cache?.telefonoContacto || defaultVals.telefonoContacto,
+  planSaaS:         cache?.planSaaS         || defaultVals.planSaaS,
+  frecuenciaPagoSaaS: cache?.frecuenciaPagoSaaS || defaultVals.frecuenciaPagoSaaS,
+  costoMensualSaaS: cache?.costoMensualSaaS  || defaultVals.costoMensualSaaS,
+  fechaInicioLicencia: cache?.fechaInicioLicencia || '',
+  fechaVencimientoGratis: cache?.fechaVencimientoGratis || '',
+  estadoPagoSaaS: cache?.estadoPagoSaaS || 'AL_DIA',
+
+  resetConfig: () => {
+    try {
+      localStorage.removeItem(CONFIG_KEY);
+      localStorage.removeItem(FORM_KEY);
+      localStorage.removeItem('aquarural-acueductos-saas-v1');
+    } catch (e) {}
+    set(defaultVals);
+  },
+
+  guardarConfig: (nuevosDatos) => {
+    const nombreFinal = esNombreValido(nuevosDatos.nombre || nuevosDatos.nombreAcueducto)
+      ? (nuevosDatos.nombre || nuevosDatos.nombreAcueducto)
+      : 'AquaRural Pro';
+
+    const vals = {
+      nombreAcueducto:  nombreFinal,
+      nit:              nuevosDatos.nit || '',
+      departamento:     nuevosDatos.departamento || 'Huila',
+      municipio:        nuevosDatos.municipio || 'Garzón',
+      telefonoContacto: nuevosDatos.telefono || nuevosDatos.telefonoContacto || '',
+      planSaaS:         nuevosDatos.planSaaS || 'CAUDAL',
+      frecuenciaPagoSaaS: nuevosDatos.frecuenciaPagoSaaS || 'MENSUAL',
+      costoMensualSaaS: nuevosDatos.costoMensualSaaS || 100000,
+    };
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(vals));
+    set(vals);
+  },
 
   cargarConfig: async () => {
     try {
-      const r = await api.get('/configuracion');
-      const d = r.data.data;
-      if (d) {
+      const r = await api.get('/configuracion').catch(() => null);
+      const d = r?.data?.data || r?.data;
+      if (d && esNombreValido(d.nombre || d.nombreAcueducto)) {
         const vals = {
-          nombreAcueducto:  d.nombreAcueducto  || 'AquaRural Pro',
-          municipio:        d.municipio        || 'Colombia',
-          telefonoContacto: d.telefonoContacto || '3166160377',
+          nombreAcueducto:  d.nombre || d.nombreAcueducto,
+          nit:              d.nit || '',
+          departamento:     d.departamento     || 'Huila',
+          municipio:        d.municipio        || 'Garzón',
+          telefonoContacto: d.telefono || d.telefonoContacto || '',
+          planSaaS:         d.planSaaS         || 'CAUDAL',
+          frecuenciaPagoSaaS: d.frecuenciaPagoSaaS || 'MENSUAL',
+          costoMensualSaaS: d.costoMensualSaaS || 100000,
+          fechaInicioLicencia: d.fechaInicioLicencia || '',
+          fechaVencimientoGratis: d.fechaVencimientoGratis || '',
+          estadoPagoSaaS: d.estadoPagoSaaS || 'AL_DIA',
         };
         localStorage.setItem(CONFIG_KEY, JSON.stringify(vals));
         set(vals);
       }
-    } catch {
-      // usa valores cacheados o por defecto
-    }
+    } catch (e) {}
   },
 }));

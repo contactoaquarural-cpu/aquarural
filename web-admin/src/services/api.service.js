@@ -6,10 +6,16 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// Agrega el token en cada request
+// Agrega el token y x-acueducto-id en cada request
 api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
+  const { token, user } = useAuthStore.getState();
   if (token) config.headers.Authorization = `Bearer ${token}`;
+
+  const acueductoIdUser = user?.acueductoId || user?.acueducto?._id || user?.acueducto;
+  if (acueductoIdUser) {
+    config.headers['x-acueducto-id'] = String(acueductoIdUser);
+  }
+
   return config;
 });
 

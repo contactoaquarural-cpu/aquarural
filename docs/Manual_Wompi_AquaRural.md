@@ -34,6 +34,16 @@ Una vez dentro del dashboard:
 
 > **Importante:** `WOMPI_INTEGRITY_SECRET` y `WOMPI_EVENTS_SECRET` son secretos distintos. El primero firma el checkout, el segundo verifica los webhooks.
 
+### 💳 Tarjetas de Prueba Wompi Sandbox
+Para probar la pasarela sin dinero real, consulta la guía detallada:
+👉 [Guía de Pruebas Wompi Sandbox](file:///c:/Users/Julian%20Andres/OneDrive/Documents/AquaRural/docs/Guia_Pruebas_Wompi_Sandbox.md)
+
+| Resultado Deseado | Tarjeta de Prueba | Expiración | CVC | Titular |
+|---|---|---|---|---|
+| **🟢 Aprobada (Éxito)** | `4242 4242 4242 4242` | `12/28` | `123` | Pedro Gómez |
+| **🔴 Rechazada** | `4000 0000 0000 0002` | `12/28` | `123` | Pedro Gómez |
+| **⚠️ Sin Fondos** | `4000 0000 0000 0051` | `12/28` | `123` | Pedro Gómez |
+
 ---
 
 ## 3. Configurar el backend

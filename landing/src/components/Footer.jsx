@@ -1,4 +1,7 @@
+import { useTheme } from '../utils/ThemeContext';
+
 const Footer = ({ config }) => {
+  const { isDark } = useTheme();
   const nombre = config?.nombreAcueducto || 'AquaRural Pro';
 
   return (
@@ -6,7 +9,7 @@ const Footer = ({ config }) => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <img
-            src="/logo.png"
+            src={isDark ? '/logo.png' : '/logo-light.png'}
             alt="AquaRural"
             className="h-[54px] md:h-[60px] w-auto object-contain drop-shadow-[0_4px_12px_rgba(6,182,212,0.35)]"
           />
