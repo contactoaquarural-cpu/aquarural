@@ -1,62 +1,49 @@
 import { create } from 'zustand';
 import * as SecureStore from 'expo-secure-store';
 import api from '../services/api.service';
-import { inicializarNotificaciones } from '../services/notifications.service';
 
-export const useAuthStore = create((set, get) => ({
-  user:          null,
-  token:         null,
-  refreshToken:  null,
-  isLoading:     true,  // true mientras se revisa el SecureStore al iniciar
+export const useAuthStore = create((set) => ({
+  user: null,
+  isAuthenticated: false,
+  isLoading: true, // true mientras se revisa si ya había una sesión guardada
+  error: '',
 
-  // Cargar sesión guardada al iniciar la app
-  hydrate: async () => {
+  // Se llama una vez al montar la app, para saber si ya hay sesión guardada
+  // y no obligar al suscriptor a loguearse cada vez que abre la app.
+  cargarSesion: async () => {
     try {
-      const token        = await SecureStore.getItemAsync('asoga_token');
-      const refreshToken = await SecureStore.getItemAsync('asoga_refresh_token');
-      const userJson     = await SecureStore.getItemAsync('asoga_user');
-
-      if (token && userJson) {
-        set({ token, refreshToken, user: JSON.parse(userJson), isLoading: false });
-      } else {
-        set({ isLoading: false });
+      const accessToken = await SecureStore.getItemAsync('accessToken');
+      const userJson = await SecureStore.getItemAsync('user');
+      if (accessToken && userJson) {
+        set({ user: JSON.parse(userJson), isAuthenticated: true });
       }
-    } catch {
+    } finally {
       set({ isLoading: false });
     }
   },
 
-  // Login con cédula y contraseña
-  login: async (cedula, password) => {
-    const { data } = await api.post('/auth/login', { cedula, password });
-    const { asociado, accessToken, refreshToken } = data.data;
-
-    await SecureStore.setItemAsync('asoga_token',         accessToken);
-    await SecureStore.setItemAsync('asoga_refresh_token', refreshToken);
-    await SecureStore.setItemAsync('asoga_user',          JSON.stringify(asociado));
-
-    set({ user: asociado, token: accessToken, refreshToken });
-
-    // Registrar token FCM en segundo plano — no bloquea el login
-    inicializarNotificaciones(asociado._id).catch(() => {});
-  },
-
-  // Logout
-  logout: async () => {
+  login: async (acueductoId, cedula) => {
+    set({ error: '' });
     try {
-      await api.post('/auth/logout');
-    } catch {
-      // Ignorar errores de red en logout
+      const { data } = await api.post('/auth/login-asociado', { acueductoId, cedula: cedula.trim() });
+      const { accessToken, refreshToken, user } = data.data;
+
+      await SecureStore.setItemAsync('accessToken', accessToken);
+      await SecureStore.setItemAsync('refreshToken', refreshToken);
+      await SecureStore.setItemAsync('user', JSON.stringify(user));
+
+      set({ user, isAuthenticated: true });
+      return true;
+    } catch (e) {
+      set({ error: e.response?.data?.message || 'No se pudo iniciar sesión. Intenta de nuevo.' });
+      return false;
     }
-    await SecureStore.deleteItemAsync('asoga_token');
-    await SecureStore.deleteItemAsync('asoga_refresh_token');
-    await SecureStore.deleteItemAsync('asoga_user');
-    set({ user: null, token: null, refreshToken: null });
   },
 
-  // Actualizar datos del usuario en store y SecureStore
-  setUser: async (user) => {
-    await SecureStore.setItemAsync('asoga_user', JSON.stringify(user));
-    set({ user });
+  logout: async () => {
+    await SecureStore.deleteItemAsync('accessToken');
+    await SecureStore.deleteItemAsync('refreshToken');
+    await SecureStore.deleteItemAsync('user');
+    set({ user: null, isAuthenticated: false });
   },
 }));

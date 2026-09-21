@@ -1,27 +1,20 @@
-import { ThemeProvider } from './utils/ThemeContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import SimuladorRecaudo from './components/SimuladorRecaudo';
 import Modulos from './components/Modulos';
 import PlanesSaaS from './components/PlanesSaaS';
 import Contacto from './components/Contacto';
 import Footer from './components/Footer';
-import WaterRippleEffect from './components/WaterRippleEffect';
 
 const App = () => {
   return (
-    <ThemeProvider>
-      <div className="min-h-screen bg-slate-950 text-slate-100 font-body selection:bg-cyan-500 selection:text-slate-950">
-        <WaterRippleEffect />
-        <Navbar />
-        <Hero />
-        <SimuladorRecaudo />
-        <Modulos />
-        <PlanesSaaS />
-        <Contacto />
-        <Footer />
-      </div>
-    </ThemeProvider>
+    <div className="min-h-screen bg-white text-slate-900 font-body selection:bg-cyan-500 selection:text-slate-950">
+      <Navbar />
+      <Hero />
+      <Modulos />
+      <PlanesSaaS />
+      <Contacto />
+      <Footer />
+    </div>
   );
 };
 

@@ -5,7 +5,7 @@ const CONFIG_KEY = 'aquarural-config';
 const FORM_KEY = 'aquarural-config-form-v1';
 
 const defaultVals = {
-  nombreAcueducto: 'AquaRural Pro',
+  nombreAcueducto: 'AquaRural',
   nit: '',
   departamento: 'Huila',
   municipio: 'Garzón',
@@ -41,7 +41,21 @@ export const useConfigStore = create((set) => ({
   costoMensualSaaS: cache?.costoMensualSaaS  || defaultVals.costoMensualSaaS,
   fechaInicioLicencia: cache?.fechaInicioLicencia || '',
   fechaVencimientoGratis: cache?.fechaVencimientoGratis || '',
+  fechaVencimientoMembresia: cache?.fechaVencimientoMembresia || '',
+  fechaInicioMembresia: cache?.fechaInicioMembresia || '',
+  fechaFinCicloVigente: cache?.fechaFinCicloVigente || '',
+  costoSaaSVigente: cache?.costoSaaSVigente || 0,
+  historialPagosSaaS: cache?.historialPagosSaaS || [],
   estadoPagoSaaS: cache?.estadoPagoSaaS || 'AL_DIA',
+
+  // Tarifas de agua (acueducto -> asociado), editables por el propio admin.
+  tipoTarifa: cache?.tipoTarifa || 'HIBRIDO',
+  tarifaBaseMensual: cache?.tarifaBaseMensual || 0,
+  cargoFijoMensual: cache?.cargoFijoMensual || 0,
+  valorMetroCubico: cache?.valorMetroCubico || 0,
+  consumoBasicoIncluido: cache?.consumoBasicoIncluido || 0,
+  montoRecargoMora: cache?.montoRecargoMora || 0,
+  diaLimitePago: cache?.diaLimitePago || 15,
 
   resetConfig: () => {
     try {
@@ -87,7 +101,19 @@ export const useConfigStore = create((set) => ({
           costoMensualSaaS: d.costoMensualSaaS || 100000,
           fechaInicioLicencia: d.fechaInicioLicencia || '',
           fechaVencimientoGratis: d.fechaVencimientoGratis || '',
+          fechaVencimientoMembresia: d.fechaVencimientoMembresia || '',
+          fechaInicioMembresia: d.fechaInicioMembresia || '',
+          fechaFinCicloVigente: d.fechaFinCicloVigente || '',
+          costoSaaSVigente: d.costoSaaSVigente || 0,
+          historialPagosSaaS: Array.isArray(d.historialPagosSaaS) ? d.historialPagosSaaS : [],
           estadoPagoSaaS: d.estadoPagoSaaS || 'AL_DIA',
+          tipoTarifa: d.tipoTarifa || 'HIBRIDO',
+          tarifaBaseMensual: d.tarifaBaseMensual || 0,
+          cargoFijoMensual: d.cargoFijoMensual || 0,
+          valorMetroCubico: d.valorMetroCubico || 0,
+          consumoBasicoIncluido: d.consumoBasicoIncluido || 0,
+          montoRecargoMora: d.montoRecargoMora || 0,
+          diaLimitePago: d.diaLimitePago || 15,
         };
         localStorage.setItem(CONFIG_KEY, JSON.stringify(vals));
         set(vals);

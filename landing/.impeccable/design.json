@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-17T00:00:00Z",
+  "title": "Design System: AquaRural Pro — Landing",
+  "extensions": {
+    "colorMeta": {
+      "trust": {
+        "role": "primary",
+        "displayName": "Azul de Confianza",
+        "canonical": "#1D4ED8",
+        "tonalRamp": ["#0F1E4D", "#1E3A8A", "#1E40AF", "#1D4ED8", "#2563EB", "#3B82F6", "#60A5FA", "#93C5FD"]
+      },
+      "tint-blue": {
+        "role": "accent-surface",
+        "displayName": "Tint Blue",
+        "canonical": "#EFF6FF",
+        "tonalRamp": ["#1E3A8A", "#1D4ED8", "#3B82F6", "#60A5FA", "#93C5FD", "#BFDBFE", "#DBEAFE", "#EFF6FF"]
+      },
+      "tint-mint": {
+        "role": "accent-surface",
+        "displayName": "Tint Mint",
+        "canonical": "#ECFDF5",
+        "tonalRamp": ["#064E3B", "#047857", "#059669", "#10B981", "#34D399", "#6EE7B7", "#A7F3D0", "#ECFDF5"]
+      },
+      "tint-violet": {
+        "role": "accent-surface",
+        "displayName": "Tint Violet",
+        "canonical": "#F5F3FF",
+        "tonalRamp": ["#4C1D95", "#5B21B6", "#6D28D9", "#7C3AED", "#8B5CF6", "#A78BFA", "#DDD6FE", "#F5F3FF"]
+      }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "Headline (Outfit)", "purpose": "Titulares de sección y tarjeta, siempre extrabold." },
+      "body": { "displayName": "Body (Inter)", "purpose": "Párrafos y descripciones." },
+      "mono": { "displayName": "Cifra (Mono)", "purpose": "Valores en COP y códigos de referencia." }
+    },
+    "shadows": [
+      { "name": "form-sm", "value": "0 1px 2px rgba(15, 23, 42, 0.05)", "purpose": "Elevación puntual del panel del formulario de contacto." },
+      { "name": "nav-pill", "value": "0 4px 12px rgba(0, 0, 0, 0.15)", "purpose": "CTA 'Iniciar Sesión' sobre la foto del hero, antes de hacer scroll." }
+    ],
+    "motion": [
+      { "name": "navbar-transition", "value": "color/background 300ms ease", "purpose": "Transición del navbar de transparente a sólido al pasar ~420px de scroll." },
+      { "name": "shimmer-hover", "value": "0.9s–1.8s ease, disparado solo en :hover", "purpose": "Barrido de luz en tarjetas/botones heredado del panel admin; nunca en loop automático." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón Primario CTA",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Acción principal de conversión ('Solicitar Demo', 'Enviar y Agendar Demo por WhatsApp').",
+      "html": "<button class=\"ds-btn-primary\">Solicitar Demo para mi Acueducto</button>",
+      "css": ".ds-btn-primary { background: #1D4ED8; color: #fff; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 14px; padding: 16px 32px; border-radius: 12px; border: none; transition: background-color 0.2s ease; cursor: pointer; } .ds-btn-primary:hover { background: #1E3A8A; } .ds-btn-primary:focus-visible { outline: 2px solid #1D4ED8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Tarjeta de Plan",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Tarjeta plana de precio, sin sombra en reposo; el plan recomendado usa borde de 2px del color del tier.",
+      "html": "<div class=\"ds-card-plan\"><span class=\"ds-badge-recomendado\">Recomendado para ti</span><h3>Plan Caudal</h3><p class=\"ds-price\">$1.000.000 <span>COP / año</span></p></div>",
+      "css": ".ds-card-plan { background: #fff; border: 2px solid #0EA5E9; border-radius: 16px; padding: 28px; position: relative; } .ds-badge-recomendado { position: absolute; top: -12px; left: 24px; background: #0891B2; color: #fff; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 10px; padding: 4px 12px; border-radius: 9999px; } .ds-card-plan h3 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px; color: #0F172A; margin: 12px 0 4px; } .ds-price { font-family: ui-monospace, monospace; font-weight: 800; font-size: 28px; color: #0F172A; } .ds-price span { font-family: 'Inter', sans-serif; font-weight: 400; font-size: 11px; color: #64748B; }"
+    },
+    {
+      "name": "Input de Formulario",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo de texto del formulario de contacto.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"ej. Julián Trujillo\" />",
+      "css": ".ds-input { width: 100%; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 16px; color: #0F172A; font-family: 'Inter', sans-serif; font-size: 12px; } .ds-input::placeholder { color: #94A3B8; } .ds-input:focus { outline: none; border-color: #1D4ED8; box-shadow: 0 0 0 1px #1D4ED8; }"
+    },
+    {
+      "name": "Navbar (estado sólido)",
+      "kind": "nav",
+      "refersTo": "nav-solid",
+      "description": "Barra de navegación tras pasar el borde del hero — blanca, con blur.",
+      "html": "<header class=\"ds-navbar\"><a href=\"#\">Características</a><a href=\"#\" class=\"ds-navbar-cta\">Iniciar Sesión</a></header>",
+      "css": ".ds-navbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: rgba(255,255,255,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid #E2E8F0; } .ds-navbar a { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 14px; color: #475569; text-decoration: none; } .ds-navbar a:hover { color: #1D4ED8; } .ds-navbar-cta { background: #fff; border: 1px solid #CBD5E1; border-radius: 9999px; padding: 10px 20px; color: #0F172A !important; font-weight: 800 !important; }"
+    },
+    {
+      "name": "Badge de estado (Recaudo)",
+      "kind": "chip",
+      "refersTo": "badge-success",
+      "description": "Pill de estado semántico en tonos pastel, usado en tarjetas de resultado.",
+      "html": "<span class=\"ds-badge\">Costo Transparente</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 9999px; background: #ECFDF5; color: #047857; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 10px; text-transform: uppercase; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Prueba, no Ambiente",
+    "overview": "Esta landing existe para convencer a una junta directiva escéptica de que AquaRural Pro es real y funciona. Cada decisión visual sirve a esa tesis: fotografía real en vez de íconos genéricos, cifras del cliente piloto en vez de placeholders, y un vocabulario de software empresarial serio (fondo claro, un solo azul de confianza, tarjetas planas con borde fino) en vez de la estética de folleto de marketing agropecuario. Es deliberadamente distinta del panel administrativo oscuro: uno vende, el otro opera.",
+    "keyCharacteristics": [
+      "Fondo blanco continuo — las secciones se separan por borde y tarjeta, nunca por color de fondo.",
+      "Un solo azul de confianza como color de acción; los tintes pastel solo viven dentro de tarjetas pequeñas.",
+      "Navbar transparente sobre el hero, sólido al hacer scroll, con transición de 300ms.",
+      "Fotografía real de agua como prueba de marca, no ilustración.",
+      "Tarjetas planas sin sombra en reposo, sin escalado al hover.",
+      "Sin modo oscuro — retirado deliberadamente."
+    ],
+    "rules": [
+      { "name": "La Regla de la Sección Blanca", "body": "Ninguna sección tiene fondo de color distinto a blanco; la diferenciación viene de tipografía, espaciado y tarjetas con borde.", "section": "colors" },
+      { "name": "La Regla del Reposo Plano", "body": "Ninguna tarjeta lleva sombra mientras el usuario no interactúa con ella.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do mantener toda sección sobre fondo blanco.",
+      "Do usar font-mono para cifras en COP y códigos de referencia.",
+      "Do disparar el shimmer de acento solo en :hover.",
+      "Do reservar cian/teal/ámbar exclusivamente para diferenciar nivel de plan.",
+      "Do usar trust como único color de acción/control; esmeralda solo para ahorro/éxito."
+    ],
+    "donts": [
+      "Don't reintroducir el modo oscuro ni ninguna superficie oscura, incluido el footer.",
+      "Don't usar imágenes o iconografía de cultivos, ganado o maquinaria agrícola.",
+      "Don't usar emojis como iconografía.",
+      "Don't agregar sombra a una tarjeta en su estado de reposo.",
+      "Don't copiar la paleta oscura del panel admin — son mundos visuales deliberadamente distintos."
+    ]
+  }
+}

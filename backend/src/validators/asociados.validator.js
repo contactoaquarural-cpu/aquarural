@@ -1,7 +1,9 @@
 const { z } = require('zod');
 
 const crearAsociadoSchema = z.object({
-  matricula: z.string().min(1, 'La matrícula es requerida'),
+  // Si no se envía, el backend genera el siguiente consecutivo del acueducto
+  // (ACU-0001, ACU-0002, ...) — ver generarSiguienteMatricula en el controller.
+  matricula: z.string().min(1).optional(),
   cedula: z.string().min(1, 'La cédula es requerida'),
   nombres: z.string().min(1, 'El nombre es requerido'),
   apellidos: z.string().optional(),
@@ -12,7 +14,11 @@ const crearAsociadoSchema = z.object({
   latitud: z.number().optional(),
   longitud: z.number().optional(),
   numeroMedidor: z.string().optional(),
-  tipoTarifa: z.enum(['GENERAL', 'COMERCIAL', 'SUBSIDIADO', 'ADULTO_MAYOR', 'ESPECIAL']).optional(),
+  // Lectura de arranque de un medidor ya existente (no nuevo): sin esto, el
+  // frontend las calcula y las manda, pero Zod las descartaba en silencio,
+  // dejando el medidor guardado en 0 como si fuera nuevo (ver PLAN_DE_TRABAJO.md).
+  lecturaAnterior: z.number().nonnegative().optional(),
+  lecturaActual: z.number().nonnegative().optional(),
   tarifaPersonalizada: z.number().nonnegative().optional(),
 });
 
@@ -20,4 +26,9 @@ const actualizarAsociadoSchema = crearAsociadoSchema.partial().extend({
   estadoServicio: z.enum(['ACTIVO', 'SUSPENDIDO', 'CORTE_PROGRAMADO']).optional(),
 });
 
-module.exports = { crearAsociadoSchema, actualizarAsociadoSchema };
+const actualizarGpsSchema = z.object({
+  latitud: z.number(),
+  longitud: z.number(),
+});
+
+module.exports = { crearAsociadoSchema, actualizarAsociadoSchema, actualizarGpsSchema };

@@ -1,65 +1,89 @@
-const MODULOS_AQUARURAL = [
-  {
-    icon: 'bolt',
-    titulo: 'Facturación Masiva en 1-Clic',
-    desc: 'Genera las cuentas de cobro del mes para todos los suscriptores activos en cuestión de segundos.',
-  },
+// Bento asimétrico: las dos capacidades que más pesan en la decisión de
+// compra (cobrar y facturar) van destacadas en grande; el resto entra
+// como soporte más pequeño alrededor. Rompe la grilla de 6 cajas iguales.
+const DESTACADAS = [
   {
     icon: 'payments',
     titulo: 'Recaudo Electrónico Wompi',
-    desc: 'Tus usuarios pagan desde el celular por Nequi, Bancolombia, PSE o Tarjeta de Crédito.',
+    desc: 'Tus usuarios pagan desde el celular por Nequi, Bancolombia, PSE o Tarjeta de Crédito — sin ir a la oficina del acueducto.',
   },
   {
+    icon: 'bolt',
+    titulo: 'Facturación Masiva en 1-Clic',
+    desc: 'Genera las cuentas de cobro del mes para todos los suscriptores activos en cuestión de segundos, no de días.',
+  },
+];
+
+const SECUNDARIAS = [
+  {
     icon: 'upload_file',
-    titulo: 'Carga Masiva desde Excel (.xlsx)',
-    desc: 'Importa tu padrón oficial de usuarios desde plantillas de Excel sin digitar fila por fila.',
+    titulo: 'Carga Masiva desde Excel',
+    desc: 'Importa tu padrón oficial sin digitar fila por fila.',
   },
   {
     icon: 'location_on',
-    titulo: 'Mapa GPS de Predios & Viviendas',
-    desc: 'Visualización satelital de cada acometida de agua con estado moratorio en tiempo real.',
+    titulo: 'Mapa GPS de Predios',
+    desc: 'Estado moratorio de cada acometida, en el mapa.',
   },
   {
     icon: 'smartphone',
     titulo: 'App Móvil',
-    desc: 'App para suscriptores con consulta de saldo, pagos en línea, avisos push y respuestas a convocatorias.',
+    desc: 'Saldo, pagos y avisos push para el suscriptor.',
   },
   {
     icon: 'verified_user',
-    titulo: 'Seguridad Multi-Inquilino & Cifrado',
-    desc: 'Cada acueducto administra sus llaves de recaudo cifradas de forma completamente aislada.',
+    titulo: 'Seguridad Multi-Inquilino',
+    desc: 'Llaves de recaudo cifradas y aisladas por acueducto.',
   },
 ];
 
 const Modulos = () => {
   return (
-    <section id="caracteristicas" className="py-20 bg-slate-950">
+    <section id="caracteristicas" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-semibold px-4 py-1.5 rounded-full font-headline">
-            Tecnología Hydro-Tech
-          </span>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-slate-100 font-headline">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 font-headline">
             Diseñado Exclusivamente para la Realidad del Campo Colombiano
           </h2>
-          <p className="text-slate-400 text-sm md:text-base font-body">
+          <p className="text-slate-500 text-sm md:text-base font-body">
             Una suite completa de herramientas pensadas para simplificar el trabajo de las Juntas Administradoras de Agua Veredales.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {MODULOS_AQUARURAL.map((m, idx) => (
+        {/* Destacadas — las dos que más importan */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {DESTACADAS.map((m, idx) => (
             <div
               key={idx}
-              className="bg-slate-900/80 border border-slate-800 rounded-3xl p-8 space-y-4 hover:border-cyan-500/40 hover:bg-slate-900 transition-all duration-300 group"
+              className="bg-white border border-slate-200 rounded-2xl p-8 hover:border-trust/50 transition-colors duration-200 group"
             >
-              <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 rounded-2xl bg-tint-blue flex items-center justify-center text-trust mb-5 group-hover:bg-trust group-hover:text-white transition-colors">
                 <span className="material-symbols-outlined text-3xl">{m.icon}</span>
               </div>
-              <h3 className="text-xl font-bold text-slate-100 font-headline group-hover:text-cyan-300 transition-colors">
+              <h3 className="text-2xl font-extrabold text-slate-900 font-headline mb-2">
                 {m.titulo}
               </h3>
-              <p className="text-slate-400 text-xs md:text-sm font-body leading-relaxed">
+              <p className="text-slate-500 text-sm font-body leading-relaxed max-w-md">
+                {m.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Secundarias — soporte, más compactas */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {SECUNDARIAS.map((m, idx) => (
+            <div
+              key={idx}
+              className="bg-white border border-slate-200 rounded-xl p-5 hover:border-trust/50 transition-colors duration-200 group"
+            >
+              <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-trust mb-3 group-hover:bg-tint-blue transition-colors">
+                <span className="material-symbols-outlined text-xl">{m.icon}</span>
+              </div>
+              <h3 className="text-sm font-bold text-slate-900 font-headline mb-1">
+                {m.titulo}
+              </h3>
+              <p className="text-slate-500 text-xs font-body leading-relaxed">
                 {m.desc}
               </p>
             </div>

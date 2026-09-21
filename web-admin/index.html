@@ -1,18 +1,13 @@
 <!DOCTYPE html>
-<html lang="es" class="dark" style="background-color: #111414; color: #e1e3e2;">
+<html lang="es" class="light" style="background-color: #ffffff; color: #111414;">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AquaRural — Panel Administrativo</title>
     <script>
-      // Aplica el tema antes del primer render para evitar flash
+      // El panel solo tiene tema oscuro. Solo actualiza el title desde cache
+      // si existe, para evitar el flash del título por defecto.
       (function () {
-        var params = new URLSearchParams(window.location.search);
-        var fromUrl = params.get('theme');
-        var saved = fromUrl || localStorage.getItem('aquarural-theme');
-        var isDark = saved !== 'light';
-        document.documentElement.className = isDark ? 'dark' : 'light';
-        // Actualiza title desde cache si existe
         try {
           var cfg = JSON.parse(localStorage.getItem('aquarural-config') || '{}');
           if (cfg.nombreAcueducto) {
@@ -35,7 +30,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   </head>
-  <body class="bg-background text-on-surface" style="background-color: #090d16; color: #e1e3e2; margin: 0; padding: 0;">
+  <body class="bg-background text-on-surface" style="background-color: #ffffff; color: #111414; margin: 0; padding: 0;">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

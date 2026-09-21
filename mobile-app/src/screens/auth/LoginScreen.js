@@ -1,234 +1,166 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, Image,
-  StyleSheet, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  Image,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons } from '@expo/vector-icons';
+import { useAcueductosStore } from '../../store/acueductos.store';
 import { useAuthStore } from '../../store/auth.store';
-import { useAsociadoStore } from '../../store/asociado.store';
-import { Toast, useToast } from '../../components/AppToast';
-import { useTheme } from '../../utils/ThemeContext';
-import { spacing, radius } from '../../utils/theme';
-import { useConfigStore } from '../../store/config.store';
 
-const LoginScreen = ({ navigation }) => {
-  const { colors, typography } = useTheme();
-  const nombreAsociacion = useConfigStore((s) => s.nombreAsociacion);
-  const [cedula,   setCedula]   = useState('');
-  const [password, setPassword] = useState('');
-  const [showPass, setShowPass] = useState(false);
-  const [loading,  setLoading]  = useState(false);
-  const { show, toastProps } = useToast();
+const LoginScreen = () => {
+  const { acueductos, isLoading: cargandoAcueductos, error: errorAcueductos, cargarAcueductos } =
+    useAcueductosStore();
+  const { login, error: errorLogin } = useAuthStore();
 
-  const login        = useAuthStore((s) => s.login);
-  const cargarDatos  = useAsociadoStore((s) => s.cargarDatos);
+  const [acueductoSeleccionado, setAcueductoSeleccionado] = useState(null);
+  const [cedula, setCedula] = useState('');
+  const [ingresando, setIngresando] = useState(false);
 
-  const handleLogin = async () => {
-    if (!cedula.trim() || !password.trim()) {
-      show('warning', 'Campos requeridos', 'Ingresa tu cédula y contraseña.');
-      return;
-    }
-    setLoading(true);
-    try {
-      await login(cedula.trim(), password);
-      await cargarDatos();
-    } catch (err) {
-      show('error', 'Error al ingresar', err.response?.data?.message || 'Verifica tu cédula y contraseña.');
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    cargarAcueductos();
+  }, []);
+
+  const handleIngresar = async () => {
+    if (!acueductoSeleccionado || !cedula.trim()) return;
+    setIngresando(true);
+    await login(acueductoSeleccionado._id, cedula);
+    setIngresando(false);
   };
 
-  const styles = makeStyles(colors, typography);
-
   return (
-    <SafeAreaView style={styles.safe}>
-      <Toast {...toastProps} />
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scroll}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Header visual */}
-          <LinearGradient
-            colors={[colors.primaryContainer, colors.background]}
-            style={styles.heroGradient}
-          >
-            <Image
-              source={require('../../../assets/logo.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-          </LinearGradient>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <View style={styles.header}>
+        <Text style={styles.titulo}>AquaRural</Text>
+        <Text style={styles.subtitulo}>Consulta y paga tu acueducto veredal</Text>
+      </View>
 
-          {/* Formulario */}
-          <View style={styles.formContainer}>
-            <Text style={styles.title}>Bienvenido</Text>
-            <Text style={styles.subtitle}>Ingresa con tu cédula para continuar.</Text>
-
-            {/* Campo cédula */}
-            <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>Cédula</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputIcon}>👤</Text>
-                <TextInput
-                  style={styles.input}
-                  value={cedula}
-                  onChangeText={setCedula}
-                  placeholder="Ej: 12345678"
-                  placeholderTextColor={colors.outline}
-                  keyboardType="numeric"
-                  autoCapitalize="none"
-                  returnKeyType="next"
-                />
-              </View>
-            </View>
-
-            {/* Campo contraseña */}
-            <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>Contraseña</Text>
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputIcon}>🔒</Text>
-                <TextInput
-                  style={[styles.input, styles.inputPassword]}
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="••••••••"
-                  placeholderTextColor={colors.outline}
-                  secureTextEntry={!showPass}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  returnKeyType="done"
-                  onSubmitEditing={handleLogin}
-                />
-                <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeBtn}>
-                  <MaterialIcons
-                    name={showPass ? 'visibility' : 'visibility-off'}
-                    size={20}
-                    color={colors.onSurfaceVariant}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* Olvidé mi contraseña */}
-            <TouchableOpacity
-              style={styles.forgotBtn}
-              onPress={() => navigation.navigate('ForgotPassword')}
-            >
-              <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
-            </TouchableOpacity>
-
-            {/* Botón ingresar */}
-            <TouchableOpacity
-              style={[styles.loginBtn, { backgroundColor: colors.primary }, loading && styles.loginBtnDisabled]}
-              onPress={handleLogin}
-              disabled={loading}
-              activeOpacity={0.85}
-            >
-              {loading ? (
-                <ActivityIndicator color={colors.onPrimary} />
-              ) : (
-                <Text style={styles.loginBtnText}>Ingresar</Text>
-              )}
-            </TouchableOpacity>
-
-            {/* Ir a registro */}
-            <View style={styles.registerRow}>
-              <Text style={styles.registerText}>¿No estás registrado? </Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <Text style={styles.registerLink}>Regístrate</Text>
+      {/* Paso 1: elegir acueducto */}
+      <Text style={styles.label}>1. Selecciona tu acueducto</Text>
+      {cargandoAcueductos ? (
+        <ActivityIndicator style={styles.spacer} />
+      ) : errorAcueductos ? (
+        <Text style={styles.error}>{errorAcueductos}</Text>
+      ) : (
+        <FlatList
+          data={acueductos}
+          keyExtractor={(item) => item._id}
+          style={styles.lista}
+          renderItem={({ item }) => {
+            const seleccionado = acueductoSeleccionado?._id === item._id;
+            return (
+              <TouchableOpacity
+                style={[styles.acueductoItem, seleccionado && styles.acueductoItemSeleccionado]}
+                onPress={() => setAcueductoSeleccionado(item)}
+              >
+                {item.logoUrl ? (
+                  <Image source={{ uri: item.logoUrl }} style={styles.logo} />
+                ) : (
+                  <View style={styles.logoPlaceholder} />
+                )}
+                <View style={styles.acueductoInfo}>
+                  <Text style={styles.acueductoNombre}>{item.nombre}</Text>
+                  <Text style={styles.acueductoUbicacion}>
+                    {item.vereda ? `${item.vereda}, ` : ''}
+                    {item.municipio}
+                  </Text>
+                </View>
               </TouchableOpacity>
-            </View>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            );
+          }}
+          ListEmptyComponent={<Text style={styles.vacio}>No hay acueductos disponibles.</Text>}
+        />
+      )}
+
+      {/* Paso 2: cédula — solo se habilita tras elegir acueducto */}
+      {acueductoSeleccionado && (
+        <View style={styles.pasoDos}>
+          <Text style={styles.label}>2. Ingresa tu cédula</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Número de cédula"
+            keyboardType="number-pad"
+            value={cedula}
+            onChangeText={setCedula}
+          />
+
+          {errorLogin ? <Text style={styles.error}>{errorLogin}</Text> : null}
+
+          <TouchableOpacity
+            style={[styles.boton, (!cedula.trim() || ingresando) && styles.botonDeshabilitado]}
+            onPress={handleIngresar}
+            disabled={!cedula.trim() || ingresando}
+          >
+            {ingresando ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.botonTexto}>Ingresar</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
+    </KeyboardAvoidingView>
   );
 };
 
-const makeStyles = (colors, typography) => StyleSheet.create({
-  safe:  { flex: 1, backgroundColor: colors.background },
-  flex:  { flex: 1 },
-  scroll: { flexGrow: 1 },
-
-  heroGradient: {
-    paddingTop:    spacing.xxl,
-    paddingBottom: spacing.xl,
-    alignItems:    'center',
-    gap:           spacing.sm,
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff', padding: 24, paddingTop: 60 },
+  header: { marginBottom: 24 },
+  titulo: { fontSize: 28, fontWeight: '800', color: '#1D4ED8' },
+  subtitulo: { fontSize: 13, color: '#64748b', marginTop: 4 },
+  label: { fontSize: 13, fontWeight: '700', color: '#334155', marginBottom: 10 },
+  lista: { maxHeight: 220 },
+  spacer: { marginVertical: 20 },
+  vacio: { fontSize: 12, color: '#94a3b8', fontStyle: 'italic' },
+  acueductoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    marginBottom: 8,
   },
-  logoBox: {
-    width:           72,
-    height:          72,
-    backgroundColor: colors.primaryContainer,
-    borderRadius:    radius.xl,
-    alignItems:      'center',
-    justifyContent:  'center',
-    marginBottom:    spacing.sm,
+  acueductoItemSeleccionado: { borderColor: '#1D4ED8', backgroundColor: '#eff6ff' },
+  logo: { width: 36, height: 36, borderRadius: 8, marginRight: 12 },
+  logoPlaceholder: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    marginRight: 12,
+    backgroundColor: '#e2e8f0',
   },
-  logoIcon:  { fontSize: 36 },
-  orgName:   { ...typography.h1, color: colors.primary, letterSpacing: 2 },
-  logo:      { width: 220, height: 100, alignSelf: 'center', marginBottom: spacing.sm },
-  heroSub:   { ...typography.small, color: colors.onSurfaceVariant, textAlign: 'center' },
-
-  formContainer: {
-    flex:              1,
-    backgroundColor:   colors.surfaceContainerLow,
-    borderTopLeftRadius:  radius.xxl,
-    borderTopRightRadius: radius.xxl,
-    padding:           spacing.xl,
-    paddingTop:        spacing.xxl,
-    marginTop:         -spacing.lg,
-  },
-  title:    { ...typography.displayMd, marginBottom: spacing.xs },
-  subtitle: { ...typography.body, marginBottom: spacing.xl },
-
-  fieldGroup: { marginBottom: spacing.md },
-  fieldLabel: { ...typography.label, marginBottom: spacing.xs + 2 },
-  inputWrapper: {
-    flexDirection:   'row',
-    alignItems:      'center',
-    backgroundColor: colors.surfaceContainerHigh,
-    borderRadius:    radius.lg,
-    paddingHorizontal: spacing.md,
-  },
-  inputIcon:     { fontSize: 18, marginRight: spacing.sm },
+  acueductoInfo: { flex: 1 },
+  acueductoNombre: { fontSize: 14, fontWeight: '700', color: '#0f172a' },
+  acueductoUbicacion: { fontSize: 12, color: '#64748b', marginTop: 2 },
+  pasoDos: { marginTop: 24 },
   input: {
-    flex:           1,
-    height:         52,
-    ...typography.bodyBold,
-    color:          colors.onSurface,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 15,
+    marginBottom: 12,
   },
-  inputPassword: { paddingRight: spacing.xl },
-  eyeBtn:        { padding: spacing.xs },
-  eyeIcon:       { fontSize: 18 },
-
-  forgotBtn: { alignSelf: 'flex-end', marginBottom: spacing.xl },
-  forgotText: { ...typography.small, color: colors.onPrimaryContainer, fontWeight: '600' },
-
-  loginBtn: {
-    borderRadius:   radius.lg,
-    paddingVertical: spacing.md + 2,
-    alignItems:     'center',
-    marginBottom:   spacing.xl,
+  error: { color: '#dc2626', fontSize: 12, marginBottom: 12, fontWeight: '600' },
+  boton: {
+    backgroundColor: '#1D4ED8',
+    borderRadius: 16,
+    paddingVertical: 14,
+    alignItems: 'center',
   },
-  loginBtnDisabled: { opacity: 0.6 },
-  loginBtnText: {
-    ...typography.h3,
-    color:         colors.onPrimary,
-    letterSpacing: 1,
-  },
-
-  registerRow:  { flexDirection: 'row', justifyContent: 'center', marginTop: spacing.sm },
-  registerText: { ...typography.body },
-  registerLink: { ...typography.bodyBold, color: colors.primary },
+  botonDeshabilitado: { opacity: 0.5 },
+  botonTexto: { color: '#fff', fontWeight: '700', fontSize: 15 },
 });
 
 export default LoginScreen;

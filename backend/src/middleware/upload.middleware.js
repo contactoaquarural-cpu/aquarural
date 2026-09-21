@@ -19,4 +19,16 @@ const uploadExcel = multer({
   },
 });
 
-module.exports = { uploadExcel };
+const uploadImagen = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const tiposValidos = ['image/jpeg', 'image/png', 'image/webp'];
+    if (tiposValidos.includes(file.mimetype)) return cb(null, true);
+    const error = new Error('La imagen debe ser JPG, PNG o WEBP.');
+    error.status = 400;
+    cb(error);
+  },
+});
+
+module.exports = { uploadExcel, uploadImagen };

@@ -17,6 +17,12 @@ const envSchema = z.object({
   NODEMAILER_USER: z.string().optional().default(''),
   NODEMAILER_PASS: z.string().optional().default(''),
   FRONTEND_URL: z.string().optional().default('http://localhost:5173'),
+  CLOUDINARY_CLOUD_NAME: z.string().optional().default(''),
+  CLOUDINARY_API_KEY: z.string().optional().default(''),
+  CLOUDINARY_API_SECRET: z.string().optional().default(''),
+  FIREBASE_PROJECT_ID: z.string().optional().default(''),
+  FIREBASE_PRIVATE_KEY: z.string().optional().default(''),
+  FIREBASE_CLIENT_EMAIL: z.string().optional().default(''),
 });
 
 const parsed = envSchema.safeParse(process.env);

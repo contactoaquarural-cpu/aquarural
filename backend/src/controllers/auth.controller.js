@@ -120,4 +120,19 @@ const cambiarPassword = asyncHandler(async (req, res) => {
   return ok(res, null, 'Contraseña actualizada.');
 });
 
-module.exports = { login, login_asociado, refresh, logout, cambiarPassword, construirPayloadAdmin };
+// Solo verifica la contraseña del admin autenticado, sin cambiar nada — usado
+// como confirmación de identidad antes de acceder a secciones sensibles
+// (ej. llaves Wompi en /pagos-wompi), que no deben editarse sin querer.
+const verificarPassword = asyncHandler(async (req, res) => {
+  const { password } = req.body;
+
+  const admin = await AdminUser.findById(req.user._id);
+  if (!admin) return fail(res, 404, 'Usuario no encontrado.');
+
+  const passwordValido = await bcrypt.compare(password, admin.password);
+  if (!passwordValido) return fail(res, 401, 'La contraseña no es correcta.');
+
+  return ok(res, null, 'Contraseña verificada.');
+});
+
+module.exports = { login, login_asociado, refresh, logout, cambiarPassword, verificarPassword, construirPayloadAdmin };

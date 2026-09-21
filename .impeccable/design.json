@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-16T00:00:00Z",
+  "title": "Design System: AquaRural Pro",
+  "extensions": {
+    "colorMeta": {
+      "cian-hidraulico": {
+        "role": "primary",
+        "displayName": "Cian Hidráulico",
+        "canonical": "#0EA5E9",
+        "tonalRamp": ["#082F49", "#0C4A6E", "#075985", "#0369A1", "#0284C7", "#0EA5E9", "#38BDF8", "#7DD3FC"]
+      },
+      "esmeralda-vital": {
+        "role": "secondary",
+        "displayName": "Esmeralda Vital",
+        "canonical": "#10B981",
+        "tonalRamp": ["#022C22", "#064E3B", "#065F46", "#047857", "#059669", "#10B981", "#34D399", "#6EE7B7"]
+      },
+      "aqua-electrico": {
+        "role": "tertiary",
+        "displayName": "Aqua Eléctrico",
+        "canonical": "#06B6D4",
+        "tonalRamp": ["#083344", "#164E63", "#155E75", "#0E7490", "#0891B2", "#06B6D4", "#22D3EE", "#67E8F9"]
+      },
+      "surface-slate-950": {
+        "role": "neutral",
+        "displayName": "Obsidiana Profunda",
+        "canonical": "#020617",
+        "tonalRamp": ["#020617", "#0F172A", "#1E293B", "#334155", "#475569", "#64748B", "#94A3B8", "#CBD5E1"]
+      },
+      "ambar-mora": {
+        "role": "warning",
+        "displayName": "Ámbar Mora",
+        "canonical": "#F59E0B",
+        "tonalRamp": ["#451A03", "#78350F", "#92400E", "#B45309", "#D97706", "#F59E0B", "#FBBF24", "#FCD34D"]
+      },
+      "rojo-inactivo": {
+        "role": "error",
+        "displayName": "Rojo Alerta",
+        "canonical": "#EF4444",
+        "tonalRamp": ["#450A0A", "#7F1D1D", "#991B1B", "#B91C1C", "#DC2626", "#EF4444", "#F87171", "#FCA5A5"]
+      }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "Headline (Outfit)", "purpose": "Títulos de página, encabezados de tarjeta, labels y badges uppercase." },
+      "body": { "displayName": "Body (Inter)", "purpose": "Párrafos, descripciones, texto de formulario." },
+      "mono": { "displayName": "Cifra (Mono)", "purpose": "Valores monetarios en COP y códigos de referencia/factura." }
+    },
+    "shadows": [
+      { "name": "glow-cian", "value": "0 10px 25px -5px rgba(14, 165, 233, 0.25)", "purpose": "Resplandor de énfasis en CTAs primarios (shadow-cyan-500/25)." },
+      { "name": "glow-esmeralda", "value": "0 10px 25px -5px rgba(16, 185, 129, 0.20)", "purpose": "Resplandor en acciones/badges de éxito (shadow-emerald-500/20)." },
+      { "name": "ambient-dark", "value": "0 25px 50px -12px rgba(0, 0, 0, 0.6)", "purpose": "Elevación ambiental de tarjetas en modo oscuro (shadow-2xl)." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Curva orgánica para hover/foco/transiciones de estado (transitionTimingFunction DEFAULT en tailwind.config.js)." },
+      { "name": "duration-standard", "value": "160ms", "purpose": "Duración por defecto de transiciones (transitionDuration DEFAULT)." },
+      { "name": "fade-in", "value": "fade-in 280ms cubic-bezier(0.16, 1, 0.3, 1) both", "purpose": "Entrada de contenido: opacidad + translateY(4px), sensación de 'asentarse'." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón Primario CTA",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Acción principal de la página (ej. 'Ingresar al Panel', 'Pagar Wompi / PSE').",
+      "html": "<button class=\"ds-btn-primary\"><span>Pagar Wompi / PSE</span></button>",
+      "css": ".ds-btn-primary { background: linear-gradient(to right, #0EA5E9, #06B6D4, #10B981); color: #020617; font-family: 'Outfit', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 12px; padding: 14px 24px; border-radius: 16px; border: none; box-shadow: 0 10px 25px -5px rgba(14,165,233,0.25); transition: all 0.2s cubic-bezier(0.16,1,0.3,1); cursor: pointer; } .ds-btn-primary:hover { background: linear-gradient(to right, #38BDF8, #22D3EE, #34D399); box-shadow: 0 10px 25px -5px rgba(14,165,233,0.4); } .ds-btn-primary:focus-visible { outline: 2px solid #0EA5E9; outline-offset: 2px; }"
+    },
+    {
+      "name": "Badge de Estado (Al día)",
+      "kind": "chip",
+      "refersTo": "badge-success",
+      "description": "Pill de estado semántico — variante 'Al día / Pagada'.",
+      "html": "<span class=\"ds-badge-success\">✓ PAGADA</span>",
+      "css": ".ds-badge-success { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #34D399; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 10px; }"
+    },
+    {
+      "name": "Badge de Estado (En mora)",
+      "kind": "chip",
+      "refersTo": "badge-warning",
+      "description": "Pill de estado semántico — variante 'En mora / Pendiente'.",
+      "html": "<span class=\"ds-badge-warning\">PENDIENTE</span>",
+      "css": ".ds-badge-warning { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); color: #FBBF24; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 10px; }"
+    },
+    {
+      "name": "Tarjeta KPI",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Tarjeta de métrica del dashboard (recaudo, suscriptores, cartera, efectividad).",
+      "html": "<div class=\"ds-card-kpi\"><div class=\"ds-card-kpi-icon\">💧</div><p class=\"ds-card-kpi-label\">Recaudo Total Mes</p><h3 class=\"ds-card-kpi-value\">$1.250.000 <span>COP</span></h3></div>",
+      "css": ".ds-card-kpi { background: rgba(15,23,42,0.9); border: 1px solid #1E293B; border-radius: 24px; padding: 24px; position: relative; overflow: hidden; transition: border-color 0.3s; } .ds-card-kpi:hover { border-color: rgba(14,165,233,0.4); } .ds-card-kpi-icon { width: 48px; height: 48px; border-radius: 16px; background: rgba(14,165,233,0.1); border: 1px solid rgba(14,165,233,0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; } .ds-card-kpi-label { font-family: 'Outfit', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; font-size: 12px; font-weight: 600; color: #94A3B8; } .ds-card-kpi-value { font-family: ui-monospace, monospace; font-weight: 800; font-size: 30px; color: #F8FAFC; margin-top: 4px; } .ds-card-kpi-value span { font-family: 'Inter', sans-serif; font-weight: 400; font-size: 14px; color: #94A3B8; }"
+    },
+    {
+      "name": "Input con Ícono",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo de formulario estándar (login, formularios de asociación/suscriptor).",
+      "html": "<div class=\"ds-input-wrap\"><input class=\"ds-input\" type=\"text\" placeholder=\"ej. admin@laargentina.org.co\" /></div>",
+      "css": ".ds-input-wrap { position: relative; } .ds-input { width: 100%; background: #020617; border: 1px solid #1E293B; border-radius: 16px; padding: 12px 16px; color: #F8FAFC; font-family: 'Inter', sans-serif; font-size: 12px; } .ds-input::placeholder { color: #64748B; } .ds-input:focus { outline: none; border-color: #0EA5E9; box-shadow: 0 0 0 1px #0EA5E9; }"
+    },
+    {
+      "name": "Item de Navegación (Sidebar)",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Enlace de navegación lateral, estado activo vs. inactivo.",
+      "html": "<a class=\"ds-nav-item ds-nav-item--active\"><span>💧</span><span>Dashboard</span></a>",
+      "css": ".ds-nav-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 12px; font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 14px; color: #94A3B8; text-decoration: none; border: 1px solid transparent; transition: color 0.15s, background 0.15s; } .ds-nav-item:hover { color: #E2E8F0; background: rgba(15,23,42,0.6); } .ds-nav-item--active { background: linear-gradient(to right, rgba(14,165,233,0.2), rgba(6,182,212,0.1)); border-color: rgba(6,182,212,0.3); color: #67E8F9; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Hydro-Tech Control Room",
+    "overview": "AquaRural Pro se ve y se siente como la sala de control de una infraestructura vital: oscura, precisa, sin ruido visual, con acentos de energía que se activan cuando algo importa (un cobro confirmado, un estado 'al día', una acción disponible). El lenguaje visual completo (fondo obsidiana, orbes de resplandor cian/esmeralda difuminados en el fondo, degradados sky→cyan→emerald en los CTAs principales) está construido alrededor de la metáfora del flujo: datos y dinero moviéndose con la misma claridad con la que debería moverse el agua en un acueducto bien gestionado. El panel es oscuro por defecto y prioriza legibilidad y jerarquía sobre decoración; la profundidad se construye por capas de superficie más resplandor de color, no por sombras neutras clásicas.",
+    "keyCharacteristics": [
+      "Fondo obsidiana/slate en capas, nunca negro puro.",
+      "Acentos cian-esmeralda-ámbar como codificación semántica de estado, no decoración libre.",
+      "Tarjetas y botones muy redondeados (rounded-2xl/3xl), casi sin esquinas rectas.",
+      "Profundidad = capas + resplandor de color, no sombra neutra.",
+      "Tipografía Outfit (títulos/labels) + Inter (cuerpo) + monoespaciada para cifras de dinero."
+    ],
+    "rules": [
+      { "name": "La Regla del Acento con Propósito", "body": "Cian, esmeralda y ámbar nunca son intercambiables por preferencia estética: cian = acción, esmeralda = éxito/al día, ámbar = alerta/mora, rojo = error/inactivo.", "section": "colors" },
+      { "name": "La Regla de la Cifra Monoespaciada", "body": "Todo valor en pesos colombianos o código de referencia se renderiza en font-mono; el resto del contenido nunca la usa.", "section": "typography" },
+      { "name": "La Regla de 'la Luz es la Sombra'", "body": "Cuando un elemento necesita destacar, no se le agrega una sombra oscura: se le agrega resplandor de color.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do usar la variante dark: de Tailwind directamente sobre clases neutras para cualquier página o componente nuevo.",
+      "Do reservar cian/esmeralda/ámbar/rojo para su significado semántico fijo.",
+      "Do usar font-mono para todo valor monetario o código de referencia.",
+      "Do mantener el sidebar siempre oscuro, sin importar el tema activo del resto del panel.",
+      "Do construir jerarquía visual con capas de superficie + resplandor de color antes que con sombras neutras."
+    ],
+    "donts": [
+      "Don't usar Ant Design ni ningún kit de componentes prefabricado.",
+      "Don't usar negro puro en ningún fondo.",
+      "Don't introducir esquinas rectas en tarjetas, botones o inputs.",
+      "Don't replicar el patrón heredado de LoginPage/Sidebar/TopBar que fuerza el modo claro con overrides CSS en vez del prefijo dark: de Tailwind.",
+      "Don't mezclar los tokens nombrados de tailwind.config.js con las clases crudas de Tailwind que dominan las páginas activas."
+    ]
+  }
+}

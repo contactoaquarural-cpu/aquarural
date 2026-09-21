@@ -6,8 +6,5 @@ const api = axios.create({
 });
 
 export const getConfiguracion  = () => api.get('/configuracion');
-export const getNoticias        = () => api.get('/noticias?page=1&limit=3');
-export const getConvenios       = () => api.get('/convenios');
-export const getPrecios         = () => api.get('/precios');
-export const getVideos          = () => api.get('/videos?page=1&limit=3');
 export const getEstadisticas    = () => api.get('/admin/estadisticas');
+export const getConfiguracionGlobal = () => api.get('/superadmin/configuracion-global');

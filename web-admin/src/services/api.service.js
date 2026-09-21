@@ -19,11 +19,13 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Maneja 401 — sesión expirada
+// Maneja 401 — sesión expirada. Evita recargar si ya estamos en /login (ahí un
+// 401 es normal, ej. login fallido o consultas sin sesión) para no entrar en
+// un bucle de recargas cuando no hay token válido.
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && window.location.pathname !== '/login') {
       useAuthStore.getState().logout();
       window.location.href = '/login';
     }

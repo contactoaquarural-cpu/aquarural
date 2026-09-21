@@ -23,87 +23,22 @@
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
+  /* Landing sin modo oscuro — siempre clara (referencia CropSync,
+     "enterprise software, not a farm brochure"), autorada directamente
+     en utilidades planas. */
   body {
-    @apply bg-dark text-white font-sans;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    @apply bg-white text-slate-900 font-sans;
   }
 
-  /* ── Modo claro ────────────────────────────────────────────────── */
-  html.light body {
-    background-color: #f8fafc;
-    color: #0f172a;
-  }
-
-  /* Fondos de sección principales en modo claro */
-  html.light .bg-slate-950,
-  html.light .bg-slate-950\/90,
-  html.light .bg-slate-950\/80 {
-    background-color: #f8fafc !important;
-  }
-
-  /* Secciones intermedias (Simulador, Planes, etc.) en modo claro */
-  html.light .bg-slate-900,
-  html.light .bg-slate-900\/90,
-  html.light .bg-slate-900\/80,
-  html.light .bg-slate-900\/60,
-  html.light .bg-slate-900\/50,
-  html.light .bg-slate-900\/40,
-  html.light [class*="bg-slate-900"] {
-    background-color: #ffffff !important;
-  }
-
-  /* Badges y contenedores secundarios */
-  html.light .bg-slate-800,
-  html.light .bg-slate-800\/90,
-  html.light .bg-slate-800\/80,
-  html.light .bg-slate-800\/60,
-  html.light .bg-slate-800\/50,
-  html.light [class*="bg-slate-800"] {
-    background-color: #f1f5f9 !important;
-  }
-
-  /* Bordes limpios en modo claro */
-  html.light .border-slate-900,
-  html.light .border-slate-800,
-  html.light .border-slate-800\/80,
-  html.light .border-slate-800\/60,
-  html.light .border-slate-700,
-  html.light [class*="border-slate-800"],
-  html.light [class*="border-slate-900"] {
-    border-color: #e2e8f0 !important;
-  }
-
-  /* Textos nítidos en modo claro */
-  html.light .text-slate-100,
-  html.light .text-slate-200,
-  html.light .text-white {
-    color: #0f172a !important;
-  }
-  html.light .text-slate-300,
-  html.light .text-slate-400 {
-    color: #334155 !important;
-  }
-  html.light .text-slate-500 {
-    color: #64748b !important;
-  }
-
-  /* Tarjetas Hydro Shimmer en modo claro */
-  html.light .hydro-shimmer-card {
-    background: #ffffff !important;
-    border: 1px solid #cbd5e1 !important;
-    box-shadow: 0 10px 30px -10px rgba(6, 182, 212, 0.12), 0 4px 12px rgba(0, 0, 0, 0.04) !important;
-  }
-
-  /* Inputs en modo claro */
-  html.light input,
-  html.light textarea {
-    background-color: #f1f5f9 !important;
-    border-color: #cbd5e1 !important;
-    color: #0f172a !important;
-  }
-  html.light input::placeholder,
-  html.light textarea::placeholder {
-    color: #94a3b8 !important;
+  /* El header es fixed (h-20 = 80px) sobre todo el documento. Sin esto,
+     saltar a un ancla (#caracteristicas, #planes, #contacto) — sea por clic
+     en el Navbar o por el propio scroll del navegador — alinea el borde
+     superior de la sección justo con el borde superior del viewport,
+     dejando su título tapado detrás del header. Aplica a cualquier sección
+     con id, no solo a las del Navbar, para no repetir este bug si se agrega
+     una nueva ancla más adelante. */
+  section[id] {
+    scroll-margin-top: 5rem;
   }
 }
 
@@ -113,15 +48,18 @@
   }
 }
 
-/* ── 💎 Hydro Liquid Shimmer (Resplandor de Agua Líquida en Cristal) ── */
+/* ── 💎 Hydro Liquid Shimmer (Resplandor de Agua Líquida en Cristal) ──
+   Elevación declarada una sola vez (sombra de acento, sin borde 1px
+   compitiendo con ella — evita el patrón "ghost card"). El barrido de luz
+   es un momento autoral que responde a la interacción (hover), no un loop
+   decorativo perpetuo. */
 .hydro-shimmer-card {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(6, 182, 212, 0.3) !important;
   background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(16px);
-  box-shadow: 0 10px 30px -10px rgba(6, 182, 212, 0.2);
-  transition: all 0.4s ease;
+  box-shadow: 0 10px 30px -10px rgba(6, 182, 212, 0.25);
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
 }
 
 .hydro-shimmer-card::before {
@@ -141,14 +79,18 @@
     transparent 100%
   );
   transform: rotate(25deg);
-  animation: hydroLiquidShimmer 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: hydroLiquidShimmer 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+  animation-play-state: paused;
   pointer-events: none;
   z-index: 1;
 }
 
+.hydro-shimmer-card:hover::before {
+  animation-play-state: running;
+}
+
 .hydro-shimmer-card:hover {
-  border-color: rgba(6, 182, 212, 0.6) !important;
-  box-shadow: 0 15px 40px -10px rgba(6, 182, 212, 0.4), 0 0 25px rgba(16, 185, 129, 0.25);
+  box-shadow: 0 15px 40px -10px rgba(6, 182, 212, 0.4), 0 0 25px rgba(16, 185, 129, 0.2);
   transform: translateY(-3px);
 }
 
@@ -173,8 +115,13 @@
     transparent
   );
   transform: skewX(-20deg);
-  animation: hydroBtnShimmer 3.2s ease-in-out infinite;
+  animation: hydroBtnShimmer 0.9s ease-in-out;
+  animation-play-state: paused;
   pointer-events: none;
+}
+
+.hydro-shimmer-btn:hover::after {
+  animation-play-state: running;
 }
 
 @keyframes hydroLiquidShimmer {
@@ -192,63 +139,6 @@
   }
   40%, 100% {
     left: 150%;
-  }
-}
-
-/* ── Efecto Ondas de Agua Concéntricas (Water Ripple Effect) ──────────── */
-.water-ripple-effect {
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  animation: waterRippleAnim 0.75s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
-  z-index: 99999;
-}
-
-.water-ripple-effect-inner {
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  animation: waterRippleAnimInner 0.9s cubic-bezier(0.1, 0.8, 0.3, 1) 0.1s forwards;
-  z-index: 99998;
-}
-
-@keyframes waterRippleAnim {
-  0% {
-    width: 0px;
-    height: 0px;
-    opacity: 0.95;
-    border: 2px solid rgba(6, 182, 212, 0.95);
-    background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, rgba(14, 165, 233, 0.15) 45%, transparent 70%);
-    box-shadow: 0 0 25px rgba(6, 182, 212, 0.9), inset 0 0 15px rgba(6, 182, 212, 0.6);
-  }
-  50% {
-    opacity: 0.65;
-    border: 1.5px solid rgba(16, 185, 129, 0.8);
-    box-shadow: 0 0 35px rgba(6, 182, 212, 0.6), inset 0 0 20px rgba(16, 185, 129, 0.4);
-  }
-  100% {
-    width: 320px;
-    height: 320px;
-    opacity: 0;
-    border: 1px solid rgba(6, 182, 212, 0);
-    box-shadow: 0 0 60px rgba(6, 182, 212, 0);
-  }
-}
-
-@keyframes waterRippleAnimInner {
-  0% {
-    width: 0px;
-    height: 0px;
-    opacity: 0.8;
-    border: 1.5px solid rgba(14, 165, 233, 0.8);
-  }
-  100% {
-    width: 240px;
-    height: 240px;
-    opacity: 0;
-    border: 1px solid rgba(6, 182, 212, 0);
   }
 }
 

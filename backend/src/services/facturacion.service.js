@@ -1,0 +1,137 @@
+const Asociado = require('../models/Asociado');
+const Factura = require('../models/Factura');
+const logger = require('../utils/logger');
+
+const tieneMedidorReal = (asociado) => Boolean(asociado.numeroMedidor) && asociado.numeroMedidor !== 'S/N';
+
+// Recalcula el estadoMoratorio de UN asociado puntual, según sus facturas
+// VENCIDA vigentes — misma regla que aplica el cron diario (estado.job.js),
+// pero disparada al instante cuando se confirma un pago (efectivo o Wompi),
+// para que no quede "En mora" en Reportes/Dashboard hasta la próxima
+// corrida del cron (6am) aunque ya haya pagado.
+const recalcularEstadoMoratorio = async (acueductoId, asociadoId) => {
+  const facturasVencidas = await Factura.countDocuments({ acueductoId, asociadoId, estado: 'VENCIDA' });
+  const nuevoEstado = facturasVencidas === 0 ? 'AL_DIA' : facturasVencidas < 3 ? 'EN_MORA' : 'INACTIVO';
+  await Asociado.updateOne({ _id: asociadoId, acueductoId }, { estadoMoratorio: nuevoEstado });
+  return nuevoEstado;
+};
+
+// Costo mensualizado de la licencia SaaS del acueducto ÷ asociados activos,
+// solo si el acueducto activó el traslado de ese costo a sus asociados.
+// Se calcula una única vez por corrida de facturación masiva (no por
+// asociado) para que todos compartan exactamente el mismo divisor.
+const calcularRecargoLicenciaPorAsociado = (acueducto, totalAsociadosActivos) => {
+  if (!acueducto.trasladarCostoLicenciaAsociados || totalAsociadosActivos === 0) return 0;
+
+  const costoMensualizado =
+    acueducto.frecuenciaPagoSaaS === 'MENSUAL' ? acueducto.costoSaaSVigente : acueducto.costoSaaSVigente / 12;
+
+  return Math.round(costoMensualizado / totalAsociadosActivos);
+};
+
+// Calcula el desglose de una factura para un asociado, según el esquema de
+// tarifa del acueducto (TARIFA_FIJA | HIBRIDO | MEDIDOR) y si ese asociado en
+// particular tiene medidor físico instalado (numeroMedidor real).
+const calcularMontoFactura = (acueducto, asociado, montoRecargoLicencia = 0) => {
+  const tieneMedidor = tieneMedidorReal(asociado);
+
+  if (acueducto.tipoTarifa === 'MEDIDOR' || (acueducto.tipoTarifa === 'HIBRIDO' && tieneMedidor)) {
+    const consumoM3 = Math.max(0, (asociado.lecturaActual || 0) - (asociado.lecturaAnterior || 0));
+    const consumoFacturable = Math.max(0, consumoM3 - (acueducto.consumoBasicoIncluido || 0));
+    const montoCargoFijo = acueducto.cargoFijoMensual || 0;
+    const montoConsumo = consumoFacturable * (acueducto.valorMetroCubico || 0);
+    return {
+      consumoM3,
+      montoCargoFijo,
+      montoConsumo,
+      montoRecargoLicencia,
+      montoTotal: montoCargoFijo + montoConsumo + montoRecargoLicencia,
+    };
+  }
+
+  // TARIFA_FIJA, o HIBRIDO para un asociado sin medidor real.
+  const montoCargoFijo = asociado.tarifaPersonalizada ?? acueducto.tarifaBaseMensual ?? 0;
+  return {
+    consumoM3: 0,
+    montoCargoFijo,
+    montoConsumo: 0,
+    montoRecargoLicencia,
+    montoTotal: montoCargoFijo + montoRecargoLicencia,
+  };
+};
+
+// Un asociado necesita lectura del ciclo vigente antes de facturarse solo si
+// su tarifa depende de medidor (MEDIDOR siempre, HIBRIDO solo si tiene
+// medidor físico instalado). TARIFA_FIJA nunca depende de lectura.
+const requiereLecturaVigente = (acueducto, asociado) =>
+  acueducto.tipoTarifa === 'MEDIDOR' || (acueducto.tipoTarifa === 'HIBRIDO' && tieneMedidorReal(asociado));
+
+const tieneLecturaDelPeriodo = (asociado, periodo) =>
+  asociado.fechaUltimaLectura && asociado.fechaUltimaLectura.toISOString().slice(0, 7) === periodo;
+
+const generarCodigoFactura = (acueducto, asociado, periodo) =>
+  `AGUA-${periodo.replace('-', '')}-${asociado.matricula}`;
+
+// Calcula la fecha de vencimiento para el periodo dado, respetando el día
+// límite configurado (1-31). Si ese día no existe en el mes (ej. 30 en
+// febrero), usa el último día real del mes en vez de desbordar al mes
+// siguiente — "día 30/31" se entiende como "fin de mes".
+const calcularFechaVencimiento = (periodo, diaLimitePago) => {
+  const [anio, mes] = periodo.split('-').map(Number);
+  const ultimoDiaDelMes = new Date(anio, mes, 0).getDate();
+  const dia = Math.min(diaLimitePago || 15, ultimoDiaDelMes);
+  return new Date(anio, mes - 1, dia);
+};
+
+// Genera las facturas del periodo dado para todos los asociados ACTIVOS del
+// acueducto que aún no tengan factura en ese periodo. Usado tanto por el botón
+// manual del admin como por el cron automático mensual.
+const generarFacturacionMasiva = async (acueducto, periodo) => {
+  const asociados = await Asociado.find({ acueductoId: acueducto._id, estadoServicio: 'ACTIVO' });
+  const montoRecargoLicencia = calcularRecargoLicenciaPorAsociado(acueducto, asociados.length);
+
+  const fechaVencimiento = calcularFechaVencimiento(periodo, acueducto.diaLimitePago);
+
+  const resultado = { creadas: 0, omitidas: 0, sinLectura: 0, errores: [] };
+
+  for (const asociado of asociados) {
+    const existente = await Factura.findOne({ acueductoId: acueducto._id, asociadoId: asociado._id, periodo });
+    if (existente) {
+      resultado.omitidas += 1;
+      continue;
+    }
+
+    if (requiereLecturaVigente(acueducto, asociado) && !tieneLecturaDelPeriodo(asociado, periodo)) {
+      resultado.sinLectura += 1;
+      continue;
+    }
+
+    try {
+      const desglose = calcularMontoFactura(acueducto, asociado, montoRecargoLicencia);
+      await Factura.create({
+        acueductoId: acueducto._id,
+        asociadoId: asociado._id,
+        codigoFactura: generarCodigoFactura(acueducto, asociado, periodo),
+        periodo,
+        ...desglose,
+        fechaVencimiento,
+      });
+      resultado.creadas += 1;
+    } catch (error) {
+      logger.error('Error generando factura', { acueductoId: acueducto._id, asociadoId: asociado._id, error: error.message });
+      resultado.errores.push({ asociadoId: asociado._id, motivo: error.message });
+    }
+  }
+
+  return resultado;
+};
+
+module.exports = {
+  calcularFechaVencimiento,
+  calcularMontoFactura,
+  calcularRecargoLicenciaPorAsociado,
+  generarFacturacionMasiva,
+  generarCodigoFactura,
+  recalcularEstadoMoratorio,
+  tieneMedidorReal,
+};

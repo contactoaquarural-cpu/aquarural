@@ -2,30 +2,26 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api.service';
 
-const DOCS_MAP = {
-  VACUNACION:       { label: 'Certificado Vacunación', icon: 'vaccines' },
-  TITULO_PROPIEDAD: { label: 'Título de Propiedad',   icon: 'home_work' },
-  REGISTRO_ICA:     { label: 'Registro Ganadero ICA', icon: 'verified' },
-  OTRO:             { label: 'Otro documento',         icon: 'description' },
-};
-
 const InfoRow = ({ icon, label, value }) => (
   <div className="flex items-center gap-4">
-    <div className="w-10 h-10 rounded-xl bg-surface-container-lowest flex items-center justify-center text-primary flex-shrink-0">
+    <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#1D4ED8] flex-shrink-0">
       <span className="material-symbols-outlined">{icon}</span>
     </div>
     <div>
-      <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">{label}</p>
-      <p className="text-sm font-medium text-on-surface">{value || '—'}</p>
+      <p className="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">{label}</p>
+      <p className="text-sm font-medium text-slate-800">{value || '—'}</p>
     </div>
   </div>
 );
 
 const ESTADO_MAP = {
-  AL_DIA:   { cls: 'bg-emerald-500 text-emerald-950', label: 'Activo' },
-  EN_MORA:  { cls: 'bg-tertiary text-on-tertiary',    label: 'En Mora' },
-  INACTIVO: { cls: 'bg-outline text-surface',         label: 'Inactivo' },
+  AL_DIA: { cls: 'bg-emerald-500 text-white', label: 'Al Día' },
+  EN_MORA: { cls: 'bg-amber-500 text-white', label: 'En Mora' },
+  INACTIVO: { cls: 'bg-gray-400 text-white', label: 'Inactivo' },
 };
+
+const formatMonto = (m) =>
+  new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(m);
 
 const ExpedientePage = () => {
   const { id } = useParams();
@@ -35,36 +31,27 @@ const ExpedientePage = () => {
     queryFn: () => api.get(`/asociados/${id}`).then((r) => r.data),
   });
 
-  const { data: aportesData } = useQuery({
-    queryKey: ['aportes', id],
-    queryFn: () => api.get(`/asociados/${id}/aportes`).then((r) => r.data),
+  const { data: facturasData } = useQuery({
+    queryKey: ['facturas-asociado', id],
+    queryFn: () => api.get('/facturas', { params: { asociadoId: id, limit: 12 } }).then((r) => r.data),
+    enabled: !!id,
   });
 
-  const { data: fincaData } = useQuery({
-    queryKey: ['finca', id],
-    queryFn: () => api.get(`/asociados/${id}/fincas`).then((r) => r.data),
+  const { data: consumoData } = useQuery({
+    queryKey: ['historial-consumo', id],
+    queryFn: () => api.get(`/asociados/${id}/historial-consumo`).then((r) => r.data),
+    enabled: !!id,
   });
 
-  const { data: docsData } = useQuery({
-    queryKey: ['documentos', id],
-    queryFn: () => api.get(`/documentos/asociado/${id}`).then((r) => r.data),
-  });
+  const asociado = aData?.data;
+  const facturas = facturasData?.data?.facturas ?? [];
+  const historialConsumo = consumoData?.data ?? [];
 
-  const asociado  = aData?.data;
-  const aportes   = aportesData?.data ?? [];
-  const finca     = fincaData?.data?.[0] ?? null;
-  const documentos = docsData?.data ?? [];
-
-  const est = ESTADO_MAP[asociado?.estado] ?? ESTADO_MAP.INACTIVO;
-
-  const formatMonto = (m) =>
-    new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(m);
-
-  const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const est = ESTADO_MAP[asociado?.estadoMoratorio] ?? ESTADO_MAP.INACTIVO;
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-96 text-on-surface-variant">
+      <div className="flex items-center justify-center h-96 text-[#1D4ED8]">
         <span className="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
       </div>
     );
@@ -72,121 +59,169 @@ const ExpedientePage = () => {
 
   if (!asociado) {
     return (
-      <div className="flex flex-col items-center justify-center h-96 gap-4 text-on-surface-variant">
-        <span className="material-symbols-outlined text-5xl opacity-30">person_off</span>
+      <div className="flex flex-col items-center justify-center h-96 gap-4 text-slate-400">
+        <span className="material-symbols-outlined text-5xl text-slate-300">person_off</span>
         <p>Asociado no encontrado.</p>
-        <Link to="/asociados" className="text-primary text-sm font-bold hover:underline">
+        <Link to="/asociados" className="text-[#1D4ED8] text-sm font-bold hover:underline">
           Volver al directorio
         </Link>
       </div>
     );
   }
 
-  return (
-    <div className="pt-8 pb-12 px-8 max-w-7xl mx-auto">
+  const tieneMedidor = Boolean(asociado.numeroMedidor) && asociado.numeroMedidor !== 'S/N';
 
+  // Resumen financiero derivado de las mismas facturas ya cargadas — sin
+  // pedir nada nuevo al backend, solo para no obligar al admin a contar
+  // filas de la tabla manualmente para saber cuánto debe el suscriptor.
+  const facturasPendientes = facturas.filter((f) => f.estado !== 'PAGADA');
+  const deudaTotal = facturasPendientes.reduce((sum, f) => sum + (f.montoTotal || 0), 0);
+  const ultimaLectura = historialConsumo[0];
+
+  return (
+    <div className="pt-8 pb-12 px-4 sm:px-8 max-w-7xl mx-auto space-y-6 font-body">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-        <div className="flex items-start gap-6">
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
+        <div className="flex items-start gap-5">
           <div className="relative">
-            <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-2xl border-4 border-surface-container-low bg-surface-container-highest flex items-center justify-center">
-              {asociado.fotoPerfil
-                ? <img src={asociado.fotoPerfil} alt={asociado.nombre} className="w-full h-full object-cover" />
-                : <span className="material-symbols-outlined text-primary text-5xl">person</span>
-              }
+            <div className="w-20 h-20 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-[#1D4ED8] text-3xl">person</span>
             </div>
-            <span className={`absolute -bottom-2 -right-2 px-3 py-1 rounded-full text-[10px] font-bold tracking-tighter uppercase border-2 border-surface-container-lowest ${est.cls}`}>
+            <span className={`absolute -bottom-2 -right-2 px-2.5 py-0.5 rounded-full text-[9px] font-bold tracking-tighter uppercase border-2 border-white ${est.cls}`}>
               {est.label}
             </span>
           </div>
           <div className="space-y-1">
-            <h2 className="text-4xl font-extrabold tracking-tight font-headline text-on-surface">
-              {asociado.nombre}
+            <h2 className="text-2xl font-extrabold tracking-tight font-headline text-slate-800">
+              {asociado.nombres} {asociado.apellidos}
             </h2>
-            <p className="text-on-surface-variant flex items-center gap-2">
+            <p className="text-slate-500 text-xs flex items-center gap-2">
               <span className="material-symbols-outlined text-sm">badge</span>
-              C.C. {asociado.cedula}
+              C.C. {asociado.cedula} • Matrícula {asociado.matricula}
             </p>
-            <div className="flex gap-3 pt-2 flex-wrap">
-              <span className="bg-surface-container-low text-secondary px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-2">
-                <span className="material-symbols-outlined text-xs">alternate_email</span>
-                {asociado.correo}
-              </span>
+            <div className="flex gap-2 pt-1 flex-wrap">
               {asociado.telefono && (
-                <span className="bg-surface-container-low text-secondary px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-2">
+                <span className="bg-blue-50 border border-blue-200 text-[#1D4ED8] px-2.5 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-xs">call</span>
                   {asociado.telefono}
                 </span>
               )}
+              <span className="bg-slate-50 border border-slate-200 text-slate-600 px-2.5 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-xs">location_on</span>
+                {asociado.vereda || 'Centro'}
+              </span>
             </div>
           </div>
         </div>
 
-        <div className="flex gap-3">
-          <button className="bg-surface-container-highest text-on-surface px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-surface-bright transition-all active:scale-95">
-            <span className="material-symbols-outlined text-lg">edit</span>
-            Editar Socio
-          </button>
-          <button className="btn-cta px-6 py-2.5 rounded-lg text-sm font-extrabold flex items-center gap-2 shadow-lg transition-all active:scale-95 font-headline">
-            <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
-              description
-            </span>
-            Generar Paz y Salvo
-          </button>
+        <Link
+          to="/asociados"
+          className="bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shrink-0"
+        >
+          <span className="material-symbols-outlined text-base">arrow_back</span>
+          Volver al Directorio
+        </Link>
+      </div>
+
+      {/* Resumen financiero — para no obligar al admin a contar filas de la
+          tabla de facturas manualmente para saber cuánto debe el suscriptor,
+          mismo patrón de tarjetas KPI ya usado en Dashboard/Reportes. */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center justify-between shadow-sm">
+          <div>
+            <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 font-headline">Deuda Total</p>
+            <h3 className={`text-2xl font-extrabold font-mono mt-0.5 ${deudaTotal > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+              {formatMonto(deudaTotal)}
+            </h3>
+            <p className="text-[11px] text-slate-500 mt-1">{facturasPendientes.length} facturas pendientes</p>
+          </div>
+          <div className={`w-11 h-11 rounded-xl border flex items-center justify-center shrink-0 ${
+            deudaTotal > 0 ? 'bg-red-50 border-red-200 text-red-600' : 'bg-emerald-50 border-emerald-200 text-emerald-600'
+          }`}>
+            <span className="material-symbols-outlined text-xl">{deudaTotal > 0 ? 'warning' : 'check_circle'}</span>
+          </div>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center justify-between shadow-sm">
+          <div>
+            <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 font-headline">Facturas Registradas</p>
+            <h3 className="text-2xl font-extrabold text-slate-800 font-mono mt-0.5">{facturas.length}</h3>
+            <p className="text-[11px] text-slate-500 mt-1">{facturas.length - facturasPendientes.length} pagadas en total</p>
+          </div>
+          <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#1D4ED8] shrink-0">
+            <span className="material-symbols-outlined text-xl">receipt_long</span>
+          </div>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center justify-between shadow-sm">
+          <div>
+            <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 font-headline">Última Lectura</p>
+            <h3 className="text-2xl font-extrabold text-slate-800 font-mono mt-0.5">
+              {tieneMedidor ? (ultimaLectura ? `${ultimaLectura.consumoM3} m³` : '—') : 'Tarifa Fija'}
+            </h3>
+            <p className="text-[11px] text-slate-500 mt-1">
+              {tieneMedidor ? (ultimaLectura ? `Período ${ultimaLectura.periodo}` : 'Sin lecturas aún') : 'Sin medidor asignado'}
+            </p>
+          </div>
+          <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#1D4ED8] shrink-0">
+            <span className="material-symbols-outlined text-xl">water_ec</span>
+          </div>
         </div>
       </div>
 
-      {/* Bento Grid */}
       <div className="grid grid-cols-12 gap-6">
-
-        {/* Columna info */}
-        <div className="col-span-12 lg:col-span-4 space-y-6">
-          <section className="bg-surface-container-low rounded-3xl p-6">
-            <h3 className="text-sm font-bold text-emerald-500 uppercase tracking-widest mb-6 font-headline">
+        {/* Fila 1: identidad del suscriptor — Información General y
+            Ubicación de Predio lado a lado, mismo peso visual, porque ambas
+            son "quién es y dónde vive" — se consultan juntas al abrir el
+            expediente. El historial (Facturas/Consumo) va debajo, en su
+            propia fila de ancho completo. */}
+        <div className="col-span-12 lg:col-span-6">
+          <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm h-full">
+            <h3 className="text-xs font-bold text-[#1D4ED8] uppercase tracking-widest mb-5 font-headline">
               Información General
             </h3>
             <div className="space-y-5">
-              <InfoRow icon="call"           label="Teléfono Principal"  value={asociado.telefono} />
-              <InfoRow icon="alternate_email" label="Correo Electrónico" value={asociado.correo} />
-              <InfoRow icon="home_work"      label="Nombre de la Finca"  value={finca?.nombre} />
-              <InfoRow icon="location_on"    label="Vereda"              value={finca?.vereda} />
-              <InfoRow icon="location_city"  label="Municipio"           value={asociado.municipio} />
-              <InfoRow icon="grass"          label="Hectáreas"           value={finca?.hectareas != null ? `${finca.hectareas} ha` : null} />
-              <InfoRow icon="pets"           label="Cabezas de Ganado"   value={finca?.cabezasGanado != null ? `${finca.cabezasGanado} cabezas` : null} />
+              <InfoRow icon="call" label="Teléfono" value={asociado.telefono} />
+              <InfoRow icon="alternate_email" label="Correo" value={asociado.correo} />
+              <InfoRow icon="home_work" label="Dirección" value={asociado.direccion} />
+              <InfoRow icon="location_on" label="Vereda / Sector" value={asociado.vereda} />
+              <InfoRow
+                icon="water_ec"
+                label="Medidor"
+                value={tieneMedidor ? asociado.numeroMedidor : 'Sin medidor (Tarifa Fija)'}
+              />
             </div>
           </section>
+        </div>
 
-          {/* Ubicación GPS */}
-          <section className="bg-surface-container-low rounded-3xl overflow-hidden relative">
-            <div className="w-full bg-gradient-to-br from-emerald-900/30 to-primary-container/20 flex items-center justify-center h-32">
-              <span className="material-symbols-outlined text-primary/20 text-8xl">map</span>
-            </div>
-            <div className="p-5">
-              <h3 className="text-sm font-bold text-emerald-500 uppercase tracking-widest mb-3 font-headline">
+        <div className="col-span-12 lg:col-span-6">
+          <section className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm h-full">
+            <div className="p-6">
+              <h3 className="text-xs font-bold text-[#1D4ED8] uppercase tracking-widest mb-5 font-headline">
                 Ubicación de Predio
               </h3>
-              {finca?.latitud ? (
+              {asociado.latitud ? (
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center bg-surface-container-high rounded-xl px-4 py-2">
-                    <span className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider">Latitud</span>
-                    <span className="text-sm font-mono text-primary">{finca.latitud.toFixed(6)}</span>
+                  <div className="flex justify-between items-center bg-slate-50 rounded-xl px-4 py-2 border border-slate-200">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Latitud</span>
+                    <span className="text-sm font-mono text-[#1D4ED8]">{asociado.latitud.toFixed(6)}</span>
                   </div>
-                  <div className="flex justify-between items-center bg-surface-container-high rounded-xl px-4 py-2">
-                    <span className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider">Longitud</span>
-                    <span className="text-sm font-mono text-primary">{finca.longitud.toFixed(6)}</span>
+                  <div className="flex justify-between items-center bg-slate-50 rounded-xl px-4 py-2 border border-slate-200">
+                    <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Longitud</span>
+                    <span className="text-sm font-mono text-[#1D4ED8]">{asociado.longitud.toFixed(6)}</span>
                   </div>
                   <a
-                    href={`https://www.google.com/maps?q=${finca.latitud},${finca.longitud}`}
+                    href={`https://www.google.com/maps?q=${asociado.latitud},${asociado.longitud}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center justify-center gap-2 w-full mt-1 py-2 rounded-xl bg-primary-container/40 text-primary text-xs font-bold hover:bg-primary-container/60 transition-colors"
+                    className="flex items-center justify-center gap-2 w-full mt-1 py-2 rounded-xl bg-blue-50 border border-blue-200 text-[#1D4ED8] text-xs font-bold hover:bg-blue-100 transition-colors"
                   >
                     <span className="material-symbols-outlined text-sm">open_in_new</span>
                     Ver en Google Maps
                   </a>
                 </div>
               ) : (
-                <p className="text-xs text-on-surface-variant italic">
+                <p className="text-xs text-slate-500 italic">
                   Sin coordenadas GPS registradas. El asociado puede registrarlas desde la app móvil.
                 </p>
               )}
@@ -194,49 +229,80 @@ const ExpedientePage = () => {
           </section>
         </div>
 
-        {/* Historial de pagos */}
-        <div className="col-span-12 lg:col-span-5">
-          <section className="bg-surface-container-low rounded-3xl p-6 h-full">
-            <div className="flex justify-between items-center mb-8">
-              <h3 className="text-sm font-bold text-emerald-500 uppercase tracking-widest font-headline">
-                Historial de Pagos
+        {/* Fila 2: Historial de Facturas — ancho completo */}
+        <div className="col-span-12">
+          <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+            <div className="flex justify-between items-center gap-4 mb-5">
+              <h3 className="text-xs font-bold text-[#1D4ED8] uppercase tracking-widest font-headline whitespace-nowrap">
+                Historial de Facturas
               </h3>
-              <span className="text-[10px] font-bold bg-tertiary-container/40 text-on-tertiary-container px-2 py-1 rounded">
-                TOTAL: {aportes.length}
+              <span className="text-[10px] font-bold bg-slate-50 border border-slate-200 text-slate-600 px-2.5 py-1 rounded-full whitespace-nowrap">
+                TOTAL: {facturas.length}
               </span>
             </div>
-            <div className="overflow-x-auto no-scrollbar">
-              <table className="w-full text-left">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <colgroup>
+                  <col className="w-24" />
+                  <col className="w-44" />
+                  <col className="w-24" />
+                  <col className="w-28" />
+                  <col className="w-28" />
+                  <col className="w-28" />
+                  <col className="w-36" />
+                  <col className="w-32" />
+                </colgroup>
                 <thead>
-                  <tr className="text-[10px] text-on-surface-variant uppercase tracking-widest border-b border-outline-variant/20">
-                    <th className="pb-3 font-bold">Periodo</th>
-                    <th className="pb-3 font-bold">Monto</th>
-                    <th className="pb-3 font-bold text-right">Estado</th>
+                  <tr className="text-[10px] text-slate-400 uppercase tracking-widest border-b border-slate-200">
+                    <th className="pb-3 pr-6 font-bold">Periodo</th>
+                    <th className="pb-3 pr-6 font-bold">Código</th>
+                    <th className="pb-3 pr-6 font-bold">Consumo</th>
+                    <th className="pb-3 pr-6 font-bold">Monto</th>
+                    <th className="pb-3 pr-6 font-bold">Vencimiento</th>
+                    <th className="pb-3 pr-6 font-bold">Fecha de Pago</th>
+                    <th className="pb-3 pr-6 font-bold">Método de Pago</th>
+                    <th className="pb-3 font-bold">Estado</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm">
-                  {aportes.length === 0 ? (
+                  {facturas.length === 0 ? (
                     <tr>
-                      <td colSpan={3} className="py-8 text-center text-on-surface-variant text-xs">
-                        Sin pagos registrados
+                      <td colSpan={8} className="py-8 text-center text-slate-400 text-xs">
+                        Sin facturas registradas aún.
                       </td>
                     </tr>
                   ) : (
-                    aportes.slice(0, 8).map((a) => (
-                      <tr key={a._id} className="border-b border-outline-variant/10 hover:bg-surface-container-highest transition-colors">
-                        <td className="py-4 font-medium text-on-surface">
-                          {MESES[a.mes - 1]} {a.año}
+                    facturas.map((f) => (
+                      <tr key={f._id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                        <td className="py-3.5 pr-6 font-medium text-slate-800 font-mono whitespace-nowrap">{f.periodo}</td>
+                        <td className="py-3.5 pr-6 text-slate-500 font-mono text-xs whitespace-nowrap">{f.codigoFactura}</td>
+                        <td className="py-3.5 pr-6 text-slate-600 font-mono whitespace-nowrap">
+                          {tieneMedidor ? `${f.consumoM3} m³` : '—'}
                         </td>
-                        <td className="py-4 text-secondary">{formatMonto(a.monto)}</td>
-                        <td className="py-4 text-right">
-                          {a.estado === 'PAGADO' ? (
-                            <span className="inline-flex items-center gap-1.5 text-emerald-400 font-bold text-xs">
+                        <td className="py-3.5 pr-6 text-[#1D4ED8] font-mono whitespace-nowrap">{formatMonto(f.montoTotal)}</td>
+                        <td className="py-3.5 pr-6 text-slate-500 font-mono text-xs whitespace-nowrap">
+                          {new Date(f.fechaVencimiento).toLocaleDateString('es-CO')}
+                        </td>
+                        <td className="py-3.5 pr-6 text-slate-500 font-mono text-xs whitespace-nowrap">
+                          {f.fechaPago ? new Date(f.fechaPago).toLocaleDateString('es-CO') : '—'}
+                        </td>
+                        <td className="py-3.5 pr-6 text-slate-500 text-xs whitespace-nowrap">
+                          {f.metodoPago === 'WOMPI' ? 'Wompi' : f.metodoPago === 'EFECTIVO_OFICINA' ? 'Efectivo Oficina' : '—'}
+                        </td>
+                        <td className="py-3.5 whitespace-nowrap">
+                          {f.estado === 'PAGADA' ? (
+                            <span className="inline-flex items-center gap-1.5 text-emerald-700 font-bold text-xs">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                              Pagado
+                              Pagada
+                            </span>
+                          ) : f.estado === 'VENCIDA' ? (
+                            <span className="inline-flex items-center gap-1.5 text-red-600 font-bold text-xs">
+                              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                              Vencida
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 text-error font-bold text-xs">
-                              <span className="w-1.5 h-1.5 rounded-full bg-error" />
+                            <span className="inline-flex items-center gap-1.5 text-amber-600 font-bold text-xs">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                               Pendiente
                             </span>
                           )}
@@ -250,85 +316,62 @@ const ExpedientePage = () => {
           </section>
         </div>
 
-        {/* Documentos */}
-        <div className="col-span-12 lg:col-span-3">
-          <section className="bg-surface-container-low rounded-3xl p-6 h-full">
-            <h3 className="text-sm font-bold text-emerald-500 uppercase tracking-widest mb-6 font-headline">
-              Documentación
-            </h3>
-            <div className="space-y-3">
-              {documentos.length === 0 ? (
-                <p className="text-xs text-on-surface-variant text-center py-6">
-                  El asociado no ha subido documentos aún
-                </p>
-              ) : (
-                documentos.map((doc) => {
-                  const def = DOCS_MAP[doc.tipo] ?? DOCS_MAP.OTRO;
-                  return (
-                    <a
-                      key={doc.tipo}
-                      href={doc.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="bg-surface-container-lowest p-4 rounded-2xl flex items-center gap-3 hover:bg-surface-container-highest transition-all group"
-                    >
-                      <div className="w-10 h-10 rounded-lg bg-emerald-900/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
-                        <span className="material-symbols-outlined text-lg">{def.icon}</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-on-surface truncate">{def.label}</p>
-                        <p className="text-[10px] text-on-surface-variant">
-                          {new Date(doc.fechaSubida).toLocaleDateString('es-CO')}
-                        </p>
-                      </div>
-                      <span className="material-symbols-outlined text-on-surface-variant text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                        open_in_new
-                      </span>
-                    </a>
-                  );
-                })
-              )}
-              {documentos.length > 0 && (
-                <p className="text-[10px] text-on-surface-variant text-center pt-2">
-                  {documentos.length} de {Object.keys(DOCS_MAP).length - 1} documentos subidos
-                </p>
-              )}
-            </div>
-          </section>
-        </div>
-      </div>
-
-      {/* Footer métricas */}
-      <div className="grid grid-cols-12 gap-6 mt-6">
-        <div className="col-span-12 md:col-span-8 bg-surface-container-low rounded-3xl p-6 flex items-center justify-between">
-          <div>
-            <h4 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">
-              Actividad Reciente
-            </h4>
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <p className="text-sm font-medium">
-                {aportes[0]
-                  ? `Último pago: ${MESES[aportes[0].mes - 1]} ${aportes[0].año}`
-                  : 'Sin actividad registrada'}
-              </p>
-            </div>
+        {/* Fila 3: Historial de Consumo (solo si tiene medidor) — ancho completo */}
+        {tieneMedidor && (
+          <div className="col-span-12">
+            <section className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+              <div className="flex justify-between items-center mb-5">
+                <h3 className="text-xs font-bold text-[#1D4ED8] uppercase tracking-widest font-headline">
+                  Historial de Consumo (Medidor {asociado.numeroMedidor})
+                </h3>
+                <span className="text-[10px] font-bold bg-slate-50 border border-slate-200 text-slate-600 px-2.5 py-1 rounded-full">
+                  {historialConsumo.length} lecturas registradas
+                </span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <colgroup>
+                    <col className="w-28" />
+                    <col />
+                    <col />
+                    <col />
+                    <col className="w-36" />
+                  </colgroup>
+                  <thead>
+                    <tr className="text-[10px] text-slate-400 uppercase tracking-widest border-b border-slate-200">
+                      <th className="pb-3 font-bold">Periodo</th>
+                      <th className="pb-3 font-bold">Lectura Anterior</th>
+                      <th className="pb-3 font-bold">Lectura Actual</th>
+                      <th className="pb-3 font-bold">Consumo</th>
+                      <th className="pb-3 font-bold">Fecha de Registro</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {historialConsumo.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="py-8 text-center text-slate-400 text-xs">
+                          Sin lecturas registradas aún para este medidor.
+                        </td>
+                      </tr>
+                    ) : (
+                      historialConsumo.map((h) => (
+                        <tr key={h._id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                          <td className="py-3.5 font-medium text-slate-800 font-mono whitespace-nowrap">{h.periodo}</td>
+                          <td className="py-3.5 text-slate-500 font-mono whitespace-nowrap">{h.lecturaAnterior} m³</td>
+                          <td className="py-3.5 text-slate-800 font-mono whitespace-nowrap">{h.lecturaActual} m³</td>
+                          <td className="py-3.5 text-[#1D4ED8] font-mono font-bold whitespace-nowrap">{h.consumoM3} m³</td>
+                          <td className="py-3.5 text-slate-500 font-mono text-xs whitespace-nowrap">
+                            {new Date(h.fechaRegistro).toLocaleDateString('es-CO')}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
           </div>
-          <Link
-            to="/reportes"
-            className="text-xs font-bold text-primary px-4 py-2 bg-primary-container/20 rounded-full hover:bg-primary-container/40 transition-all"
-          >
-            Ver Reporte
-          </Link>
-        </div>
-        <div className="col-span-12 md:col-span-4 bg-tertiary-container/10 border border-tertiary-container/20 rounded-3xl p-6 flex flex-col justify-center">
-          <p className="text-[10px] font-bold text-tertiary uppercase tracking-widest mb-1">Estado Actual</p>
-          <div className="flex items-baseline gap-2">
-            <span className={`text-2xl font-extrabold font-headline ${ESTADO_MAP[asociado.estado]?.cls.split(' ')[1] ?? 'text-on-surface'}`}>
-              {ESTADO_MAP[asociado.estado]?.label ?? '—'}
-            </span>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

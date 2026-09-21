@@ -19,4 +19,8 @@ const cambiarPasswordSchema = z.object({
   passwordNuevo: z.string().min(6, 'La nueva contraseña debe tener al menos 6 caracteres'),
 });
 
-module.exports = { loginSchema, loginAsociadoSchema, refreshSchema, cambiarPasswordSchema };
+const verificarPasswordSchema = z.object({
+  password: z.string().min(1, 'La contraseña es requerida'),
+});
+
+module.exports = { loginSchema, loginAsociadoSchema, refreshSchema, cambiarPasswordSchema, verificarPasswordSchema };

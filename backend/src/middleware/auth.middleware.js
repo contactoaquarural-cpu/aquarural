@@ -31,4 +31,14 @@ const verifySuperadmin = (req, res, next) => {
   next();
 };
 
-module.exports = { verifyToken, verifyAdmin, verifySuperadmin };
+// Fontanero: acceso acotado solo a registrar lecturas de medidor. Los roles
+// administrativos también pueden (ej. el admin cubre al fontanero si falta).
+const verifyFontanero = (req, res, next) => {
+  const rolesConAcceso = ['FONTANERO', 'ADMIN_ACUEDUCTO', 'TESORERO', 'SUPERADMIN'];
+  if (!req.user || !rolesConAcceso.includes(req.user.rol)) {
+    return fail(res, 403, 'No tienes permisos para registrar lecturas.');
+  }
+  next();
+};
+
+module.exports = { verifyToken, verifyAdmin, verifySuperadmin, verifyFontanero };

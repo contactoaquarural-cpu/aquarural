@@ -1,63 +1,27 @@
 {
   "expo": {
-    "name": "AquaRural",
-    "slug": "aquarural-app",
+    "name": "mobile-app",
+    "slug": "mobile-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
-    "splash": {
-      "resizeMode": "contain",
-      "backgroundColor": "#111414"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.aquarural.app"
+      "supportsTablet": true
     },
     "android": {
-      "package": "com.aquarural.app",
-      "googleServicesFile": "./google-services.json",
-      "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION"
-      ]
-    },
-    "plugins": [
-      "expo-secure-store",
-      "expo-camera",
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "Permite seleccionar foto de perfil."
-        }
-      ],
-      "expo-font",
-      [
-        "expo-location",
-        {
-          "locationWhenInUsePermission": "Necesitamos tu ubicación para registrar la localización de tu finca."
-        }
-      ],
-      [
-        "expo-notifications",
-        {
-          "color": "#1A7A3C"
-        }
-      ],
-      "expo-video",
-      "expo-web-browser"
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "bc1ee1af-8601-4c69-aa3b-d5cd5549dd06"
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
       }
     },
-    "owner": "aquarural"
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store"
+    ]
   }
 }

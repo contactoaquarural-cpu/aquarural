@@ -26,6 +26,12 @@ const acueductoSchema = new mongoose.Schema(
     montoRecargoMora: { type: Number, default: 0 },
     diaLimitePago: { type: Number, default: 15 },
 
+    // Traslado opcional del costo de la licencia SaaS a los asociados, como
+    // rubro separado y visible en cada factura de agua (no mezclado con
+    // cargoFijoMensual). Se recalcula en cada generación de factura según
+    // costoSaaSVigente mensualizado ÷ asociados activos.
+    trasladarCostoLicenciaAsociados: { type: Boolean, default: false },
+
     // Wompi propio del acueducto (cobro de agua), cifrado AES-256
     wompiPublicKey: { type: String, default: '' },
     wompiPrivateKeyEncrypted: { type: String, default: '' },
@@ -42,7 +48,6 @@ const acueductoSchema = new mongoose.Schema(
     fechaInicioLicencia: { type: Date, default: Date.now },
     fechaVencimientoGratis: { type: Date },
     fechaVencimientoMembresia: { type: Date },
-    esPrimerAnoGratis: { type: Boolean, default: true },
     estadoPagoSaaS: {
       type: String,
       enum: ['MES_GRATIS_PRUEBA', 'AL_DIA', 'POR_COBRAR', 'VENCIDO'],

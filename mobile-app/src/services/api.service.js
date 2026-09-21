@@ -1,38 +1,54 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+// Mismo puerto/backend que web-admin (backend/src/server.js escucha en :3000).
+// En producción esto se reemplaza por la URL real del backend desplegado.
+const BASE_URL = 'http://localhost:3000';
 
-const api = axios.create({
-  baseURL: API_URL,
-  timeout: 30000, // 30s — conexiones rurales + cold start de Railway
-  headers: { 'Content-Type': 'application/json' },
+const api = axios.create({ baseURL: BASE_URL });
+
+api.interceptors.request.use(async (config) => {
+  const token = await SecureStore.getItemAsync('accessToken');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
 });
 
-// Interceptor de request: agrega Bearer token
-api.interceptors.request.use(
-  async (config) => {
-    const token = await SecureStore.getItemAsync('asoga_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// Si el access token expira, se reintenta una vez con el refresh token antes
+// de forzar logout — evita que el suscriptor pierda sesión solo por haber
+// dejado la app abierta más tiempo del que dura el access token.
+let refrescando = null;
 
-// Interceptor de response: maneja 401 (token expirado)
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      // Limpiar tokens almacenados
-      await SecureStore.deleteItemAsync('asoga_token');
-      await SecureStore.deleteItemAsync('asoga_refresh_token');
-      await SecureStore.deleteItemAsync('asoga_user');
-      // El navigator en index.js detecta el token nulo y redirige a Auth
+    const original = error.config;
+    if (error.response?.status !== 401 || original._retry) {
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
+    original._retry = true;
+
+    try {
+      if (!refrescando) {
+        const refreshToken = await SecureStore.getItemAsync('refreshToken');
+        if (!refreshToken) throw new Error('Sin refresh token');
+        refrescando = axios.post(`${BASE_URL}/auth/refresh`, { refreshToken });
+      }
+      const { data } = await refrescando;
+      refrescando = null;
+      // El backend rota AMBOS tokens en cada refresh (el refresh token viejo
+      // queda revocado de un solo uso) — hay que guardar los dos nuevos, no
+      // solo el access token, o la siguiente renovación fallaría con un
+      // refresh token ya revocado.
+      await SecureStore.setItemAsync('accessToken', data.data.accessToken);
+      await SecureStore.setItemAsync('refreshToken', data.data.refreshToken);
+      original.headers.Authorization = `Bearer ${data.data.accessToken}`;
+      return api(original);
+    } catch (refreshError) {
+      refrescando = null;
+      await SecureStore.deleteItemAsync('accessToken');
+      await SecureStore.deleteItemAsync('refreshToken');
+      return Promise.reject(error);
+    }
   }
 );
 

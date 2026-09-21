@@ -18,13 +18,13 @@
 
   /* ── Modo claro ────────────────────────────────────────────────────────── */
   html.light body {
-    background-color: #f0f2f0;
+    background-color: #ffffff;
     color: #111414;
   }
 
   /* Sobreescribir tokens de color en modo claro */
   html.light {
-    --color-background:               #f0f2f0;
+    --color-background:               #ffffff;
     --color-surface:                  #ffffff;
     --color-surface-container-low:    #f5f7f5;
     --color-surface-container:        #eaeeeb;
@@ -53,6 +53,18 @@
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     vertical-align: middle;
     user-select: none;
+  }
+
+  /* El autocompletado de Chrome pinta su propio fondo (azul/amarillo) por
+     encima de cualquier bg-* de Tailwind. Se usa en superficies siempre
+     claras (ej. LoginPage) que no dependen de html.light. */
+  .aq-input:-webkit-autofill,
+  .aq-input:-webkit-autofill:hover,
+  .aq-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #0f172a;
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+    box-shadow: 0 0 0px 1000px #ffffff inset;
+    transition: background-color 9999s ease-in-out 0s;
   }
 }
 
@@ -100,7 +112,7 @@
   html.light .bg-slate-950,
   html.light .bg-slate-950\/90,
   html.light .bg-slate-950\/80,
-  html.light [class*="bg-slate-950"]   { background-color: #f8fafc !important; }
+  html.light [class*="bg-slate-950"]   { background-color: #ffffff !important; }
 
   html.light .bg-slate-900,
   html.light .bg-slate-900\/95,
@@ -120,6 +132,14 @@
   html.light .border-slate-800\/80,
   html.light .border-slate-800\/60,
   html.light [class*="border-slate-800"] { border-color: #e2e8f0 !important; }
+
+  /* Tarjeta con contorno reforzado: para bloques de contenido (tablas, listas)
+     que necesitan leerse como un panel definido incluso en modo claro, donde
+     el borde slate-800 tenue casi se pierde contra el fondo #f0f2f0. */
+  html.light .card-defined {
+    border: 1.5px solid #94a3b8 !important;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.10), 0 1px 4px rgba(15, 23, 42, 0.08) !important;
+  }
 
   html.light .text-slate-100,
   html.light .text-slate-200,
