@@ -32,6 +32,14 @@ const acueductoSchema = new mongoose.Schema(
     // costoSaaSVigente mensualizado ÷ asociados activos.
     trasladarCostoLicenciaAsociados: { type: Boolean, default: false },
 
+    // Si está activo, la comisión que Wompi cobra por cada transacción
+    // (2.65% + $700 COP + IVA 19% sobre esa comisión) se le suma al
+    // suscriptor en el momento de pagar por Wompi — el acueducto recibe el
+    // neto completo de su factura. Si está apagado (default), el acueducto
+    // sigue absorbiendo la comisión como hasta ahora. Nunca aplica al pago
+    // en efectivo en oficina, que no pasa por la pasarela.
+    trasladarComisionWompiAsociados: { type: Boolean, default: false },
+
     // Wompi propio del acueducto (cobro de agua), cifrado AES-256
     wompiPublicKey: { type: String, default: '' },
     wompiPrivateKeyEncrypted: { type: String, default: '' },

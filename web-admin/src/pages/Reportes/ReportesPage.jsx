@@ -138,34 +138,40 @@ const ReportesPage = () => {
             </div>
           </div>
 
-          <div className="h-[260px] w-full flex items-end justify-between gap-2 px-2 border-b border-slate-100 pb-2">
-            {(recaudacionMensual.length === 0
-              ? Array.from({ length: 12 }, (_, i) => ({ mes: i + 1, pagado: 0, pendiente: 0 }))
-              : recaudacionMensual
-            ).map((item, i) => {
-              const hPagado    = item.pagado    > 0 ? Math.max(8, (item.pagado    / maxPagado) * 220) : 4;
-              const hPendiente = item.pendiente > 0 ? Math.max(8, (item.pendiente / maxPagado) * 220) : 4;
-              const esActual   = i === new Date().getMonth();
-              return (
-                <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                  <div className="w-full flex justify-center gap-1 items-end" style={{ height: 230 }}>
-                    <div
-                      className={`w-4 sm:w-5 rounded-t-sm transition-all ${esActual ? 'bg-[#1D4ED8]' : 'bg-[#1D4ED8]/40'}`}
-                      style={{ height: hPagado }}
-                      title={formatMonto(item.pagado)}
-                    />
-                    <div
-                      className="w-4 sm:w-5 bg-amber-400/70 rounded-t-sm"
-                      style={{ height: hPendiente }}
-                      title={formatMonto(item.pendiente)}
-                    />
+          {/* Las 12 columnas tienen un ancho mínimo real (2 barras + gap) que
+              nunca cabe en un viewport móvil sin importar flex-1 — en vez de
+              desbordar la página completa, el scroll horizontal queda
+              contenido aquí (mismo patrón que las tablas del panel). */}
+          <div className="w-full overflow-x-auto pb-2 -mx-2 px-2">
+            <div className="h-[260px] flex items-end justify-between gap-2 min-w-[520px] border-b border-slate-100 pb-2">
+              {(recaudacionMensual.length === 0
+                ? Array.from({ length: 12 }, (_, i) => ({ mes: i + 1, pagado: 0, pendiente: 0 }))
+                : recaudacionMensual
+              ).map((item, i) => {
+                const hPagado    = item.pagado    > 0 ? Math.max(8, (item.pagado    / maxPagado) * 220) : 4;
+                const hPendiente = item.pendiente > 0 ? Math.max(8, (item.pendiente / maxPagado) * 220) : 4;
+                const esActual   = i === new Date().getMonth();
+                return (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                    <div className="w-full flex justify-center gap-1 items-end" style={{ height: 230 }}>
+                      <div
+                        className={`w-4 sm:w-5 rounded-t-sm transition-all ${esActual ? 'bg-[#1D4ED8]' : 'bg-[#1D4ED8]/40'}`}
+                        style={{ height: hPagado }}
+                        title={formatMonto(item.pagado)}
+                      />
+                      <div
+                        className="w-4 sm:w-5 bg-amber-400/70 rounded-t-sm"
+                        style={{ height: hPendiente }}
+                        title={formatMonto(item.pendiente)}
+                      />
+                    </div>
+                    <span className={`text-[9px] font-bold uppercase font-headline ${esActual ? 'text-[#1D4ED8]' : 'text-slate-400'}`}>
+                      {MESES[i]}
+                    </span>
                   </div>
-                  <span className={`text-[9px] font-bold uppercase font-headline ${esActual ? 'text-[#1D4ED8]' : 'text-slate-400'}`}>
-                    {MESES[i]}
-                  </span>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

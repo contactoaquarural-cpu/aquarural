@@ -301,10 +301,10 @@ const SuscriptoresPage = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-3 text-xs font-headline">
-          <div className="flex items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-200">
+          <div className="flex flex-wrap items-center gap-1.5 bg-slate-50 p-1 rounded-2xl border border-slate-200">
             <button
               onClick={() => setFiltroMedidor('TODOS')}
-              className={`px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all ${
+              className={`px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all whitespace-nowrap ${
                 filtroMedidor === 'TODOS'
                   ? 'bg-blue-50 text-[#1D4ED8] border border-blue-200'
                   : 'text-slate-500 hover:text-slate-700'
@@ -314,25 +314,27 @@ const SuscriptoresPage = () => {
             </button>
             <button
               onClick={() => setFiltroMedidor('CON_MEDIDOR')}
-              className={`px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all flex items-center gap-1 whitespace-nowrap ${
                 filtroMedidor === 'CON_MEDIDOR'
                   ? 'bg-blue-50 text-[#1D4ED8] border border-blue-200'
                   : 'text-slate-500 hover:text-slate-700'
               }`}
             >
               <span className="material-symbols-outlined text-sm">water_ec</span>
-              <span>Con Medidor ({suscriptores.filter((s) => Boolean(s.numeroMedidor) && s.numeroMedidor !== 'S/N').length})</span>
+              <span className="hidden sm:inline">Con Medidor ({suscriptores.filter((s) => Boolean(s.numeroMedidor) && s.numeroMedidor !== 'S/N').length})</span>
+              <span className="sm:hidden">Con ({suscriptores.filter((s) => Boolean(s.numeroMedidor) && s.numeroMedidor !== 'S/N').length})</span>
             </button>
             <button
               onClick={() => setFiltroMedidor('SIN_MEDIDOR')}
-              className={`px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all flex items-center gap-1 whitespace-nowrap ${
                 filtroMedidor === 'SIN_MEDIDOR'
                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                   : 'text-slate-500 hover:text-slate-700'
               }`}
             >
               <span className="material-symbols-outlined text-sm">home</span>
-              <span>Sin Medidor ({suscriptores.filter((s) => !s.numeroMedidor || s.numeroMedidor === 'S/N').length})</span>
+              <span className="hidden sm:inline">Sin Medidor ({suscriptores.filter((s) => !s.numeroMedidor || s.numeroMedidor === 'S/N').length})</span>
+              <span className="sm:hidden">Sin ({suscriptores.filter((s) => !s.numeroMedidor || s.numeroMedidor === 'S/N').length})</span>
             </button>
           </div>
 

@@ -10,93 +10,107 @@
 
 # 🔲 PENDIENTE
 
-## Notificaciones Push (Firebase Cloud Messaging)
-
-### 🟠 Pendiente en `mobile-app` — registrar token FCM y construir pantalla de Eventos
-El proyecto de Firebase ya existe y el backend ya envía push al crear un Evento (ver Completado). Lo que falta es 100% del lado de `mobile-app`, y cae bajo su revisión general "al final de todo" (ver esa sección más abajo):
-- `mobile-app` debe registrar el token FCM del dispositivo al iniciar sesión (`login-asociado`) y enviarlo al backend para guardarlo en el nuevo campo `tokenFCM` de `Asociado` (ya existe en el modelo, solo falta quién lo llene).
-- Construir la pantalla de Eventos en `mobile-app` conectada a `GET /eventos`, para que el suscriptor vea el detalle completo de la convocatoria además de recibir el push.
-
-## Bugs / mejoras menores aún abiertos
-
-### 🔴 Falta el login de suscriptores (app móvil) — no es un bug del Login de `web-admin`
-**Importante — no confundir los dos logins del sistema:**
-- El Login de `web-admin/src/pages/Login/LoginPage.jsx` es **exclusivamente para SuperAdmin y Administradores de acueducto** (junta/tesorero/fontanero). Entra por correo + contraseña contra `POST /auth/login`. Esto funciona correctamente y no debe tocarse para "aceptar cédulas" — los suscriptores del acueducto **nunca inician sesión en `web-admin`**, ese panel no es para ellos.
-- Los **suscriptores** (usuarios finales del acueducto) inician sesión en la **app móvil** (`mobile-app`), con un flujo distinto y más simple, pensado para gente con poca familiaridad tecnológica:
-  1. Al abrir la app, se muestra una **lista de acueductos afiliados** (aquí es donde `GET /acueductos/publico` deja de ser código muerto — es exactamente el endpoint que alimentaría esa lista).
-  2. El suscriptor elige su acueducto de la lista → resuelve el `acueductoId` sin que el usuario tenga que saberlo o escribirlo.
-  3. Solo digita su **cédula**, sin contraseña → entra, vía `POST /auth/login-asociado` (`{acueductoId, cedula}`).
-
-**Estado actual:** el backend ya tiene la ruta lista (`POST /auth/login-asociado`), pero **ninguna pantalla la usa todavía** — ni en `web-admin` (que no debería, no es su rol) ni en `mobile-app` (que sí debería, pero falta construirla).
-
-**Pendiente:** revisar el estado actual de `mobile-app` para saber si esta pantalla de selector de acueducto + login por cédula ya existe a medias o hay que crearla desde cero, conectando `GET /acueductos/publico` + `POST /auth/login-asociado`.
-
-### 🟡 `estadoServicio` sin pantalla que lo use
-`actualizarAsociadoSchema` acepta `estadoServicio` (`ACTIVO`/`SUSPENDIDO`/`CORTE_PROGRAMADO`), pero ninguna pantalla de `web-admin` lo usa — no hay forma de suspender el servicio de un suscriptor puntual desde la UI hoy. No es urgente.
-
-### 🟡 Código muerto / endpoints sin UI que los invoque
-- `POST /pagos/iniciar` y `GET /acueductos/publico` — nadie los llama desde ningún frontend. Se conectan cuando se trabaje el login/pagos de la app móvil del suscriptor (ver ítem de login de suscriptores arriba).
-
----
-
-## App Móvil / Portal del Suscriptor (revisar al final, cuando SuperAdmin y Admin/web-admin estén completos)
-**Contexto:** sección dedicada para agrupar todo lo pendiente específico de `mobile-app` — login de suscriptores, limpieza de rastros del proyecto anterior, y funcionalidades que hoy no funcionan (Noticias, QR) o que se identificaron como necesarias en conversaciones con el usuario (aviso de lectura pendiente). Se agrupa aquí en vez de dispersarse por el resto del plan porque todo cae bajo el mismo bloque de trabajo futuro.
-
-### 🔴 Noticias no funciona
-Reportado por el usuario como no funcional en `mobile-app`. Pendiente de diagnosticar la causa raíz (¿pantalla no conectada al endpoint? ¿endpoint no existe para AquaRural? ¿error de red/parsing?) cuando se retome el bloque de mobile-app.
-
-### 🔴 Carné QR no funciona
-Reportado por el usuario como no funcional en `mobile-app`. El módulo "Carné QR Digital" (firmado HMAC-SHA256, TTL 30 días) está listado como completado a nivel backend en el CLAUDE.md del proyecto raíz, pero el consumo desde `mobile-app` no está funcionando. Pendiente de diagnosticar cuando se retome el bloque de mobile-app — probablemente relacionado con `src/screens/qr/MiPredioScreen.js`, que además tiene el hardcode de nombre heredado del proyecto ganadero anterior (ver hallazgo #3 más abajo).
-
-### 🟠 Avisar al suscriptor cuando su predio queda sin lectura del mes (clima, orden público, etc.)
-**Contexto:** si el fontanero no logra llegar a un predio en el ciclo del mes (por clima, orden público, u otra causa de fuerza mayor), el sistema de facturación ya maneja esto correctamente a nivel de datos — no se genera factura ese mes para ese predio (`resultado.sinLectura` en `facturacion.service.js`), y el consumo se acumula automáticamente para la siguiente lectura real (el suscriptor paga por todo el consumo real acumulado, no se pierde ni se inventa). Ver detalle técnico completo en Completado, sección "Facturación segura ante lecturas pendientes".
-
-**Lo que falta:** hoy el suscriptor no tiene ninguna forma de enterarse de que no se le tomó lectura este mes ni de que la próxima factura puede venir más alta por consumo acumulado de varios meses. El usuario pidió evaluar 3 canales, y decidió que los 3 son válidos y deben quedar documentados aquí para implementarlos cuando se retome mobile-app:
-1. **Mensaje visible en el portal/consulta de deuda** (recomendado como primera línea de defensa): cuando el suscriptor consulte su estado en la app, si su predio quedó sin lectura del ciclo vigente, mostrar un aviso explícito tipo "Este mes no se tomó lectura de tu medidor. La próxima factura puede incluir el consumo acumulado de varios meses." No depende de tener push configurado ni de que el suscriptor abra la app justo ese día — se muestra la próxima vez que consulte, cuando sea.
-2. **Notificación Push (Firebase)**: enviar push a los predios sin lectura al cerrar el ciclo (ej. desde un cron o al correr la facturación masiva y detectar `sinLectura` > 0). Depende de que el login de suscriptores y el registro de `tokenFCM` en mobile-app ya estén funcionando (ver ítems de login de suscriptores y FCM más abajo) — no se puede implementar antes que eso.
-3. **Nota impresa en el próximo recibo**: cuando finalmente se facture el consumo acumulado, el ticket/factura debe incluir una línea aclaratoria tipo "Incluye consumo de N meses sin lectura por [motivo]". Llega después del hecho pero deja constancia física/legal del porqué del monto más alto — útil para que el fontanero/administración no tengan que explicarlo de palabra en cada reclamo. Requiere guardar en el modelo cuántos meses/motivo cubre esa lectura acumulada (hoy no se registra explícitamente, solo se infiere de la diferencia de fechas).
-
-### 🟠 Notificar por push a suscriptores sin GPS registrado, desde `/mapa`
-**Contexto:** en `MapaPage.jsx` (web-admin), se agregó una sección "Sin Ubicación (N)" que lista a los suscriptores que aún no tienen `latitud`/`longitud` guardadas — dato que hoy solo se capturaría desde la app del suscriptor (aún sin construir). El usuario pidió poder notificarlos por push directamente desde esa pantalla para pedirles que actualicen su ubicación.
-
-**Estado actual:** la sección y la lista ya están construidas y funcionando (`web-admin/src/pages/Mapa/MapaPage.jsx`), con un botón "Notificar" por suscriptor y uno "Notificar a Todos" — pero ambos están **deshabilitados a propósito**, con un `title` explicando por qué. No se conectó el envío real porque depende de piezas que aún no existen:
-1. El **login de suscriptores por cédula** en `mobile-app` debe existir primero (ver ítem 🔴 más abajo, "Falta el login de suscriptores").
-2. El suscriptor debe iniciar sesión al menos una vez para que la app registre su `tokenFCM` en el backend (campo ya existe en `Asociado.js`, pero nadie lo llena hoy).
-3. Recién ahí un botón de "Notificar" real tendría a quién enviarle el push — antes de eso, sería un botón que aparenta funcionar pero no le llega a nadie (mismo tipo de bug de "UI que miente" ya corregido varias veces en este proyecto: carga Excel a localStorage, botones de exportar sin acción, etc.).
-
-**Pendiente para cuando el login de suscriptores y el `tokenFCM` ya funcionen:**
-- Backend: nuevo endpoint (ej. `POST /asociados/:id/notificar-gps` y una variante masiva) que envíe un push vía Firebase Admin SDK con un mensaje tipo "Actualiza la ubicación de tu predio en la app" — reutilizando el mismo servicio de Firebase ya usado para el push de Eventos (ver Completado).
-- Frontend: conectar los 2 botones ya existentes en `MapaPage.jsx` (individual y masivo) a ese endpoint, quitando el `disabled` y el `title` explicativo.
-
-### 🟡 Rastros textuales del proyecto ganadero anterior — limpiar, no reescribir todo
-**Contexto:** `mobile-app` se reutilizó como base de un proyecto anterior de gestión ganadera. Se auditó con grep (`ganad|bovino|hato|vacun|res\b|finca ganadera|ASOGACENTRO`, case-insensitive) sobre `mobile-app/src` completo (29 archivos). Resultado: la arquitectura (navegación, stores de Zustand, servicio API, sistema de theming) ya está bien migrada y es reutilizable — **no se justifica borrar la carpeta**. Solo 3 archivos tienen contaminación real, el resto de coincidencias del grep fueron falsos positivos (variables como `notifRes`/`eventosRes`, o la palabra "res" dentro de "valores"/"recursos").
-
-**Hallazgos reales a corregir cuando se retome mobile-app:**
-1. `src/screens/perfil/MisDocumentosScreen.js` — tiene un tipo de documento completo de dominio ganadero, no un simple texto suelto:
-   ```js
-   tipo: 'VACUNACION', label: 'Certificado de Vacunación', desc: 'Certificado de vacunación del hato ganadero'
-   ...
-   label: 'Registro Ganadero ICA'
-   ```
-   No aplica a un acueducto veredal. Hay que reemplazar estos tipos de documento por los relevantes a un suscriptor de agua (ej. escritura del predio, certificado de conexión, paz y salvo) o eliminar la sección si "Mis Documentos" no es parte del alcance de AquaRural.
-2. `src/screens/notificaciones/NotificacionesScreen.js` — tiene un tipo de notificación entero heredado:
-   ```js
-   GANADERO_TV: { icon: '📺', color: '#a78bfa' },
-   ```
-   "Ganadero TV" no existe como concepto en AquaRural. Eliminar esta entrada (y verificar que ningún otro lado del código dependa de ese tipo).
-3. `src/screens/home/HomeScreen.js`, `src/screens/qr/MiPredioScreen.js`, `src/screens/perfil/PerfilScreen.js` — mismo patrón repetido de nombre de ejemplo hardcodeado del cliente ganadero anterior:
-   ```js
-   const nombre = user?.nombres || user?.nombre || 'José Donaldo Gómez';
-   ```
-   Cosmético (solo se ve si no hay usuario autenticado), pero da mala imagen en demo. Cambiar el fallback a algo genérico ("Suscriptor") o quitarlo si nunca debería renderizarse sin sesión.
-
-**No requieren cambios:** `auth.store.js`, `config.store.js`, `PagoScreen.js` (coincidencias del grep eran falsos positivos, solo nombres de variable o comentarios genéricos).
-
-**Cuándo abordarlo:** junto con el resto del trabajo pendiente de `mobile-app` (login de suscriptores por cédula, ver ítem arriba, y la pantalla de Eventos conectada a `GET /eventos`) — no antes, según lo acordado.
+## App Móvil / Portal del Suscriptor — ver PLAN_APP_SUSCRIPTOR.md
+**Actualización 2026-09-23:** todo el trabajo de `mobile-app` (login, pagos, GPS, facturas+PDF, perfil, Eventos con RSVP, Notificaciones push) está **completado y probado end-to-end**. El detalle vive en `PLAN_APP_SUSCRIPTOR.md` (raíz del proyecto), incluyendo los pendientes reales que quedan (splash screen, `BASE_URL` de producción, build de producción, prueba en iOS) — no se duplica aquí para evitar que los dos documentos se desincronicen otra vez.
 
 ---
 
 # ✅ COMPLETADO
+
+## Traslado de la comisión Wompi al suscriptor — ✅ COMPLETA (2026-09-30)
+**Contexto:** Wompi cobra por transacción exitosa (2.65% + $700 COP + IVA 19% sobre esa comisión), y hasta ahora el acueducto la absorbía siempre. El usuario pidió un toggle (igual al de "trasladar costo de licencia") para que, si el acueducto lo activa, esa comisión se le sume al suscriptor al pagar por Wompi — nunca al pagar en efectivo en oficina, que no pasa por la pasarela.
+
+- **`backend/src/models/Factura.js`** — nuevo campo `montoComisionWompi` (default 0); `montoTotal` sigue siendo el valor real del agua, la comisión vive aparte para que el desglose sea siempre claro.
+- **`backend/src/models/Acueducto.js`** — nuevo toggle `trasladarComisionWompiAsociados` (default false), independiente del toggle de licencia (afectan cosas distintas: licencia se prorratea al generar la factura, comisión Wompi se calcula por transacción individual al pagar).
+- **`backend/src/services/facturacion.service.js`** — `calcularComisionWompi(montoFactura)`, fórmula fija.
+- **`backend/src/controllers/pagos.controller.js`** (`iniciarPago`) — si el toggle está activo, calcula y suma la comisión al monto del checkout, la guarda en la factura, y devuelve el desglose completo (`montoFactura`, `montoComision`, `montoTotal`) para que el frontend lo muestre antes de pagar.
+- **`backend/src/controllers/facturas.controller.js`** (webhook) y **`pdf.service.js`** — mensaje de confirmación y recibo PDF actualizados para reflejar el monto real pagado con comisión incluida.
+- **`backend/src/controllers/configuracion.controller.js`** + **`routes/configuracion.routes.js`** — nuevo endpoint `GET /configuracion/publica`, accesible a cualquier rol autenticado (incluido ASOCIADO) a diferencia de `GET /configuracion` que trae datos administrativos/de licencia SaaS que no le corresponden a un suscriptor ver. Expone solo `trasladarComisionWompiAsociados`.
+- **`web-admin/src/pages/Configuracion/ConfiguracionPage.jsx`** — nuevo toggle "Trasladar comisión de Wompi a los asociados", mismo patrón visual que el de licencia, con ejemplo de cálculo (factura de $45.000 → comisión ≈ $2.252).
+- **`web-admin/src/pages/Facturacion/FacturacionPage.jsx`** — ticket individual, ticket de lote y exportación CSV actualizados para mostrar la comisión y el total correcto.
+- **`mobile-app/src/screens/pagos/PagarScreen.js`** — nuevo modal de confirmación con el desglose exacto (factura + comisión = total) antes de abrir el checkout de Wompi, solo cuando aplica.
+- **`mobile-app/src/store/facturas.store.js`** — `cargarConfigPublica()` (consume el endpoint nuevo) y estado `trasladaComisionWompi`.
+- **`mobile-app/src/components/FacturaCard.js`** — nota discreta ("Pagando por Wompi se suma la comisión de la pasarela") visible en cada tarjeta de factura pendiente en la pestaña Pagar, antes de que el suscriptor toque nada — sin valor exacto ahí (se calcula solo al iniciar el pago), el monto preciso aparece en el modal siguiente.
+- **Verificado en vivo con Wompi real**: factura de $26.000 → comisión calculada $1.653 → total cobrado $27.653, coincidiendo exactamente con la fórmula.
+- **Incidente durante la prueba:** el backend corría una instancia vieja de nodemon que no había recargado los cambios de rutas/controller (mismo síntoma de "node.exe zombie" ya visto en sesiones anteriores) — el endpoint nuevo devolvía 404 hasta reiniciar el proceso manualmente. Si un endpoint nuevo da "Ruta no encontrada" pese a que el código ya está en el archivo, verificar primero si el proceso de backend realmente recargó (`taskkill` + reinicio limpio) antes de seguir depurando el código.
+
+## Responsividad móvil del panel admin — ✅ COMPLETA (2026-09-30)
+**Contexto:** el usuario detectó al inspeccionar como dispositivo móvil que varios botones de filtros y de tablas desbordaban la pantalla. Auditoría previa confirmó que todas las tablas ya usaban `overflow-x-auto` correctamente — el problema real estaba en las filas de filtros/controles arriba de las tablas, no en las tablas en sí.
+
+- **`LecturasPage.jsx`**: la fila de filtros (Buscar/Medidor/Ordenar/Vereda) pasó de `flex-wrap` con anchos mínimos rígidos a `flex-col` en móvil (cada bloque a ancho completo); botones "Con Medidor"/"Sin Medidor" muestran texto corto ("Con"/"Sin") bajo `sm:`.
+- **`SuscriptoresPage.jsx`**: el grupo de pills con contadores dinámicos ("Con Medidor (247)") ganó `flex-wrap` propio y texto acortado en móvil.
+- **`FacturacionPage.jsx`**: botones del header (Exportar, Imprimir Lote, Anular Periodo) ocultan texto en móvil dejando solo ícono/contador — "Emitir Facturación" se mantuvo completo por ser la acción principal. Botón "Cobrar Efectivo" de la tabla se acorta a "Cobrar".
+- **`ReportesPage.jsx`**: el gráfico de barras de "Recaudación Mensual" (12 meses × 2 barras, construido a mano sin librería) tenía un ancho mínimo real que nunca cabía en viewport móvil pese a `flex-1` en cada columna — desbordaba la página completa. Envuelto en su propio `overflow-x-auto` con `min-w-[520px]`, igual que ya hacían las tablas: en desktop se ve igual, en móvil el scroll queda contenido dentro del gráfico.
+- Verificado con `npx vite build` limpio tras cada cambio.
+
+## Favicon del panel admin — ✅ COMPLETA (2026-09-30)
+`web-admin/index.html` no declaraba ningún `<link rel="icon">`, así que el navegador mostraba el ícono por defecto de Vite en la pestaña en vez del favicon de marca (que ya existía en `web-admin/public/favicon.svg`, mismo usado por `landing`). Agregada la línea faltante.
+
+## Splash screen — degradado + wordmark del landing — ✅ COMPLETA (2026-09-30)
+**Decisión previa:** el usuario declinó invertir en un rediseño elaborado del splash (ver `PLAN_APP_SUSCRIPTOR.md`), pero sí pidió cambiar el corte diagonal duro por algo más simple: un degradado blanco→azul con el wordmark "AquaRural" en el mismo estilo bicolor que ya usa el Navbar del landing (`Navbar.jsx`: "Aqua" en oscuro + "Rural" en `#1D4ED8`).
+
+- `mobile-app/src/screens/splash/SplashScreen.js` reescrito con `expo-linear-gradient` (nueva dependencia nativa, instalada vía `npx expo install` — versión `~57.0.2` correcta para SDK 57) en vez del `View` rotado -8° anterior.
+- **Requirió nuevo build de desarrollo EAS** (mismo patrón que cada módulo nativo agregado a esta app) — generado y probado por el usuario end-to-end, funcionando.
+- Confirmado con el usuario: el splash sigue desapareciendo casi al instante (mismo problema de fondo ya documentado: `isLoading` solo espera una lectura local de `SecureStore`, sin red) — pendiente si se quiere agregar un tiempo mínimo de visualización fijo, no decidido aún.
+- Se descartó también una recreación previa del splash como Artifact de diseño (canvas `.dc.html`) que no le gustó al usuario — reemplazada por esta segunda versión con degradado, que sí aprobó antes de implementarla en código real.
+
+## GPS en /lecturas restringido al rol Fontanero + fix de falsa alerta — ✅ COMPLETA (2026-09-24)
+**Contexto:** el usuario pidió que la captura de GPS del predio dejara de ser una función del Admin en `web-admin/src/pages/Lecturas/LecturasPage.jsx` — la ubicación debe capturarla el Fontanero (visita física) o el propio suscriptor desde su app (`gps-propio`, ya existente y sin cambios), nunca el Admin.
+
+- La columna "GPS" y el botón de captura (`capturarGps`, usa `navigator.geolocation` + `PATCH /asociados/:id/gps`) ahora se muestran solo si `useAuthStore((s) => s.user?.rol === 'FONTANERO')` — Admin ya no ve ni la columna ni el botón; `colSpan` de las filas de loading/vacío se ajusta dinámicamente (10 u 11) según el rol. El resto de páginas de solo lectura (`ExpedientePage`, `SuscriptoresPage`, `MapaPage`, `FontaneroDashboardPage`) ya estaban bien — no mostraban ni permitían editar GPS del lado admin, solo lo leían.
+- **Bug real encontrado al probar como Fontanero:** tras capturar el GPS aparecía una alerta roja de error aunque el punto sí se guardaba correctamente. Diagnosticado con logs de timing: el navegador dispara un `PERMISSION_DENIED` espurio a los ~9ms (antes de resolver el prompt de permiso), y el éxito real llega ~4 segundos después. El margen de "ignorar error si ya hubo éxito" (`yaResuelto`) estaba en 800ms, insuficiente. Corregido subiendo ese margen a 15000ms (igual al `timeout` ya configurado en `getCurrentPosition`) — si el éxito llega en cualquier momento dentro de esa ventana, el error se descarta. Contrapartida aceptada: un fallo real de GPS ahora tarda hasta 15s en mostrarse en vez de ser instantáneo.
+- Se limpió (`$unset` de `latitud`/`longitud`) el GPS de los 4 asociados de la base local `aquarural_dev` para poder probar la captura desde cero — vía script temporal, ya eliminado tras usarlo. Solo tocó la base de desarrollo local, no producción.
+- Verificado con `npx vite build` limpio.
+
+## Recordatorio push de "factura próxima a vencer" — ✅ COMPLETA (2026-09-24)
+**Contexto:** el sistema solo avisaba al suscriptor DESPUÉS del vencimiento (`FACTURA_VENCIDA`, al momento de entrar en mora) — no existía ningún recordatorio preventivo antes de la fecha límite.
+
+- `backend/src/models/Factura.js` — nuevo campo `recordatorioEnviado` (default `false`) para no repetir el aviso cada día mientras la factura siga dentro de la ventana.
+- `backend/src/models/Notificacion.js` — nuevo tipo `PROXIMO_VENCIMIENTO` en el enum.
+- `backend/src/jobs/estado.job.js` — en la misma corrida diaria (6:00 AM, hora Colombia) que ya marca facturas vencidas, se agregó una consulta de facturas `PENDIENTE` que vencen dentro de los próximos **3 días** (`DIAS_AVISO_VENCIMIENTO`, fijo por ahora, no configurable por acueducto) y aún no tienen el flag — se marca y se notifica (persiste + push) una sola vez.
+- `mobile-app/src/screens/notificaciones/NotificacionesScreen.js` — agregado ícono/color (`schedule`, ámbar) para el nuevo tipo en la bandeja.
+- No requirió cambios en `web-admin` ni endpoints nuevos — reutiliza el mismo `crearNotificacion` ya existente.
+
+## Estandarización de dropdowns + mejoras UX de Lecturas/Facturación/Inicio — ✅ COMPLETA (2026-09-24)
+
+**Dropdown custom (`web-admin/src/components/Dropdown.jsx`):** se creó un componente reutilizable (botón + panel flotante, hover azul, cierre al clic fuera, prop `compact` para alinear con controles más bajos) y se reemplazaron los 10 `<select>` nativos que quedaban en el panel, en 7 archivos: `FacturacionPage.jsx` (Ordenamiento, Estado), `LecturasPage.jsx` (Ordenar, Vereda), `EventosPage.jsx` (Tipo de Convocatoria), `ConfiguracionPage.jsx` (Día Límite de Pago), `EquipoPage.jsx` (Estado inline en tabla, Rol en modal), `EditarAcueductoPage.jsx` y `NuevoAcueductoPage.jsx` (Departamento, Municipio). Cero `<select>` nativos quedan en `web-admin/src` (confirmado por grep).
+
+**Selector de período en `FacturacionPage.jsx`:** antes `periodo` era una constante fija al mes calendario actual — al cambiar de mes, la pantalla dejaba de mostrar el período anterior sin forma de reabrirlo (las facturas seguían existiendo en la BD, solo dejaban de listarse). Ahora es un estado navegable con flechas ‹ › integradas en la fila de filtros (no en el header), sin poder navegar al futuro, con botón "Volver al mes actual". El banner de "avance de lecturas" (que siempre describe el ciclo real en curso, el backend no acepta parámetro de período) ahora solo se muestra si se está viendo el mes actual, para no confundir con datos que no aplican a meses pasados.
+
+**Ajustes de la tabla en `LecturasPage.jsx`** (para reducir el scroll horizontal generado por columnas demasiado anchas): fila de filtros reorganizada en una sola fila distribuida (`justify-between`) con Buscar + Medidor + Ordenar + Vereda; encabezado "Lectura Actual (m³)" partido en dos líneas centradas ("Lectura" / "Actual (m³)") con su input reducido de `w-28` a `w-20` centrado; "Lectura Anterior" con el mismo tratamiento de dos líneas centradas; "Medidor / Modalidad" acortado a "Medidor" y la píldora "Sin Medidor (Tarifa Fija)" acortada a "Sin Medidor" (el paréntesis era redundante con el ícono/color).
+
+**Inicio de `mobile-app` (`HomeScreen.js`):** las 3 tarjetas de apoyo (consumo, servicio, matrícula) — la de "Servicio" ahora tiene color semántico (verde/ámbar/rojo) según `estadoServicio`; consumo/matrícula quedan neutros (informativos, no de alerta) a pedido explícito del usuario. Para suscriptores sin medidor (Tarifa Fija) la tarjeta de consumo muestra "Tarifa Fija" en vez de "0 m³" confuso, y no se llama a `cargarHistorialConsumo` (nunca habrá `LecturaHistorica` sin medidor). Se agregó una sección de gráfico de consumo de los últimos hasta 6 meses (barras nativas con `View`, sin librerías nuevas) debajo de "Última factura", visible solo si hay medidor y más de 1 mes de historial. La tarjeta de "Última factura" ahora es tocable y navega a la pestaña Facturas.
+
+**Banner de confirmación en `ExpedientePage.jsx`:** el cambio de `estadoServicio` se aplicaba en silencio (sin feedback visible); se agregó un banner verde/rojo con auto-cierre a los 4s, mismo patrón ya usado en `SuscriptoresPage.jsx`.
+
+**Aclaración de flujo (dudas del usuario resueltas en esta sesión):** "Emitir Facturación" en `/facturacion` solo genera las cuentas de cobro (`Factura` en estado `PENDIENTE`) — no cobra nada. El cobro ocurre después, vía "Cobrar Efectivo" en el panel o pago Wompi desde la app. La columna "Estado" (Pendiente/Tomada/Facturada) de `/lecturas` solo aplica a suscriptores con medidor porque describe si ya se tomó la lectura física del ciclo; Tarifa Fija nunca tiene lectura, así que muestra guion. "Guardar Lecturas" solo registra consumo, nunca genera facturas — eso es un paso separado y posterior en `/facturacion`.
+
+Verificado con `npx vite build` limpio en `web-admin` tras cada cambio.
+
+## `estadoServicio` — pantalla de gestión + sincronización con mobile-app — ✅ COMPLETA (2026-09-23)
+**Contexto:** `actualizarAsociadoSchema` ya aceptaba `estadoServicio` (`ACTIVO`/`SUSPENDIDO`/`CORTE_PROGRAMADO`) desde el backend, pero ninguna pantalla de `web-admin` lo exponía — no había forma de suspender el servicio de un suscriptor puntual desde la UI.
+
+- **Backend:** sin cambios — `PUT /asociados/:id` (`verifyAdmin`) ya soportaba el campo vía `actualizarAsociadoSchema`.
+- **`web-admin/src/pages/Asociados/ExpedientePage.jsx`:** agregado el control como 4ª tarjeta KPI (junto a Deuda Total, Facturas Registradas, Última Lectura) — no en el header junto al botón "Volver" como en el primer intento, porque el label competía visualmente con él. El `<select>` nativo tampoco encajaba con el resto del panel (look del sistema operativo), así que se reemplazó por un dropdown propio (`SelectorEstadoServicio`): botón + panel flotante con las 3 opciones, hover azul y bordes redondeados, que cierra al hacer clic fuera. Actualiza vía `api.put('/asociados/:id', { estadoServicio })` + `refetch()` de React Query, mismo patrón ya usado en el resto del proyecto (sin `useMutation`, que no se usa en ningún lado del código real pese a estar documentado en `web-admin/CLAUDE.md`).
+- **`mobile-app`:** al verificar cómo se veía el cambio del lado del suscriptor, se encontró que `HomeScreen.js` ya mostraba el estado ("Servicio activo/suspendido/corte programado" en la fila de datos de apoyo), pero solo se leía del `user` guardado en `SecureStore` al hacer login — si el admin cambiaba el estado con la sesión del celular ya abierta, no se reflejaba hasta un nuevo login. Corregido agregando `refrescarUsuario()` a `auth.store.js` (llama a `GET /asociados/:id`, ya restringido a "solo mi propio registro" para rol ASOCIADO, y sincroniza store + SecureStore; falla en silencio sin conexión) y enganchándolo en el mismo `useFocusEffect` de `HomeScreen.js` que ya refresca facturas/eventos/notificaciones. **Se actualiza al volver a entrar a la pantalla de Inicio, no en tiempo real mientras el suscriptor la tiene abierta.**
+- **Feedback visual (2026-09-24):** el cambio se aplicaba en silencio en el panel (solo cambiaba el texto del botón, sin confirmación) — se agregó un banner de confirmación en `ExpedientePage.jsx` reutilizando el mismo patrón (`mensaje.tipo`/`mensaje.texto`, verde/rojo, ícono `check_circle`/`error`, botón de cerrar) ya usado en `SuscriptoresPage.jsx`, con auto-cierre a los 4 segundos.
+- Ambos flujos (panel y app móvil) probados y confirmados funcionando por el usuario.
+- Verificado con `npx vite build` limpio en `web-admin`.
+
+## Limpieza de restos "Hydro-Tech" (descartado) — ✅ COMPLETA (2026-09-23)
+**Contexto:** el `DESIGN.md` original describía un sistema visual oscuro ("Hydro-Tech Control Room": fondo obsidiana `#090D16`, acentos cian/esmeralda) que nunca se implementó en ninguna página real. Antes de borrar código se hizo una auditoría exhaustiva (grep de cada token nombrado, cada clase custom, y de hex/patrones sospechosos en todo el monorepo, incluyendo backend) para confirmar qué estaba realmente muerto.
+
+**Borrado (0 usos confirmados en todo el proyecto):**
+- `web-admin/tailwind.config.js` — paleta completa de tokens `Hydro-Tech` (`background`, `surface-*`, `primary` cian, `secondary` esmeralda, `tertiary`, `error`, `on-*`, `alDia/enMora/inactivo`, `sidebar`) y `darkMode: 'class'`. Ningún componente usaba estos tokens (todo el panel usa hex crudo `bg-[#1D4ED8]` o paleta estándar `slate-*`) ni la variante `dark:` de Tailwind (0 coincidencias en todo `web-admin/src`).
+- `landing/src/index.css` — clases `.hydro-shimmer-card`/`.hydro-shimmer-btn` con sus `::before`/`::after` y `@keyframes` (brillo cian/esmeralda). 0 referencias en cualquier componente `.jsx` del landing.
+- `web-admin/CLAUDE.md` — sección "Design System (Dark Mode Editorial)" que documentaba la paleta Hydro-Tech como si fuera el sistema activo real (desincronizada del `DESIGN.md` raíz, ya corregido antes); reemplazada por un resumen correcto del sistema claro con azul `#1D4ED8`.
+
+**NO tocado — es código vivo, no un resto muerto (corrige una suposición anterior de este documento):**
+- `web-admin/src/index.css` — el `body { background-color:#111414 }` por defecto y el bloque de overrides `html.light .bg-slate-950/900/800/...` SÍ son el mecanismo real y activo de theming del panel: `main.jsx` agrega la clase `light` al `<html>` de forma síncrona antes del render, así que el oscuro nunca se ve, pero los selectores `html.light` sobreescriben clases Tailwind estándar (`bg-slate-900`, `text-white`, etc.) que sí están en uso extendido en el panel. Es deuda de arquitectura (debería invertirse: claro por defecto, sin overrides) pero eliminarlo rompería el panel — no es limpieza de "restos sin usar", es un cambio estructural aparte que requiere su propia sesión dedicada. Por la misma razón, la Named Rule de `DESIGN.md` (`style={{ color: '#ffffff' }}` en vez de `text-white` en botones primarios) se mantiene sin cambios.
+- Favicons de `web-admin/public/` y `landing/public/` (gradiente cian/esmeralda, comentario "Hydro-Leaf Water Drop Icon") — es el ícono de marca/logo, una decisión de diseño de producto independiente del sistema de diseño de las páginas, no deuda técnica de código.
+- Un puñado de clases en `index.css` de web-admin (`.card-defined`, `.btn-cta`, `.glass-effect`, `.mrr-card-highlight`, `.scrollbar-thin`, `.no-scrollbar`) no mostraron uso directo vía grep, pero son utilidades genéricas (no paleta Hydro-Tech específica) y no se confirmó al 100% que no se generen dinámicamente — quedan sin tocar hasta una verificación manual aparte.
+
+**Verificado:** `npx vite build` limpio en `web-admin` y `landing` tras los cambios. `backend/` confirmado sin ningún rastro (grep de "hydro", hex del sistema descartado, `html.light` — 0 resultados).
 
 ## Migración visual del panel Admin a tema claro + #1D4ED8 — ✅ COMPLETA
 **Contexto:** el panel Admin de acueducto tenía dos identidades visuales en paralelo: el shell (Sidebar/TopBar) en tema claro + azul `#1D4ED8` (igual a SuperAdmin y la landing), y todo el contenido en un tema oscuro "Hydro-Tech" con cian como acento, con varias páginas además arrastrando una capa `dark:` residual de una migración anterior a medio hacer. Se decidió que el azul `#1D4ED8` claro es la identidad real del producto, y se migró el contenido página por página, revisando y corrigiendo bugs funcionales encontrados en el camino (no fue un cambio solo de color).

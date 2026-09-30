@@ -5,10 +5,14 @@ node_modules/
 npm-debug.log 
 yarn-error.log 
  
-# Variables de entorno 
-.env 
-.env.local 
-.env.production 
+# Variables de entorno
+.env
+.env.local
+.env.production
+
+# Configuración de Firebase por dispositivo/desarrollador (mobile-app)
+google-services.json
+GoogleService-Info.plist
  
 # IDEs 
 .vscode/ 

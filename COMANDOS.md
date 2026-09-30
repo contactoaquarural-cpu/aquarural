@@ -4,6 +4,9 @@ Guía de comandos para ejecutar, sembrar datos y compilar la plataforma AquaRura
 
 ---
 
+## Ngrok
+https://skipper-geologist-move.ngrok-free.dev/facturas/webhook-wompi
+
 ## ⚡ 1. Backend (API REST Node.js / Express)
 
 ```bash
@@ -53,6 +56,8 @@ npm run preview
 ```bash
 cd mobile-app
 
+npx expo start --dev-client
+
 # Instalar dependencias (primera vez)
 npm install
 
@@ -72,10 +77,14 @@ npx expo start --clear
 
 > **Builds para Tiendas de Aplicaciones (EAS):**
 > ```bash
-> eas login                                          # Iniciar sesión en Expo
-> eas build --platform android --profile preview     # Generar archivo APK de prueba
-> eas build --platform android --profile production  # Build para Google Play Store
+> npx eas-cli login                                            # Iniciar sesión en Expo (usar 'eas-cli', no 'eas' a secas)
+> npx eas-cli build --platform android --profile development   # Build de desarrollo (dev-client) instalable directo
+> npx eas-cli build --platform android --profile preview       # Generar archivo APK de prueba
+> npx eas-cli build --platform android --profile production    # Build para Google Play Store
 > ```
+> Cuenta de Expo del proyecto AquaRural: owner `aquaruralpros-team`, proyecto `aquarural` (projectId en app.json).
+> Usar un build de desarrollo (perfil `development`) cuando la versión de Expo Go de Play Store no sea
+> compatible con el SDK del proyecto — instala tu propia app en el celular, sin depender de Expo Go.
 
 ---
 
@@ -113,3 +122,13 @@ cd landing && npm run dev
 # Terminal 4 (Opcional) — App Móvil Expo
 cd mobile-app && npx expo start --tunnel
 ```
+
+---
+
+Los 4 servicios arriba y respondiendo correctamente:
+
+backend → http://localhost:3000/ (401 esperado sin token)
+web-admin → http://localhost:5173/
+landing → http://localhost:5174/
+ngrok → https://skipper-geologist-move.ngrok-free.dev
+Listo para que levantes la app.

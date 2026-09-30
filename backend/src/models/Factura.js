@@ -11,6 +11,14 @@ const facturaSchema = new mongoose.Schema(
     montoConsumo: { type: Number, default: 0, min: 0 },
     montoMora: { type: Number, default: 0, min: 0 },
     montoRecargoLicencia: { type: Number, default: 0, min: 0 },
+    // Comisión de la pasarela Wompi (2.65% + $700 COP + IVA 19% sobre esa
+    // comisión), solo si el acueducto activó trasladarComisionWompiAsociados.
+    // Queda en 0 hasta que el pago se confirme por Wompi — nunca aplica al
+    // pago en efectivo en oficina, que no pasa por la pasarela. montoTotal
+    // sigue siendo el valor real del agua (lo que factura el acueducto); esta
+    // comisión se suma aparte solo al checkout de Wompi y al recibo final,
+    // para que quede siempre claro cuánto es agua y cuánto es la pasarela.
+    montoComisionWompi: { type: Number, default: 0, min: 0 },
     montoTotal: { type: Number, required: true, min: 0 },
 
     consumoM3: { type: Number, default: 0, min: 0 },
@@ -23,6 +31,12 @@ const facturaSchema = new mongoose.Schema(
     wompiTransactionId: { type: String, default: '' },
     fechaPago: { type: Date },
     notas: { type: String, default: '' },
+
+    // Evita reenviar el recordatorio de "vence pronto" cada día durante la
+    // ventana de aviso — se marca true la primera vez que se envía y ya no
+    // se vuelve a tocar (una factura VENCIDA nunca vuelve a PENDIENTE, así
+    // que no hace falta resetearlo).
+    recordatorioEnviado: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

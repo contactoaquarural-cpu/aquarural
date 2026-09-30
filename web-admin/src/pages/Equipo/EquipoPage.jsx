@@ -1,5 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import api from '../../services/api.service';
+import Dropdown from '../../components/Dropdown';
 
 const ROL_LABELS = { FONTANERO: 'Fontanero', TESORERO: 'Tesorero' };
 
@@ -244,14 +245,15 @@ const EquipoPage = () => {
                           </td>
                           <td className="py-3 px-4 text-gray-500">{ROL_LABELS[m.rol] || m.rol}</td>
                           <td className="py-3 px-4">
-                            <select
+                            <Dropdown
                               value={formEdicion.estado}
-                              onChange={(e) => setFormEdicion({ ...formEdicion, estado: e.target.value })}
-                              className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-slate-800 text-xs focus:outline-none focus:border-[#1D4ED8] cursor-pointer"
-                            >
-                              <option value="ACTIVO">Activo</option>
-                              <option value="INACTIVO">Inactivo</option>
-                            </select>
+                              onChange={(estado) => setFormEdicion({ ...formEdicion, estado })}
+                              className="w-36"
+                              options={[
+                                { value: 'ACTIVO', label: 'Activo' },
+                                { value: 'INACTIVO', label: 'Inactivo' },
+                              ]}
+                            />
                           </td>
                           <td className="py-3 px-6 whitespace-nowrap space-x-1.5">
                             <button
@@ -478,19 +480,14 @@ const EquipoPage = () => {
 
               <div>
                 <label className="text-slate-700 font-bold mb-1.5 block text-xs font-headline">Rol</label>
-                <div className="relative">
-                  <select
-                    value={nuevoMiembro.rol}
-                    onChange={(e) => setNuevoMiembro({ ...nuevoMiembro, rol: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-3.5 pr-9 py-2.5 text-slate-800 text-xs focus:outline-none focus:border-[#1D4ED8] cursor-pointer appearance-none"
-                  >
-                    <option value="FONTANERO">Fontanero</option>
-                    <option value="TESORERO">Tesorero</option>
-                  </select>
-                  <span className="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[#1D4ED8] pointer-events-none text-lg">
-                    unfold_more
-                  </span>
-                </div>
+                <Dropdown
+                  value={nuevoMiembro.rol}
+                  onChange={(rol) => setNuevoMiembro({ ...nuevoMiembro, rol })}
+                  options={[
+                    { value: 'FONTANERO', label: 'Fontanero' },
+                    { value: 'TESORERO', label: 'Tesorero' },
+                  ]}
+                />
               </div>
 
               {nuevoMiembro.rol === 'FONTANERO' && (

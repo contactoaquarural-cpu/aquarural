@@ -307,6 +307,66 @@ const actualizarGps = asyncHandler(async (req, res) => {
   return ok(res, { latitud, longitud }, 'Ubicación GPS actualizada.');
 });
 
+// Guarda el GPS del propio predio, capturado por el suscriptor desde la app
+// móvil. Ruta separada de actualizarGps (fontanero) a propósito: aquí el
+// permiso está acotado a "solo mi propio registro" (verificado con
+// req.user._id), mientras que verifyFontanero permite editar cualquier
+// asociado del acueducto — mezclar ambos casos en un único endpoint abriría
+// la puerta a que un bug de middleware deje a un suscriptor editar el GPS
+// de otro.
+const actualizarGpsPropio = asyncHandler(async (req, res) => {
+  const { latitud, longitud } = req.body;
+  if (req.params.id !== req.user._id) return fail(res, 403, 'Solo puedes actualizar tu propia ubicación.');
+
+  const asociado = await Asociado.findOne({ _id: req.params.id, acueductoId: req.acueductoId });
+  if (!asociado) return fail(res, 404, 'Asociado no encontrado.');
+
+  asociado.latitud = latitud;
+  asociado.longitud = longitud;
+  await asociado.save();
+
+  return ok(res, { latitud, longitud }, 'Ubicación GPS actualizada.');
+});
+
+// Permite al propio suscriptor actualizar solo un subconjunto acotado de sus
+// datos de contacto (teléfono, correo, dirección) desde la app móvil — nunca
+// cédula, nombres, matrícula, vereda ni medidor, que son administrativos y
+// solo el PUT general (verifyAdmin) puede tocar. El validator ya restringe
+// qué campos llegan aquí (actualizarPerfilPropioSchema), pero se reafirma
+// explícitamente al construir el objeto de cambios, para que agregar un
+// campo nuevo al validator sin querer no abra una puerta de escritura extra.
+const actualizarPerfilPropio = asyncHandler(async (req, res) => {
+  if (req.params.id !== req.user._id) return fail(res, 403, 'Solo puedes actualizar tu propio perfil.');
+
+  const asociado = await Asociado.findOne({ _id: req.params.id, acueductoId: req.acueductoId });
+  if (!asociado) return fail(res, 404, 'Asociado no encontrado.');
+
+  const { telefono, correo, direccion } = req.body;
+  if (telefono !== undefined) asociado.telefono = telefono;
+  if (correo !== undefined) asociado.correo = correo;
+  if (direccion !== undefined) asociado.direccion = direccion;
+  await asociado.save();
+
+  return ok(res, asociado, 'Perfil actualizado.');
+});
+
+// Guarda el token de Firebase Cloud Messaging del dispositivo del propio
+// suscriptor, para que pueda recibir push (nuevas convocatorias, avisos de
+// mora, etc. — ver eventos.controller.js). Se llama cada vez que la app
+// abre sesión o el token rota (los tokens FCM pueden cambiar), así que
+// simplemente sobreescribe sin validar duplicados entre asociados.
+const actualizarTokenFCM = asyncHandler(async (req, res) => {
+  if (req.params.id !== req.user._id) return fail(res, 403, 'Solo puedes actualizar tu propio token.');
+
+  const asociado = await Asociado.findOne({ _id: req.params.id, acueductoId: req.acueductoId });
+  if (!asociado) return fail(res, 404, 'Asociado no encontrado.');
+
+  asociado.tokenFCM = req.body.tokenFCM;
+  await asociado.save();
+
+  return ok(res, null, 'Token de notificaciones actualizado.');
+});
+
 // Historial de consumo de un asociado (todas sus lecturas mensuales
 // registradas), para reclamos o consulta del propio asociado en la app.
 const historialConsumo = asyncHandler(async (req, res) => {
@@ -376,6 +436,9 @@ module.exports = {
   previsualizarExcel,
   registrarLecturasMasivas,
   actualizarGps,
+  actualizarGpsPropio,
+  actualizarPerfilPropio,
+  actualizarTokenFCM,
   historialConsumo,
   estadisticasLecturas,
 };

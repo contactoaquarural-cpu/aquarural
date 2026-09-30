@@ -31,4 +31,23 @@ const actualizarGpsSchema = z.object({
   longitud: z.number(),
 });
 
-module.exports = { crearAsociadoSchema, actualizarAsociadoSchema, actualizarGpsSchema };
+// Subconjunto acotado de datos de contacto que el propio suscriptor puede
+// editar desde la app móvil — nunca cédula, nombres, matrícula, vereda ni
+// medidor, que quedan reservados al PUT general (verifyAdmin).
+const actualizarPerfilPropioSchema = z.object({
+  telefono: z.string().optional(),
+  correo: z.string().email('Correo inválido').optional().or(z.literal('')),
+  direccion: z.string().optional(),
+});
+
+const actualizarTokenFCMSchema = z.object({
+  tokenFCM: z.string().min(1, 'El token es requerido'),
+});
+
+module.exports = {
+  crearAsociadoSchema,
+  actualizarAsociadoSchema,
+  actualizarGpsSchema,
+  actualizarPerfilPropioSchema,
+  actualizarTokenFCMSchema,
+};

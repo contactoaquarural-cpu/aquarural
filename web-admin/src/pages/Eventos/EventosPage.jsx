@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api.service';
+import Dropdown from '../../components/Dropdown';
 
 const EventosPage = () => {
   const [eventos, setEventos] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [eventoExpandidoId, setEventoExpandidoId] = useState(null);
 
   const cargarEventosApi = async () => {
     setCargando(true);
@@ -326,9 +328,73 @@ const EventosPage = () => {
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-200 flex items-center gap-1.5 text-[10px] text-slate-400 font-headline">
-                <span className="material-symbols-outlined text-xs text-slate-400">info</span>
-                <span>La confirmación de asistencia se activará cuando los suscriptores tengan acceso desde la app móvil.</span>
+              <div className="pt-3 border-t border-slate-200 space-y-3">
+                {(() => {
+                  const asistentes = ev.asistentes || [];
+                  const confirmados = asistentes.filter((a) => a.respuesta === 'SI');
+                  const declinados = asistentes.filter((a) => a.respuesta === 'NO');
+                  const expandido = eventoExpandidoId === ev._id;
+
+                  return (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setEventoExpandidoId(expandido ? null : ev._id)}
+                        disabled={asistentes.length === 0}
+                        className="w-full flex items-center justify-between gap-4 text-[11px] font-headline cursor-pointer disabled:cursor-default"
+                      >
+                        <div className="flex items-center gap-4">
+                          <span className="flex items-center gap-1.5 text-emerald-700 font-bold">
+                            <span className="material-symbols-outlined text-sm">check_circle</span>
+                            {confirmados.length} asistirán
+                          </span>
+                          <span className="flex items-center gap-1.5 text-red-600 font-bold">
+                            <span className="material-symbols-outlined text-sm">cancel</span>
+                            {declinados.length} no asistirán
+                          </span>
+                        </div>
+                        {asistentes.length > 0 && (
+                          <span className="material-symbols-outlined text-slate-400 text-lg">
+                            {expandido ? 'expand_less' : 'expand_more'}
+                          </span>
+                        )}
+                      </button>
+
+                      {expandido && asistentes.length > 0 && (
+                        <div className="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden">
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="text-[10px] text-slate-400 uppercase tracking-wider">
+                                <th className="py-2 px-3 font-bold">Suscriptor</th>
+                                <th className="py-2 px-3 font-bold">Matrícula</th>
+                                <th className="py-2 px-3 font-bold text-right">Respuesta</th>
+                              </tr>
+                            </thead>
+                            <tbody className="text-xs">
+                              {asistentes.map((a) => (
+                                <tr key={a.asociadoId} className="border-t border-slate-200">
+                                  <td className="py-2 px-3 font-semibold text-slate-700">{a.nombre}</td>
+                                  <td className="py-2 px-3 font-mono text-slate-500">{a.matricula}</td>
+                                  <td className="py-2 px-3 text-right">
+                                    <span
+                                      className={`inline-flex items-center gap-1 font-bold px-2 py-0.5 rounded-full text-[10px] ${
+                                        a.respuesta === 'SI'
+                                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                          : 'bg-red-50 text-red-600 border border-red-200'
+                                      }`}
+                                    >
+                                      {a.respuesta === 'SI' ? 'Asistirá' : 'No asistirá'}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           ))}
@@ -378,20 +444,15 @@ const EventosPage = () => {
 
               <div>
                 <label className="text-slate-700 font-bold block mb-1.5 font-headline">Tipo de Convocatoria / Categoría</label>
-                <div className="relative">
-                  <select
-                    value={form.tipo}
-                    onChange={(e) => setForm({ ...form, tipo: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 pr-10 text-slate-800 font-headline text-xs focus:border-[#1D4ED8] focus:outline-none transition-colors cursor-pointer appearance-none"
-                  >
-                    <option value="ASAMBLEA_GENERAL">Asamblea General de Usuarios del Agua</option>
-                    <option value="MANTENIMIENTO_BOCATOMA">Mantenimiento / Limpieza Comunitaria (Minga)</option>
-                    <option value="REUNION_JUNTA">Reunión Extraordinaria de la Junta Directiva</option>
-                  </select>
-                  <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#1D4ED8]">
-                    <span className="material-symbols-outlined text-xl">unfold_more</span>
-                  </div>
-                </div>
+                <Dropdown
+                  value={form.tipo}
+                  onChange={(tipo) => setForm({ ...form, tipo })}
+                  options={[
+                    { value: 'ASAMBLEA_GENERAL', label: 'Asamblea General de Usuarios del Agua' },
+                    { value: 'MANTENIMIENTO_BOCATOMA', label: 'Mantenimiento / Limpieza Comunitaria (Minga)' },
+                    { value: 'REUNION_JUNTA', label: 'Reunión Extraordinaria de la Junta Directiva' },
+                  ]}
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">

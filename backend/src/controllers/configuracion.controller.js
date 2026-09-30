@@ -42,6 +42,17 @@ const obtener = asyncHandler(async (req, res) => {
   });
 });
 
+// Subconjunto mínimo de configuración, seguro de exponer a cualquier
+// suscriptor (rol ASOCIADO) — a diferencia de `obtener`, que trae datos
+// administrativos/de licencia SaaS que no le corresponden a un suscriptor
+// ver. Hoy solo lo usa mobile-app para saber si debe avisar sobre la
+// comisión de Wompi antes de que el suscriptor pague.
+const obtenerPublica = asyncHandler(async (req, res) => {
+  const acueducto = await Acueducto.findById(req.acueductoId).select('trasladarComisionWompiAsociados');
+  if (!acueducto) return fail(res, 404, 'Acueducto no encontrado.');
+  return ok(res, { trasladarComisionWompiAsociados: acueducto.trasladarComisionWompiAsociados });
+});
+
 const actualizar = asyncHandler(async (req, res) => {
   const { wompiPrivateKey, wompiEventsSecret, wompiIntegritySecret, ...resto } = req.body;
   const cambios = { ...resto, ...construirCamposWompi(req.body) };
@@ -167,4 +178,4 @@ const iniciarPagoSaaS = asyncHandler(async (req, res) => {
   return ok(res, { wompiUrl, factura });
 });
 
-module.exports = { obtener, actualizar, confirmarPagoSaaS, iniciarPagoSaaS };
+module.exports = { obtener, obtenerPublica, actualizar, confirmarPagoSaaS, iniciarPagoSaaS };

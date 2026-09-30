@@ -15,6 +15,7 @@ const pagosRoutes = require('./routes/pagos.routes');
 const equipoRoutes = require('./routes/equipo.routes');
 const reportesRoutes = require('./routes/reportes.routes');
 const eventosRoutes = require('./routes/eventos.routes');
+const notificacionesRoutes = require('./routes/notificaciones.routes');
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use('/pagos', pagosRoutes);
 app.use('/equipo', equipoRoutes);
 app.use('/reportes', reportesRoutes);
 app.use('/eventos', eventosRoutes);
+app.use('/notificaciones', notificacionesRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

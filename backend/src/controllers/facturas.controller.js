@@ -3,7 +3,11 @@ const Acueducto = require('../models/Acueducto');
 const encryption = require('../services/encryption.service');
 const { generarFacturacionMasiva, recalcularEstadoMoratorio } = require('../services/facturacion.service');
 const { verificarFirmaWebhook } = require('../services/wompi.service');
+const { generarPdfFactura } = require('../services/pdf.service');
+const { crearNotificacion } = require('../services/notificaciones.service');
 const { ok, fail, asyncHandler } = require('../utils/response');
+
+const formatMonto = (valor) => `$${Math.round(valor || 0).toLocaleString('es-CO')} COP`;
 
 const listar = asyncHandler(async (req, res) => {
   const { periodo, estado, asociadoId, page = 1, limit = 20 } = req.query;
@@ -65,8 +69,32 @@ const pagoEfectivo = asyncHandler(async (req, res) => {
   if (req.body.notas) factura.notas = req.body.notas;
   await factura.save();
   await recalcularEstadoMoratorio(factura.acueductoId, factura.asociadoId);
+  await crearNotificacion(factura.asociadoId, factura.acueductoId, {
+    tipo: 'PAGO_CONFIRMADO',
+    titulo: 'Pago confirmado',
+    cuerpo: `Recibimos tu pago de ${formatMonto(factura.montoTotal)} por la factura de ${factura.periodo}. ¡Gracias!`,
+    referenciaId: factura._id.toString(),
+  });
 
   return ok(res, factura, 'Pago registrado en efectivo.');
+});
+
+// Genera el recibo/factura en PDF para descarga desde la app del
+// suscriptor. Mismo contenido que el ticket POS de web-admin (ver
+// pdf.service.js), pero un asociado solo puede descargar su propia factura.
+const descargarPdf = asyncHandler(async (req, res) => {
+  const filtro = { _id: req.params.id, acueductoId: req.acueductoId };
+  if (req.user.rol === 'ASOCIADO') filtro.asociadoId = req.user._id;
+
+  const factura = await Factura.findOne(filtro).populate('asociadoId', 'nombres apellidos cedula');
+  if (!factura) return fail(res, 404, 'Factura no encontrada.');
+
+  const acueducto = await Acueducto.findById(req.acueductoId);
+  const pdfBuffer = await generarPdfFactura(factura, factura.asociadoId, acueducto);
+
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', `attachment; filename="${factura.codigoFactura}.pdf"`);
+  return res.send(pdfBuffer);
 });
 
 // Webhook público de Wompi para el cobro de agua. La firma se verifica con las
@@ -94,9 +122,16 @@ const webhookWompi = asyncHandler(async (req, res) => {
     factura.fechaPago = new Date();
     await factura.save();
     await recalcularEstadoMoratorio(factura.acueductoId, factura.asociadoId);
+    const montoPagado = factura.montoTotal + (factura.montoComisionWompi || 0);
+    await crearNotificacion(factura.asociadoId, factura.acueductoId, {
+      tipo: 'PAGO_CONFIRMADO',
+      titulo: 'Pago confirmado',
+      cuerpo: `Recibimos tu pago de ${formatMonto(montoPagado)} por la factura de ${factura.periodo}. ¡Gracias!`,
+      referenciaId: factura._id.toString(),
+    });
   }
 
   return ok(res, null, 'Webhook procesado.');
 });
 
-module.exports = { listar, generarMasiva, anularPeriodo, pagoEfectivo, webhookWompi };
+module.exports = { listar, generarMasiva, anularPeriodo, pagoEfectivo, descargarPdf, webhookWompi };

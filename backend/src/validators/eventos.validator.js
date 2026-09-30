@@ -13,4 +13,8 @@ const actualizarEventoSchema = crearEventoSchema.partial().extend({
   estado: z.enum(['PROGRAMADO', 'REALIZADO', 'CANCELADO']).optional(),
 });
 
-module.exports = { crearEventoSchema, actualizarEventoSchema };
+const confirmarAsistenciaSchema = z.object({
+  respuesta: z.enum(['SI', 'NO']),
+});
+
+module.exports = { crearEventoSchema, actualizarEventoSchema, confirmarAsistenciaSchema };

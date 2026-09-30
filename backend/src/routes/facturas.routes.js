@@ -6,6 +6,7 @@ const {
   generarMasiva,
   anularPeriodo,
   pagoEfectivo,
+  descargarPdf,
   webhookWompi,
 } = require('../controllers/facturas.controller');
 const { verifyToken, verifyAdmin } = require('../middleware/auth.middleware');
@@ -19,6 +20,7 @@ router.post('/webhook-wompi', webhookWompi);
 router.use(verifyToken, tenantMiddleware);
 
 router.get('/', listar);
+router.get('/:id/pdf', descargarPdf);
 router.post('/generar-masiva', verifyAdmin, validate(generarMasivaSchema), generarMasiva);
 router.delete('/anular-periodo', verifyAdmin, anularPeriodo);
 router.post('/:id/pago-efectivo', verifyAdmin, validate(pagoEfectivoSchema), pagoEfectivo);

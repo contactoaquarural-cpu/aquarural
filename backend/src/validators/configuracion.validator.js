@@ -11,6 +11,7 @@ const actualizarConfiguracionSchema = z.object({
   montoRecargoMora: z.number().nonnegative().optional(),
   diaLimitePago: z.number().int().min(1).max(31).optional(),
   trasladarCostoLicenciaAsociados: z.boolean().optional(),
+  trasladarComisionWompiAsociados: z.boolean().optional(),
   telefono: z.string().optional(),
   email: z.string().email().optional().or(z.literal('')),
   // Llaves Wompi propias del acueducto (cobro de agua), cifradas antes de

@@ -1,8 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api.service';
 import { useConfigStore } from '../../store/config.store';
+import Dropdown from '../../components/Dropdown';
 
 const periodoActualISO = () => new Date().toISOString().slice(0, 7);
+
+// Suma/resta meses a un período YYYY-MM sin depender de aritmética de
+// fechas con día fijo (evita el bug clásico de desbordar a otro mes por
+// zonas horarias) — se opera directamente sobre año/mes como enteros.
+const sumarMesesAPeriodo = (periodo, delta) => {
+  const [anio, mes] = periodo.split('-').map(Number);
+  const fecha = new Date(anio, mes - 1 + delta, 1);
+  return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+};
+
+const formatPeriodoLargo = (periodo) => {
+  const [anio, mes] = periodo.split('-').map(Number);
+  return new Date(anio, mes - 1, 1).toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
+};
 
 const FacturacionPage = () => {
   const nombreAcueducto = useConfigStore((s) => s.nombreAcueducto || 'AquaRural Pro');
@@ -11,7 +26,13 @@ const FacturacionPage = () => {
   const departamentoConfig = useConfigStore((s) => s.departamento || '');
   const diaLimitePago = useConfigStore((s) => s.diaLimitePago || 15);
 
-  const periodo = periodoActualISO();
+  // Antes era una constante fijada al mes calendario actual — sin selector,
+  // al cambiar de mes esta pantalla dejaba de mostrar el período anterior
+  // por completo, sin forma de reabrirlo (las facturas seguían existiendo en
+  // la base de datos, solo dejaban de listarse aquí). Ahora es un estado
+  // navegable, por defecto en el mes actual.
+  const [periodo, setPeriodo] = useState(periodoActualISO());
+  const esPeriodoActual = periodo === periodoActualISO();
   const [facturas, setFacturas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [generando, setGenerando] = useState(false);
@@ -33,7 +54,7 @@ const FacturacionPage = () => {
   useEffect(() => {
     cargarFacturas();
     cargarAvanceLecturas();
-  }, []);
+  }, [periodo]);
 
   const cargarAvanceLecturas = async () => {
     try {
@@ -145,7 +166,7 @@ const FacturacionPage = () => {
 
     const headers = [
       'CODIGO_FACTURA', 'PERIODO', 'DOCUMENTO_SUSCRIPTOR', 'NOMBRE_SUSCRIPTOR', 'MATRICULA',
-      'CONSUMO_M3', 'CARGO_FIJO_COP', 'VALOR_CONSUMO_COP', 'APORTE_PLATAFORMA_COP', 'MONTO_MORA_COP', 'TOTAL_FACTURADO_COP',
+      'CONSUMO_M3', 'CARGO_FIJO_COP', 'VALOR_CONSUMO_COP', 'APORTE_PLATAFORMA_COP', 'MONTO_MORA_COP', 'COMISION_WOMPI_COP', 'TOTAL_FACTURADO_COP',
       'ESTADO_FACTURA', 'METODO_PAGO', 'REFERENCIA_WOMPI',
     ];
 
@@ -160,7 +181,8 @@ const FacturacionPage = () => {
       f.montoConsumo || 0,
       f.montoRecargoLicencia || 0,
       f.montoMora || 0,
-      f.montoTotal,
+      f.montoComisionWompi || 0,
+      f.montoTotal + (f.montoComisionWompi || 0),
       `"${f.estado}"`,
       `"${f.metodoPago || 'SIN_PAGAR'}"`,
       `"${f.referenciaWompi || ''}"`,
@@ -195,7 +217,7 @@ const FacturacionPage = () => {
                   Recaudo & Emisión de Facturas
                 </h1>
                 <p className="text-xs text-slate-500 capitalize">
-                  Ciclo vigente: {new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })}
+                  {esPeriodoActual ? 'Ciclo vigente: ' : 'Viendo periodo: '}{formatPeriodoLargo(periodo)}
                 </p>
               </div>
             </div>
@@ -207,7 +229,7 @@ const FacturacionPage = () => {
               className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-headline font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
             >
               <span className="material-symbols-outlined text-base">file_download</span>
-              <span>Exportar (CSV)</span>
+              <span className="hidden sm:inline">Exportar (CSV)</span>
             </button>
 
             {facturas.length > 0 && (
@@ -217,7 +239,8 @@ const FacturacionPage = () => {
                 className="bg-blue-50 hover:bg-blue-100 text-[#1D4ED8] border border-blue-200 font-headline font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
               >
                 <span className="material-symbols-outlined text-base">print</span>
-                <span>Imprimir Lote ({facturasFiltradas.length})</span>
+                <span className="hidden sm:inline">Imprimir Lote ({facturasFiltradas.length})</span>
+                <span className="sm:hidden">({facturasFiltradas.length})</span>
               </button>
             )}
 
@@ -227,10 +250,10 @@ const FacturacionPage = () => {
               <button
                 type="button"
                 onClick={() => setMostrarModalVaciar(true)}
-                className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-headline font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer mr-4"
+                className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-headline font-bold text-xs px-3.5 py-2.5 rounded-xl transition-all flex items-center gap-2 cursor-pointer sm:mr-4"
               >
                 <span className="material-symbols-outlined text-base">delete_sweep</span>
-                <span>Anular Periodo</span>
+                <span className="hidden sm:inline">Anular Periodo</span>
               </button>
             )}
 
@@ -250,7 +273,10 @@ const FacturacionPage = () => {
           </div>
         </div>
 
-        {avanceLecturas && avanceLecturas.totalConMedidor > 0 && avanceLecturas.pendientes > 0 && (
+        {/* El avance de lecturas siempre describe el ciclo real en curso
+            (el backend no acepta período), así que solo tiene sentido
+            mostrarlo mientras se está viendo ese mismo mes actual. */}
+        {esPeriodoActual && avanceLecturas && avanceLecturas.totalConMedidor > 0 && avanceLecturas.pendientes > 0 && (
           <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-3.5 flex items-center gap-2.5 text-amber-800 text-xs font-headline shadow-sm">
             <span className="material-symbols-outlined text-lg">water_ec</span>
             <p className="font-semibold">
@@ -325,7 +351,7 @@ const FacturacionPage = () => {
         {/* BÚSQUEDA Y FILTROS */}
         <div className="bg-white border border-slate-200 rounded-3xl p-4 shadow-sm">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
-            <div className="relative sm:col-span-2 lg:col-span-6">
+            <div className="relative sm:col-span-2 lg:col-span-4">
               <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
               <input
                 type="text"
@@ -337,29 +363,68 @@ const FacturacionPage = () => {
             </div>
 
             <div className="lg:col-span-3">
-              <select
+              <Dropdown
                 value={ordenamiento}
-                onChange={(e) => setOrdenamiento(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs font-headline font-bold rounded-2xl px-3 py-2.5 focus:outline-none focus:border-[#1D4ED8] cursor-pointer"
-              >
-                <option value="nombre">Nombre (A - Z)</option>
-                <option value="matricula">N° Matrícula</option>
-                <option value="monto">Monto Facturado</option>
-              </select>
+                onChange={setOrdenamiento}
+                options={[
+                  { value: 'nombre', label: 'Nombre (A - Z)' },
+                  { value: 'matricula', label: 'N° Matrícula' },
+                  { value: 'monto', label: 'Monto Facturado' },
+                ]}
+              />
             </div>
 
-            <div className="lg:col-span-3">
-              <select
+            <div className="lg:col-span-2">
+              <Dropdown
                 value={filtroEstado}
-                onChange={(e) => setFiltroEstado(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs font-headline font-bold rounded-2xl px-3 py-2.5 focus:outline-none focus:border-[#1D4ED8] cursor-pointer"
-              >
-                <option value="TODOS">Estado: Todos</option>
-                <option value="PAGADA">Pagadas</option>
-                <option value="PENDIENTE">Pendientes</option>
-                <option value="VENCIDA">Vencidas</option>
-              </select>
+                onChange={setFiltroEstado}
+                options={[
+                  { value: 'TODOS', label: 'Estado: Todos' },
+                  { value: 'PAGADA', label: 'Pagadas' },
+                  { value: 'PENDIENTE', label: 'Pendientes' },
+                  { value: 'VENCIDA', label: 'Vencidas' },
+                ]}
+              />
             </div>
+
+            {/* Selector de período — antes vivía en el header como
+                flechas + texto; se movió aquí junto al resto de filtros
+                de la tabla, que es donde el admin ya espera controlar
+                qué se está mostrando. */}
+            <div className="sm:col-span-2 lg:col-span-3 flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-2xl px-2 py-1.5">
+              <button
+                type="button"
+                onClick={() => setPeriodo((p) => sumarMesesAPeriodo(p, -1))}
+                className="w-7 h-7 rounded-lg hover:bg-white text-slate-500 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                title="Mes anterior"
+              >
+                <span className="material-symbols-outlined text-base">chevron_left</span>
+              </button>
+              <span className="flex-1 text-center text-xs font-headline font-bold text-slate-800 capitalize truncate">
+                {formatPeriodoLargo(periodo)}
+              </span>
+              <button
+                type="button"
+                onClick={() => setPeriodo((p) => sumarMesesAPeriodo(p, 1))}
+                disabled={esPeriodoActual}
+                className="w-7 h-7 rounded-lg hover:bg-white text-slate-500 flex items-center justify-center transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed shrink-0"
+                title="Mes siguiente"
+              >
+                <span className="material-symbols-outlined text-base">chevron_right</span>
+              </button>
+            </div>
+
+            {!esPeriodoActual && (
+              <div className="sm:col-span-2 lg:col-span-12 -mt-1">
+                <button
+                  type="button"
+                  onClick={() => setPeriodo(periodoActualISO())}
+                  className="text-[11px] font-bold text-[#1D4ED8] hover:underline"
+                >
+                  Volver al mes actual
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -477,7 +542,8 @@ const FacturacionPage = () => {
                             className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3.5 py-1.5 rounded-xl font-headline font-bold text-xs inline-flex items-center gap-1.5 transition-all cursor-pointer"
                           >
                             <span className="material-symbols-outlined text-sm">point_of_sale</span>
-                            <span>Cobrar Efectivo</span>
+                            <span className="hidden sm:inline">Cobrar Efectivo</span>
+                            <span className="sm:hidden">Cobrar</span>
                           </button>
                         ) : (
                           <span className="text-[11px] text-emerald-600 font-extrabold inline-flex items-center gap-1">
@@ -646,6 +712,9 @@ const FacturacionPage = () => {
                   {facturaAImprimir.montoMora > 0 && (
                     <div className="flex justify-between text-red-700"><span>Recargo por Mora:</span><span>${facturaAImprimir.montoMora.toLocaleString()} COP</span></div>
                   )}
+                  {facturaAImprimir.montoComisionWompi > 0 && (
+                    <div className="flex justify-between text-slate-700"><span>Comisión pasarela de pago:</span><span>${facturaAImprimir.montoComisionWompi.toLocaleString()} COP</span></div>
+                  )}
                 </div>
               </div>
 
@@ -653,7 +722,7 @@ const FacturacionPage = () => {
                 <div className="flex justify-between items-center text-xs font-extrabold font-headline">
                   <span className="text-slate-950">{facturaAImprimir.estado === 'PAGADA' ? 'TOTAL CANCELADO:' : 'TOTAL A PAGAR:'}</span>
                   <span className={facturaAImprimir.estado === 'PAGADA' ? 'text-emerald-700 text-sm' : 'text-cyan-800 text-sm'}>
-                    ${facturaAImprimir.montoTotal.toLocaleString()} COP
+                    ${(facturaAImprimir.montoTotal + (facturaAImprimir.montoComisionWompi || 0)).toLocaleString()} COP
                   </span>
                 </div>
 
@@ -750,7 +819,7 @@ const FacturacionPage = () => {
                   <div className="space-y-1.5 pt-1">
                     <div className="flex justify-between items-center text-xs font-extrabold font-headline">
                       <span className="text-slate-950">{f.estado === 'PAGADA' ? 'TOTAL CANCELADO:' : 'TOTAL A PAGAR:'}</span>
-                      <span className={f.estado === 'PAGADA' ? 'text-emerald-700 text-sm' : 'text-cyan-800 text-sm'}>${f.montoTotal.toLocaleString()} COP</span>
+                      <span className={f.estado === 'PAGADA' ? 'text-emerald-700 text-sm' : 'text-cyan-800 text-sm'}>${(f.montoTotal + (f.montoComisionWompi || 0)).toLocaleString()} COP</span>
                     </div>
                     {f.estado === 'PAGADA' ? (
                       <div className="bg-emerald-50 border border-emerald-300 p-2 rounded-xl text-center"><p className="text-[10px] font-extrabold text-emerald-800 font-headline uppercase">✅ PAGO CONFIRMADO</p></div>

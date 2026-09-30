@@ -1,9 +1,13 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-// Mismo puerto/backend que web-admin (backend/src/server.js escucha en :3000).
+// URL fija de ngrok apuntando al backend local (puerto 3000) — reemplaza la
+// IP de red local que antes había que actualizar cada vez que cambiaba de
+// red (Wi-Fi de casa, hotspot del celular, etc.). Requiere tener el túnel
+// corriendo: `ngrok http 3000` (dominio fijo de esta cuenta, no cambia
+// entre reinicios). Funciona sin importar en qué red esté el celular.
 // En producción esto se reemplaza por la URL real del backend desplegado.
-const BASE_URL = 'http://localhost:3000';
+export const BASE_URL = 'https://skipper-geologist-move.ngrok-free.dev';
 
 const api = axios.create({ baseURL: BASE_URL });
 

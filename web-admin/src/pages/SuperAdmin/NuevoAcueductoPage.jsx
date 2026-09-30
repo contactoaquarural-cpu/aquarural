@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api.service';
 import { PLANES_SAAS_MAP } from './AcueductosPage';
+import Dropdown from '../../components/Dropdown';
 
 const NuevoAcueductoPage = () => {
   const navigate = useNavigate();
@@ -104,8 +105,7 @@ const NuevoAcueductoPage = () => {
     }
   };
 
-  const handleCambiarDepartamento = (e) => {
-    const deptId = Number(e.target.value);
+  const handleCambiarDepartamento = (deptId) => {
     const deptObj = departamentos.find((d) => d.id === deptId);
     setDepartamentoSeleccionadoId(deptId);
     setForm((prev) => ({ ...prev, departamento: deptObj ? deptObj.name : 'Huila' }));
@@ -245,20 +245,11 @@ const NuevoAcueductoPage = () => {
 
               <div>
                 <label className="text-gray-700 font-bold mb-1.5 block font-headline">Departamento</label>
-                <div className="relative">
-                  <select
-                    value={departamentoSeleccionadoId || ''}
-                    onChange={handleCambiarDepartamento}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-3.5 pr-10 py-2.5 text-gray-900 font-headline focus:outline-none focus:border-[#1D4ED8] cursor-pointer appearance-none"
-                  >
-                    {departamentos.map((d) => (
-                      <option key={d.id} value={d.id}>{d.name}</option>
-                    ))}
-                  </select>
-                  <span className="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-[#1D4ED8] pointer-events-none text-base">
-                    unfold_more
-                  </span>
-                </div>
+                <Dropdown
+                  value={departamentoSeleccionadoId || ''}
+                  onChange={handleCambiarDepartamento}
+                  options={departamentos.map((d) => ({ value: d.id, label: d.name }))}
+                />
               </div>
 
               <div>
@@ -266,20 +257,12 @@ const NuevoAcueductoPage = () => {
                   <span>Municipio</span>
                   {cargandoUbicaciones && <span className="text-[10px] text-[#1D4ED8] animate-pulse">Cargando...</span>}
                 </label>
-                <div className="relative">
-                  <select
-                    value={form.municipio}
-                    onChange={(e) => setForm({ ...form, municipio: e.target.value })}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-3.5 pr-10 py-2.5 text-gray-900 font-headline focus:outline-none focus:border-[#1D4ED8] cursor-pointer appearance-none"
-                  >
-                    {municipios.map((m) => (
-                      <option key={m.id || m.name} value={m.name}>{m.name}</option>
-                    ))}
-                  </select>
-                  <span className="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-[#1D4ED8] pointer-events-none text-base">
-                    unfold_more
-                  </span>
-                </div>
+                <Dropdown
+                  value={form.municipio}
+                  onChange={(municipio) => setForm({ ...form, municipio })}
+                  disabled={cargandoUbicaciones}
+                  options={municipios.map((m) => ({ value: m.name, label: m.name }))}
+                />
               </div>
             </div>
           </div>

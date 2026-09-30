@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api.service';
 import { useConfigStore } from '../../store/config.store';
+import Dropdown from '../../components/Dropdown';
 
 // Página enfocada solo en tarifas y modalidad de cobro del servicio de agua —
 // datos institucionales (solo lectura), información de contacto y cambio de
@@ -23,6 +24,7 @@ const ConfiguracionPage = () => {
     montoRecargoMora: 0,
     diaLimitePago: 15,
     trasladarCostoLicenciaAsociados: false,
+    trasladarComisionWompiAsociados: false,
     frecuenciaPagoSaaS: 'ANUAL',
     costoSaaSVigente: 0,
     nombreAcueducto: '',
@@ -44,6 +46,7 @@ const ConfiguracionPage = () => {
             montoRecargoMora: apiData.montoRecargoMora ?? 0,
             diaLimitePago: apiData.diaLimitePago ?? 15,
             trasladarCostoLicenciaAsociados: Boolean(apiData.trasladarCostoLicenciaAsociados),
+            trasladarComisionWompiAsociados: Boolean(apiData.trasladarComisionWompiAsociados),
             frecuenciaPagoSaaS: apiData.frecuenciaPagoSaaS || 'ANUAL',
             costoSaaSVigente: apiData.costoSaaSVigente || 0,
             nombreAcueducto: apiData.nombre || '',
@@ -83,6 +86,7 @@ const ConfiguracionPage = () => {
       montoRecargoMora: Number(form.montoRecargoMora) || 0,
       diaLimitePago: Number(form.diaLimitePago) || 15,
       trasladarCostoLicenciaAsociados: Boolean(form.trasladarCostoLicenciaAsociados),
+      trasladarComisionWompiAsociados: Boolean(form.trasladarComisionWompiAsociados),
     };
 
     try {
@@ -307,21 +311,16 @@ const ConfiguracionPage = () => {
               <label className="text-slate-700 font-bold mb-1.5 block text-xs font-headline">
                 Día Límite de Pago
               </label>
-              <div className="relative">
-                <select
-                  value={form.diaLimitePago}
-                  onChange={(e) => setForm({ ...form, diaLimitePago: Number(e.target.value) })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-3.5 pr-10 py-2.5 text-slate-800 font-headline focus:outline-none focus:border-[#1D4ED8] appearance-none cursor-pointer"
-                >
-                  <option value={15}>Día 15 del mes</option>
-                  <option value={20}>Día 20 del mes</option>
-                  <option value={25}>Día 25 del mes</option>
-                  <option value={30}>Último día del mes (30/31)</option>
-                </select>
-                <span className="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-[#1D4ED8] pointer-events-none text-base">
-                  unfold_more
-                </span>
-              </div>
+              <Dropdown
+                value={form.diaLimitePago}
+                onChange={(diaLimitePago) => setForm({ ...form, diaLimitePago })}
+                options={[
+                  { value: 15, label: 'Día 15 del mes' },
+                  { value: 20, label: 'Día 20 del mes' },
+                  { value: 25, label: 'Día 25 del mes' },
+                  { value: 30, label: 'Último día del mes (30/31)' },
+                ]}
+              />
               <p className="text-[11px] text-slate-500 mt-1">Límite para pago ordinario sin recargo.</p>
             </div>
           </div>
@@ -383,6 +382,56 @@ const ConfiguracionPage = () => {
                     'Aún no hay suscriptores activos registrados para calcular el aporte por persona.'
                   )}
                   {' '}Este valor es una proyección con los datos de hoy — el monto real de cada factura se recalcula con la cantidad de suscriptores activos en el momento de facturar, así que puede variar si el acueducto crece o se reduce.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* TOGGLE: TRASLADAR COMISIÓN DE WOMPI A LOS ASOCIADOS */}
+          <div className="pt-4 border-t border-slate-200 space-y-3">
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, trasladarComisionWompiAsociados: !form.trasladarComisionWompiAsociados })}
+              className="w-full flex items-center justify-between gap-4 bg-slate-50 border border-slate-200 rounded-2xl p-4 hover:border-[#1D4ED8]/40 transition-all cursor-pointer text-left"
+            >
+              <div className="flex items-start gap-3">
+                <span className="material-symbols-outlined text-[#1D4ED8] text-xl mt-0.5">credit_card</span>
+                <div>
+                  <p className="text-sm font-bold text-slate-800 font-headline">
+                    Trasladar comisión de Wompi a los asociados
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                    Si lo activas, cada vez que un suscriptor pague su factura por Wompi (Nequi, PSE, tarjeta o
+                    Bancolombia), se le suma la comisión que Wompi cobra por esa transacción (2.65% + $700 COP + IVA
+                    sobre la comisión) — el acueducto recibe el valor completo de su factura. Nunca aplica al pago en
+                    efectivo en oficina. Si lo dejas apagado, el acueducto sigue asumiendo esa comisión como hasta ahora.
+                  </p>
+                </div>
+              </div>
+              <span
+                className={`shrink-0 w-12 h-7 rounded-full relative transition-colors ${
+                  form.trasladarComisionWompiAsociados ? 'bg-[#1D4ED8]' : 'bg-slate-300'
+                }`}
+              >
+                <span
+                  className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                    form.trasladarComisionWompiAsociados ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </span>
+            </button>
+
+            {/* Ejemplo con una factura de referencia (no depende de datos en
+                vivo como el toggle de licencia, porque esta comisión se
+                calcula por transacción individual, no prorrateada). */}
+            {form.trasladarComisionWompiAsociados && (
+              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center gap-3">
+                <span className="material-symbols-outlined text-[#1D4ED8] text-xl shrink-0">calculate</span>
+                <p className="text-xs text-slate-700 leading-relaxed">
+                  Ejemplo con una factura de <strong className="font-mono">$45.000 COP</strong>: la comisión de Wompi
+                  sería <strong className="text-[#1D4ED8] font-mono">≈ $2.252 COP</strong>, así que el suscriptor
+                  pagaría <strong className="text-[#1D4ED8] font-mono">≈ $47.252 COP</strong> en total por Wompi, y tu
+                  acueducto recibiría los $45.000 completos de la factura.
                 </p>
               </div>
             )}

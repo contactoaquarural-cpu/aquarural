@@ -11,6 +11,9 @@ const {
   previsualizarExcel,
   registrarLecturasMasivas,
   actualizarGps,
+  actualizarGpsPropio,
+  actualizarPerfilPropio,
+  actualizarTokenFCM,
   historialConsumo,
   estadisticasLecturas,
 } = require('../controllers/asociados.controller');
@@ -18,7 +21,13 @@ const { verifyToken, verifyAdmin, verifyFontanero } = require('../middleware/aut
 const { tenantMiddleware } = require('../middleware/tenant.middleware');
 const { uploadExcel } = require('../middleware/upload.middleware');
 const validate = require('../middleware/validate.middleware');
-const { crearAsociadoSchema, actualizarAsociadoSchema, actualizarGpsSchema } = require('../validators/asociados.validator');
+const {
+  crearAsociadoSchema,
+  actualizarAsociadoSchema,
+  actualizarGpsSchema,
+  actualizarPerfilPropioSchema,
+  actualizarTokenFCMSchema,
+} = require('../validators/asociados.validator');
 const { registrarLecturasMasivasSchema } = require('../validators/facturas.validator');
 
 router.use(verifyToken, tenantMiddleware);
@@ -32,6 +41,9 @@ router.post('/cargar-excel/previsualizar', verifyAdmin, uploadExcel.single('arch
 router.post('/cargar-excel', verifyAdmin, uploadExcel.single('archivo'), cargarExcel);
 router.post('/lecturas-masivas', verifyFontanero, validate(registrarLecturasMasivasSchema), registrarLecturasMasivas);
 router.patch('/:id/gps', verifyFontanero, validate(actualizarGpsSchema), actualizarGps);
+router.patch('/:id/gps-propio', validate(actualizarGpsSchema), actualizarGpsPropio);
+router.patch('/:id/perfil-propio', validate(actualizarPerfilPropioSchema), actualizarPerfilPropio);
+router.patch('/:id/token-fcm', validate(actualizarTokenFCMSchema), actualizarTokenFCM);
 router.put('/:id', verifyAdmin, validate(actualizarAsociadoSchema), actualizar);
 router.delete('/:id', verifyAdmin, eliminar);
 

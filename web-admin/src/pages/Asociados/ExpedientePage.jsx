@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api.service';
@@ -20,16 +21,104 @@ const ESTADO_MAP = {
   INACTIVO: { cls: 'bg-gray-400 text-white', label: 'Inactivo' },
 };
 
+// Estado del servicio físico (¿tiene el agua abierta o no?) — independiente
+// del estado moratorio (¿debe o no debe?). Un suscriptor puede estar
+// EN_MORA pero seguir ACTIVO si la junta aún no decide cortarle el servicio.
+const ESTADO_SERVICIO_MAP = {
+  ACTIVO: { cls: 'bg-emerald-50 border-emerald-200 text-emerald-700', text: 'text-emerald-600', icon: 'water_drop', label: 'Activo' },
+  CORTE_PROGRAMADO: { cls: 'bg-amber-50 border-amber-200 text-amber-700', text: 'text-amber-600', icon: 'schedule', label: 'Corte Programado' },
+  SUSPENDIDO: { cls: 'bg-red-50 border-red-200 text-red-700', text: 'text-red-600', icon: 'block', label: 'Suspendido' },
+};
+
 const formatMonto = (m) =>
   new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(m);
+
+// Dropdown propio (no <select> nativo) para que el popup de opciones respete
+// el mismo lenguaje visual del panel (bordes redondeados, hover azul) en vez
+// del control del sistema operativo, que desentona con las tarjetas custom.
+const SelectorEstadoServicio = ({ valor, onCambiar, deshabilitado }) => {
+  const [abierto, setAbierto] = useState(false);
+  const ref = useRef(null);
+  const actual = ESTADO_SERVICIO_MAP[valor] ?? ESTADO_SERVICIO_MAP.ACTIVO;
+
+  useEffect(() => {
+    const alClickFuera = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setAbierto(false);
+    };
+    document.addEventListener('mousedown', alClickFuera);
+    return () => document.removeEventListener('mousedown', alClickFuera);
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setAbierto((v) => !v)}
+        disabled={deshabilitado}
+        className={`w-full flex items-center gap-1 text-base font-extrabold mt-0.5 disabled:opacity-50 ${actual.text}`}
+      >
+        <span className="truncate">{actual.label}</span>
+        <span className="material-symbols-outlined text-lg shrink-0">
+          {abierto ? 'expand_less' : 'expand_more'}
+        </span>
+      </button>
+
+      {abierto && (
+        <div className="absolute left-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden z-20">
+          {Object.entries(ESTADO_SERVICIO_MAP).map(([clave, cfg]) => (
+            <button
+              key={clave}
+              type="button"
+              onClick={() => {
+                setAbierto(false);
+                if (clave !== valor) onCambiar(clave);
+              }}
+              className={`w-full flex items-center gap-2 px-3 py-2.5 text-xs font-semibold text-left transition-colors hover:bg-blue-50 ${
+                clave === valor ? 'bg-blue-50 text-[#1D4ED8]' : 'text-slate-600'
+              }`}
+            >
+              <span className="material-symbols-outlined text-base">{cfg.icon}</span>
+              {cfg.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ExpedientePage = () => {
   const { id } = useParams();
 
-  const { data: aData, isLoading } = useQuery({
+  const { data: aData, isLoading, refetch } = useQuery({
     queryKey: ['asociado', id],
     queryFn: () => api.get(`/asociados/${id}`).then((r) => r.data),
   });
+
+  const [cambiandoEstado, setCambiandoEstado] = useState(false);
+  const [mensaje, setMensaje] = useState(null);
+
+  const cambiarEstadoServicio = async (nuevoEstado) => {
+    setCambiandoEstado(true);
+    setMensaje(null);
+    try {
+      await api.put(`/asociados/${id}`, { estadoServicio: nuevoEstado });
+      await refetch();
+      setMensaje({ tipo: 'ok', texto: `Estado del servicio actualizado a "${ESTADO_SERVICIO_MAP[nuevoEstado]?.label ?? nuevoEstado}".` });
+    } catch (err) {
+      setMensaje({ tipo: 'error', texto: err.response?.data?.message || 'No se pudo actualizar el estado del servicio.' });
+    } finally {
+      setCambiandoEstado(false);
+    }
+  };
+
+  // Se oculta solo a los 4s (sin bloquear el cierre manual con la X) —
+  // mismo patrón de feedback ya usado en SuscriptoresPage.jsx.
+  useEffect(() => {
+    if (!mensaje) return;
+    const t = setTimeout(() => setMensaje(null), 4000);
+    return () => clearTimeout(t);
+  }, [mensaje]);
 
   const { data: facturasData } = useQuery({
     queryKey: ['facturas-asociado', id],
@@ -123,10 +212,28 @@ const ExpedientePage = () => {
         </Link>
       </div>
 
+      {/* Feedback del cambio de estado del servicio — mismo patrón de banner
+          ya usado en SuscriptoresPage.jsx (autocierra a los 4s). */}
+      {mensaje && (
+        <div className={`rounded-2xl px-5 py-3.5 flex items-center justify-between text-xs font-headline shadow-sm animate-fade-in ${
+          mensaje.tipo === 'error' ? 'bg-red-50 border border-red-200 text-red-700' : 'bg-emerald-50 border border-emerald-200 text-emerald-700'
+        }`}>
+          <div className="flex items-center gap-2.5">
+            <span className="material-symbols-outlined text-lg">
+              {mensaje.tipo === 'error' ? 'error' : 'check_circle'}
+            </span>
+            <p className="font-semibold">{mensaje.texto}</p>
+          </div>
+          <button onClick={() => setMensaje(null)} className="hover:opacity-70">
+            <span className="material-symbols-outlined text-base">close</span>
+          </button>
+        </div>
+      )}
+
       {/* Resumen financiero — para no obligar al admin a contar filas de la
           tabla de facturas manualmente para saber cuánto debe el suscriptor,
           mismo patrón de tarjetas KPI ya usado en Dashboard/Reportes. */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center justify-between shadow-sm">
           <div>
             <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 font-headline">Deuda Total</p>
@@ -165,6 +272,25 @@ const ExpedientePage = () => {
           </div>
           <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#1D4ED8] shrink-0">
             <span className="material-symbols-outlined text-xl">water_ec</span>
+          </div>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center justify-between shadow-sm">
+          <div className="min-w-0">
+            <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 font-headline">Estado del Servicio</p>
+            <SelectorEstadoServicio
+              valor={asociado.estadoServicio}
+              onCambiar={cambiarEstadoServicio}
+              deshabilitado={cambiandoEstado}
+            />
+            <p className="text-[11px] text-slate-500 mt-1">
+              {cambiandoEstado ? 'Guardando...' : 'Cambiar estado del predio'}
+            </p>
+          </div>
+          <div className={`w-11 h-11 rounded-xl border flex items-center justify-center shrink-0 ${ESTADO_SERVICIO_MAP[asociado.estadoServicio]?.cls ?? ESTADO_SERVICIO_MAP.ACTIVO.cls}`}>
+            <span className="material-symbols-outlined text-xl">
+              {ESTADO_SERVICIO_MAP[asociado.estadoServicio]?.icon ?? 'water_drop'}
+            </span>
           </div>
         </div>
       </div>

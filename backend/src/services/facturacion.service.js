@@ -10,10 +10,11 @@ const tieneMedidorReal = (asociado) => Boolean(asociado.numeroMedidor) && asocia
 // para que no quede "En mora" en Reportes/Dashboard hasta la próxima
 // corrida del cron (6am) aunque ya haya pagado.
 const recalcularEstadoMoratorio = async (acueductoId, asociadoId) => {
+  const asociadoPrevio = await Asociado.findOne({ _id: asociadoId, acueductoId }).select('estadoMoratorio');
   const facturasVencidas = await Factura.countDocuments({ acueductoId, asociadoId, estado: 'VENCIDA' });
   const nuevoEstado = facturasVencidas === 0 ? 'AL_DIA' : facturasVencidas < 3 ? 'EN_MORA' : 'INACTIVO';
   await Asociado.updateOne({ _id: asociadoId, acueductoId }, { estadoMoratorio: nuevoEstado });
-  return nuevoEstado;
+  return { estadoAnterior: asociadoPrevio?.estadoMoratorio, nuevoEstado };
 };
 
 // Costo mensualizado de la licencia SaaS del acueducto ÷ asociados activos,
@@ -27,6 +28,17 @@ const calcularRecargoLicenciaPorAsociado = (acueducto, totalAsociadosActivos) =>
     acueducto.frecuenciaPagoSaaS === 'MENSUAL' ? acueducto.costoSaaSVigente : acueducto.costoSaaSVigente / 12;
 
   return Math.round(costoMensualizado / totalAsociadosActivos);
+};
+
+// Comisión real que Wompi cobra por transacción exitosa: 2.65% + $700 COP,
+// más IVA (19%) sobre esa comisión — fórmula fija, no configurable. Se aplica
+// solo si el acueducto activó trasladarComisionWompiAsociados y solo al pagar
+// por Wompi (nunca en efectivo en oficina, que no pasa por la pasarela).
+// Redondeada al peso, igual que el resto de montos monetarios del sistema.
+const calcularComisionWompi = (montoFactura) => {
+  const comisionBase = montoFactura * 0.0265 + 700;
+  const iva = comisionBase * 0.19;
+  return Math.round(comisionBase + iva);
 };
 
 // Calcula el desglose de una factura para un asociado, según el esquema de
@@ -127,6 +139,7 @@ const generarFacturacionMasiva = async (acueducto, periodo) => {
 };
 
 module.exports = {
+  calcularComisionWompi,
   calcularFechaVencimiento,
   calcularMontoFactura,
   calcularRecargoLicenciaPorAsociado,

@@ -56,36 +56,27 @@ plataforma-digital-ganadera/
 
 ---
 
-## 🎨 Design System (Dark Mode Editorial)
+## 🎨 Design System (Claro — azul de marca)
 
-### Paleta de colores (tokens Tailwind)
+> El panel es 100% claro. Ver `DESIGN.md` (raíz del monorepo) para el sistema de diseño completo. La sección "Dark Mode Editorial" que existía aquí describía la paleta "Hydro-Tech" descartada, que nunca se implementó — eliminada el 2026-09-23 junto con sus tokens muertos en `tailwind.config.js`.
+
+### Paleta de colores
 ```
-background / surface:          #111414
-surface-container-low:         #191c1c
-surface-container:             #1d2020
-surface-container-high:        #282a2a
-surface-container-highest:     #333535
-primary (texto/acento):        #a5d0b9
-primary-container (verde):     #1b4332
-on-surface (texto principal):  #e1e3e2
-on-surface-variant (gris):     #c1c8c2
-tertiary (tierra/urgente):     #f7ba8b
-tertiary-container:            #59320e
-error:                         #ffb4ab
-sidebar (emerald-950):         #022c22
+azul de marca (acento/CTA):    #1D4ED8
+azul oscuro (hover/headlines): #1E3A8A
+fondo:                          blanco / slate-50
+texto principal:                slate-900
+texto secundario:               slate-500/600
 ```
 
 ### Reglas de diseño
-1. **Sin bordes 1px** — profundidad solo por cambio de color de fondo
-2. **Sin negro puro** — usar `#111414` como base más oscura
-3. **Botones CTA:** gradiente `from-primary-container to-primary-container/70` con texto `text-primary`
-4. **Cards:** `bg-surface-container-low rounded-2xl` o `rounded-3xl` — sin divisores
-5. **Sidebar:** siempre `bg-emerald-950` con texto `text-emerald-50/100`
-6. **TopBar:** `glass-effect` (80% opacidad + backdrop-blur)
-7. **Estados:** AL_DIA → `text-emerald-400`, EN_MORA → `text-error`, INACTIVO → `text-outline`
+1. Fondo claro (blanco/slate-50), sin modo oscuro real — el mecanismo `html.light` en `index.css` fuerza apariencia clara por encima de un oscuro heredado que nunca se ve en producción (deuda técnica documentada en `PLAN_DE_TRABAJO.md`, no tocar sin revisión aparte)
+2. **Botones primarios:** fondo `bg-[#1D4ED8]` con texto fijado vía `style={{ color: '#ffffff' }}` (no la clase `text-white` de Tailwind — ver "Regla del Texto Blanco Explícito" en `DESIGN.md`)
+3. **Cards:** `bg-white rounded-2xl` con sombra suave, sin bordes 1px
+4. **Estados:** AL_DIA → verde, EN_MORA → ámbar/rojo, INACTIVO → gris
 
 ### Tipografía
-- Títulos/Headlines: `font-headline` (Manrope)
+- Títulos/Headlines: `font-headline` (Outfit)
 - Cuerpo/Labels: `font-body` o `font-label` (Inter)
 
 ### Iconos

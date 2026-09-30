@@ -2,10 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from '../../services/api.service';
 import { useConfigStore } from '../../store/config.store';
+import { useAuthStore } from '../../store/auth.store';
+import Dropdown from '../../components/Dropdown';
 
 const tieneMedidorReal = (s) => Boolean(s.numeroMedidor) && s.numeroMedidor !== 'S/N';
 
 const LecturasPageContent = () => {
+  // Captura de GPS del predio: es una función de campo del Fontanero (quien
+  // visita físicamente al suscriptor) o del propio suscriptor desde la app
+  // móvil — el Admin no captura GPS, solo lo consulta (ExpedientePage,
+  // SuscriptoresPage, MapaPage ya son de solo lectura para ese rol).
+  const esFontanero = useAuthStore((s) => s.user?.rol === 'FONTANERO');
+
   const tipoTarifa = useConfigStore((s) => s.tipoTarifa || 'HIBRIDO');
   const cargoFijoMensual = useConfigStore((s) => s.cargoFijoMensual || 0);
   const valorMetroCubico = useConfigStore((s) => s.valorMetroCubico || 0);
@@ -61,6 +69,8 @@ const LecturasPageContent = () => {
     setLecturasEditadas((prev) => ({ ...prev, [asociadoId]: valor }));
   };
 
+  // Solo el Fontanero captura GPS desde el panel (o el suscriptor desde su
+  // propia app, vía /gps-propio, que no pasa por aquí) — ver `esFontanero`.
   const capturarGps = (asociadoId) => {
     if (!navigator.geolocation) {
       setError('Este navegador no soporta geolocalización.');
@@ -68,10 +78,11 @@ const LecturasPageContent = () => {
     }
     setCapturandoGpsId(asociadoId);
     setError('');
-    // Bandera para ignorar un callback de error que Chrome/Windows a veces
-    // dispara DESPUÉS de que el de éxito ya guardó el punto (reintento
-    // interno del proveedor de ubicación de alta precisión) — sin esto, el
-    // guardado exitoso queda seguido de una alerta de error falsa.
+    // Chrome/Windows a veces dispara el callback de error ANTES de que un
+    // segundo intento interno del proveedor de ubicación logre resolver con
+    // éxito (no solo al revés) — por eso no basta con ignorar el error si ya
+    // hubo éxito; también hay que esperar un margen antes de mostrar el
+    // error, por si el éxito real está a punto de llegar.
     let yaResuelto = false;
     navigator.geolocation.getCurrentPosition(
       async (posicion) => {
@@ -81,6 +92,9 @@ const LecturasPageContent = () => {
         try {
           await api.patch(`/asociados/${asociadoId}/gps`, { latitud, longitud });
           setGpsCapturado((prev) => ({ ...prev, [asociadoId]: { latitud, longitud } }));
+          setError('');
+          const asociado = asociados.find((a) => a._id === asociadoId);
+          setMensaje(`Ubicación GPS guardada${asociado ? ` para ${asociado.nombres} ${asociado.apellidos}` : ''}.`);
         } catch (e) {
           setError(e.response?.data?.message || 'No se pudo guardar la ubicación GPS.');
         } finally {
@@ -88,7 +102,6 @@ const LecturasPageContent = () => {
         }
       },
       (err) => {
-        if (yaResuelto) return;
         let mensaje;
         if (err.code === err.PERMISSION_DENIED) {
           mensaje = 'Permiso de ubicación denegado. Actívalo en el navegador para capturar el GPS del predio.';
@@ -99,8 +112,18 @@ const LecturasPageContent = () => {
         } else {
           mensaje = 'No se pudo obtener la ubicación GPS. Intenta de nuevo.';
         }
-        setError(mensaje);
-        setCapturandoGpsId(null);
+        // El navegador puede disparar un PERMISSION_DENIED espurio en los
+        // primeros milisegundos (antes de resolver el prompt de permiso) y
+        // luego, segundos después, sí entregar la posición real — medido en
+        // pruebas reales: error a los 9ms, éxito a los ~3900ms. Por eso el
+        // margen de esta espera debe cubrir el mismo `timeout` de arriba
+        // (15s), no unos pocos cientos de ms — si el éxito llega en ese
+        // lapso, `yaResuelto` ya estará en true y este error se descarta.
+        setTimeout(() => {
+          if (yaResuelto) return;
+          setError(mensaje);
+          setCapturandoGpsId(null);
+        }, 15000);
       },
       { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
     );
@@ -322,21 +345,24 @@ const LecturasPageContent = () => {
         </div>
       </div>
 
-      {/* Controles de Búsqueda y Filtros */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-5 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 shadow-sm">
-        <div className="relative w-full lg:w-80 lg:shrink-0">
-          <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-          <input
-            type="text"
-            placeholder="Buscar por suscriptor, cédula, matrícula o medidor..."
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1D4ED8]"
-          />
-        </div>
+      {/* Controles de Búsqueda y Filtros — en pantallas ≥sm se distribuyen en
+          una sola fila (justify-between); en móvil cada control se apila en
+          su propia fila a ancho completo, para que ningún bloque (Medidor,
+          Ordenar, Vereda) fuerce scroll horizontal de toda la página. */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center sm:justify-between gap-3">
+          <div className="relative w-full sm:w-72 lg:w-80 shrink-0">
+            <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+            <input
+              type="text"
+              placeholder="Buscar por suscriptor, cédula, matrícula o medidor..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1D4ED8]"
+            />
+          </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto lg:flex-1 lg:justify-end">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <span className="text-xs font-bold text-slate-500 font-headline shrink-0">Medidor:</span>
             {/* Filtro Con/Sin medidor: separa de un vistazo a quién le toca
                 tomar lectura de campo (con medidor, incluidos los nuevos con
@@ -368,7 +394,8 @@ const LecturasPageContent = () => {
                 }`}
               >
                 <span className="material-symbols-outlined text-sm">water_ec</span>
-                Con Medidor
+                <span className="hidden sm:inline">Con Medidor</span>
+                <span className="sm:hidden">Con</span>
               </button>
               <button
                 type="button"
@@ -380,46 +407,37 @@ const LecturasPageContent = () => {
                 }`}
               >
                 <span className="material-symbols-outlined text-sm">home</span>
-                Sin Medidor
+                <span className="hidden sm:inline">Sin Medidor</span>
+                <span className="sm:hidden">Sin</span>
               </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <span className="text-xs font-bold text-slate-500 font-headline shrink-0">Ordenar:</span>
-            <div className="relative w-full sm:w-auto">
-              <select
-                value={ordenamiento}
-                onChange={(e) => setOrdenamiento(e.target.value)}
-                className="w-full sm:w-auto bg-slate-50 border border-slate-200 text-[#1D4ED8] text-xs font-headline rounded-2xl pl-3.5 pr-9 py-2.5 focus:outline-none focus:border-[#1D4ED8] cursor-pointer appearance-none"
-              >
-                <option value="NOMBRE_AZ">Nombre (A - Z)</option>
-                <option value="MATRICULA">N° Matrícula</option>
-                <option value="VEREDA">Vereda / Sector</option>
-                <option value="MEDIDOR">N° Medidor</option>
-              </select>
-              <span className="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[#1D4ED8] pointer-events-none text-lg">
-                unfold_more
-              </span>
-            </div>
+            <Dropdown
+              value={ordenamiento}
+              onChange={setOrdenamiento}
+              compact
+              className="w-full sm:w-auto sm:min-w-[160px]"
+              options={[
+                { value: 'NOMBRE_AZ', label: 'Nombre (A - Z)' },
+                { value: 'MATRICULA', label: 'N° Matrícula' },
+                { value: 'VEREDA', label: 'Vereda / Sector' },
+                { value: 'MEDIDOR', label: 'N° Medidor' },
+              ]}
+            />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <span className="text-xs font-bold text-slate-500 font-headline shrink-0">Vereda:</span>
-            <div className="relative w-full sm:w-auto">
-              <select
-                value={filtroVereda}
-                onChange={(e) => setFiltroVereda(e.target.value)}
-                className="w-full sm:w-auto bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-2xl pl-4 pr-9 py-2.5 focus:outline-none focus:border-[#1D4ED8] cursor-pointer appearance-none"
-              >
-                {veredasDisponibles.map((v) => (
-                  <option key={v} value={v}>{v === 'TODAS' ? 'Todas' : v}</option>
-                ))}
-              </select>
-              <span className="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[#1D4ED8] pointer-events-none text-lg">
-                unfold_more
-              </span>
-            </div>
+            <Dropdown
+              value={filtroVereda}
+              onChange={setFiltroVereda}
+              compact
+              className="w-full sm:w-auto sm:min-w-[130px]"
+              options={veredasDisponibles.map((v) => ({ value: v, label: v === 'TODAS' ? 'Todas' : v }))}
+            />
           </div>
         </div>
       </div>
@@ -434,10 +452,16 @@ const LecturasPageContent = () => {
                 <th className="py-3.5 px-4">Cédula</th>
                 <th className="py-3.5 px-4">Vereda</th>
                 <th className="py-3.5 px-4">Matrícula</th>
-                <th className="py-3.5 px-4">Medidor / Modalidad</th>
-                <th className="py-3.5 px-4">Lectura Anterior</th>
-                <th className="py-3.5 px-4">Lectura Actual (m³)</th>
-                <th className="py-3.5 px-4">GPS</th>
+                <th className="py-3.5 px-4">Medidor</th>
+                <th className="py-3.5 px-4 text-center">
+                  <span className="block">Lectura</span>
+                  <span className="block">Anterior</span>
+                </th>
+                <th className="py-3.5 px-3 text-center">
+                  <span className="block">Lectura</span>
+                  <span className="block">Actual (m³)</span>
+                </th>
+                {esFontanero && <th className="py-3.5 px-4">GPS</th>}
                 <th className="py-3.5 px-4">Consumo (Δ m³)</th>
                 <th className="py-3.5 px-4">Cobro Estimado</th>
                 <th className="py-3.5 px-6">Estado</th>
@@ -446,11 +470,11 @@ const LecturasPageContent = () => {
             <tbody className="text-xs font-body text-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={11} className="py-12 text-center text-gray-400">Cargando padrón de suscriptores...</td>
+                  <td colSpan={esFontanero ? 11 : 10} className="py-12 text-center text-gray-400">Cargando padrón de suscriptores...</td>
                 </tr>
               ) : asociadosFiltrados.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="py-12 text-center text-gray-400">No se encontraron suscriptores con los criterios de búsqueda.</td>
+                  <td colSpan={esFontanero ? 11 : 10} className="py-12 text-center text-gray-400">No se encontraron suscriptores con los criterios de búsqueda.</td>
                 </tr>
               ) : (
                 asociadosFiltrados.map((s, i) => {
@@ -480,11 +504,11 @@ const LecturasPageContent = () => {
                         ) : (
                           <span className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-bold px-2.5 py-1 rounded-full font-headline whitespace-nowrap inline-flex items-center gap-1">
                             <span className="material-symbols-outlined text-xs">home</span>
-                            Sin Medidor (Tarifa Fija)
+                            Sin Medidor
                           </span>
                         )}
                       </td>
-                      <td className="py-5 px-4">
+                      <td className="py-5 px-4 text-center">
                         {conMedidor ? (
                           <span className="text-gray-500 font-mono font-bold text-sm inline-flex items-center gap-1" title="Lectura anterior registrada">
                             <span className="material-symbols-outlined text-[14px] text-gray-400">lock</span>
@@ -494,7 +518,7 @@ const LecturasPageContent = () => {
                           <span className="text-gray-400 font-mono">—</span>
                         )}
                       </td>
-                      <td className="py-5 px-4">
+                      <td className="py-5 px-3">
                         {conMedidor ? (
                           <input
                             type="number"
@@ -509,7 +533,7 @@ const LecturasPageContent = () => {
                                 ? 'Advertencia: la lectura es menor a la anterior registrada.'
                                 : undefined
                             }
-                            className={`w-28 rounded-xl px-3 py-1.5 text-left font-mono font-black text-sm focus:outline-none transition-all border ${
+                            className={`w-20 rounded-xl px-2 py-1.5 text-center font-mono font-black text-sm focus:outline-none transition-all border ${
                               bloqueadaPorFactura
                                 ? 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'
                                 : esMenor
@@ -521,29 +545,31 @@ const LecturasPageContent = () => {
                           <span className="text-gray-400 font-mono">—</span>
                         )}
                       </td>
-                      <td className="py-5 px-4">
-                        <button
-                          type="button"
-                          onClick={() => capturarGps(s._id)}
-                          disabled={capturandoGpsId === s._id}
-                          title={
-                            gpsCapturado[s._id]
-                              ? `Guardado — Lat: ${gpsCapturado[s._id].latitud.toFixed(5)}, Lon: ${gpsCapturado[s._id].longitud.toFixed(5)}`
-                              : s.latitud
-                              ? `Ya tiene GPS — Lat: ${s.latitud.toFixed(5)}, Lon: ${s.longitud.toFixed(5)}. Click para actualizar.`
-                              : 'Capturar y guardar GPS del predio'
-                          }
-                          className={`w-8 h-8 rounded-xl border flex items-center justify-center shrink-0 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-wait ${
-                            gpsCapturado[s._id] || s.latitud
-                              ? 'bg-emerald-50 border-emerald-200 text-emerald-600'
-                              : 'bg-slate-50 border-slate-200 text-slate-400 hover:text-[#1D4ED8] hover:border-blue-200'
-                          }`}
-                        >
-                          <span className={`material-symbols-outlined text-base ${capturandoGpsId === s._id ? 'animate-spin' : ''}`}>
-                            {capturandoGpsId === s._id ? 'progress_activity' : gpsCapturado[s._id] || s.latitud ? 'check_circle' : 'my_location'}
-                          </span>
-                        </button>
-                      </td>
+                      {esFontanero && (
+                        <td className="py-5 px-4">
+                          <button
+                            type="button"
+                            onClick={() => capturarGps(s._id)}
+                            disabled={capturandoGpsId === s._id}
+                            title={
+                              gpsCapturado[s._id]
+                                ? `Guardado — Lat: ${gpsCapturado[s._id].latitud.toFixed(5)}, Lon: ${gpsCapturado[s._id].longitud.toFixed(5)}`
+                                : s.latitud
+                                ? `Ya tiene GPS — Lat: ${s.latitud.toFixed(5)}, Lon: ${s.longitud.toFixed(5)}. Click para actualizar.`
+                                : 'Capturar y guardar GPS del predio'
+                            }
+                            className={`w-8 h-8 rounded-xl border flex items-center justify-center shrink-0 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-wait ${
+                              gpsCapturado[s._id] || s.latitud
+                                ? 'bg-emerald-50 border-emerald-200 text-emerald-600'
+                                : 'bg-slate-50 border-slate-200 text-slate-400 hover:text-[#1D4ED8] hover:border-blue-200'
+                            }`}
+                          >
+                            <span className={`material-symbols-outlined text-base ${capturandoGpsId === s._id ? 'animate-spin' : ''}`}>
+                              {capturandoGpsId === s._id ? 'progress_activity' : gpsCapturado[s._id] || s.latitud ? 'check_circle' : 'my_location'}
+                            </span>
+                          </button>
+                        </td>
+                      )}
                       <td className="py-5 px-4 font-mono font-extrabold text-sm">
                         {conMedidor ? (
                           <span className={consumo > 30 ? 'text-amber-600' : 'text-gray-800'}>{consumo} m³</span>
