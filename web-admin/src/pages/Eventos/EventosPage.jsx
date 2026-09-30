@@ -75,9 +75,14 @@ const EventosPage = () => {
 
   const handleGuardarEvento = async (e) => {
     e.preventDefault();
-    setGuardando(true);
     setError('');
 
+    if (!form.titulo.trim() || !form.fecha || !form.hora.trim() || !form.lugar.trim()) {
+      setError('Completa título, fecha, hora y lugar para continuar.');
+      return;
+    }
+
+    setGuardando(true);
     try {
       if (eventoEditando) {
         await api.put(`/eventos/${eventoEditando._id}`, form);
@@ -434,7 +439,6 @@ const EventosPage = () => {
                 <label className="text-slate-700 font-bold block mb-1.5 font-headline">Título de la Convocatoria</label>
                 <input
                   type="text"
-                  required
                   value={form.titulo}
                   onChange={(e) => setForm({ ...form, titulo: e.target.value })}
                   placeholder="ej. Asamblea General Ordinaria de Usuarios del Agua"
@@ -460,7 +464,6 @@ const EventosPage = () => {
                   <label className="text-slate-700 font-bold block mb-1.5 font-headline">Fecha del Evento</label>
                   <input
                     type="date"
-                    required
                     value={form.fecha}
                     onChange={(e) => setForm({ ...form, fecha: e.target.value })}
                     className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-800 font-headline text-xs focus:border-[#1D4ED8] focus:outline-none transition-colors"
@@ -471,7 +474,6 @@ const EventosPage = () => {
                   <label className="text-slate-700 font-bold block mb-1.5 font-headline">Hora de Inicio</label>
                   <input
                     type="text"
-                    required
                     value={form.hora}
                     onChange={(e) => setForm({ ...form, hora: e.target.value })}
                     placeholder="09:00 AM"
@@ -484,7 +486,6 @@ const EventosPage = () => {
                 <label className="text-slate-700 font-bold block mb-1.5 font-headline">Lugar / Sede de la Reunión</label>
                 <input
                   type="text"
-                  required
                   value={form.lugar}
                   onChange={(e) => setForm({ ...form, lugar: e.target.value })}
                   placeholder="ej. Caseta Comunal Vereda La Argentina"

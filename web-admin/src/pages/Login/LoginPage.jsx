@@ -40,10 +40,16 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
 
     const cedulaClean = form.cedula.trim();
     const passClean = form.password.trim();
+
+    if (!cedulaClean || !passClean) {
+      setError('Completa correo/cédula y contraseña para continuar.');
+      return;
+    }
+
+    setLoading(true);
 
     // Autenticación 100% real contra el backend (incluye SUPERADMIN, sembrado
     // vía `npm run seed:superadmin` — ya no existe bypass del lado del cliente).
@@ -111,7 +117,6 @@ const LoginPage = () => {
               </label>
               <input
                 type="text"
-                required
                 autoComplete="username"
                 value={form.cedula}
                 onChange={(e) => setForm({ ...form, cedula: e.target.value })}
@@ -127,7 +132,6 @@ const LoginPage = () => {
               <div className="relative flex items-center">
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  required
                   autoComplete="current-password"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}

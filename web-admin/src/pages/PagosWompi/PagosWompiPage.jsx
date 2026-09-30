@@ -45,6 +45,10 @@ const PagosWompiPage = () => {
   const handleVerificarPassword = async (e) => {
     e.preventDefault();
     setErrorAcceso('');
+    if (!password) {
+      setErrorAcceso('Ingresa tu contraseña para continuar.');
+      return;
+    }
     setVerificando(true);
     try {
       await api.post('/auth/verificar-password', { password });
@@ -112,7 +116,6 @@ const PagosWompiPage = () => {
               <label className="text-slate-700 font-bold mb-1.5 block font-headline text-xs">Tu contraseña</label>
               <input
                 type="password"
-                required
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

@@ -67,8 +67,14 @@ const MiCuentaPage = () => {
 
   const handleGuardarContacto = async (e) => {
     e.preventDefault();
-    setGuardandoContacto(true);
     setMensajeContacto(null);
+
+    if (!contactoForm.telefono.trim() || !contactoForm.email.trim()) {
+      setMensajeContacto({ tipo: 'error', texto: 'Completa el teléfono y el correo de contacto.' });
+      return;
+    }
+
+    setGuardandoContacto(true);
     try {
       const { data } = await api.patch('/configuracion', contactoForm);
       if (data?.success) {
@@ -88,6 +94,10 @@ const MiCuentaPage = () => {
     setErrorPassword('');
     setMensajePassword(null);
 
+    if (!passwordForm.passwordActual || !passwordForm.passwordNuevo || !passwordForm.passwordConfirmar) {
+      setErrorPassword('Completa los 3 campos para cambiar tu contraseña.');
+      return;
+    }
     if (passwordForm.passwordNuevo !== passwordForm.passwordConfirmar) {
       setErrorPassword('La nueva contraseña y su confirmación no coinciden.');
       return;
@@ -273,7 +283,6 @@ const MiCuentaPage = () => {
             <label className="text-slate-700 font-bold mb-1.5 block font-headline">Teléfono WhatsApp de Atención</label>
             <input
               type="text"
-              required
               value={contactoForm.telefono}
               onChange={(e) => setContactoForm({ ...contactoForm, telefono: e.target.value })}
               className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:border-[#1D4ED8]"
@@ -284,7 +293,6 @@ const MiCuentaPage = () => {
             <label className="text-slate-700 font-bold mb-1.5 block font-headline">Correo Electrónico para Alertas</label>
             <input
               type="email"
-              required
               value={contactoForm.email}
               onChange={(e) => setContactoForm({ ...contactoForm, email: e.target.value })}
               className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:border-[#1D4ED8]"
@@ -346,7 +354,6 @@ const MiCuentaPage = () => {
         <form onSubmit={handleCambiarPassword} className="grid grid-cols-1 sm:grid-cols-4 gap-3">
           <input
             type="password"
-            required
             autoComplete="current-password"
             placeholder="Contraseña actual"
             value={passwordForm.passwordActual}
@@ -355,8 +362,6 @@ const MiCuentaPage = () => {
           />
           <input
             type="password"
-            required
-            minLength={6}
             autoComplete="new-password"
             placeholder="Nueva contraseña (mín. 6)"
             value={passwordForm.passwordNuevo}
@@ -365,8 +370,6 @@ const MiCuentaPage = () => {
           />
           <input
             type="password"
-            required
-            minLength={6}
             autoComplete="new-password"
             placeholder="Confirmar nueva contraseña"
             value={passwordForm.passwordConfirmar}

@@ -68,6 +68,14 @@ const EquipoPage = () => {
     e.preventDefault();
     setErrorEquipo('');
 
+    if (!nuevoMiembro.nombre.trim() || !nuevoMiembro.correo.trim() || !nuevoMiembro.password) {
+      setErrorEquipo('Completa nombre, correo y contraseña para continuar.');
+      return;
+    }
+    if (nuevoMiembro.password.length < 6) {
+      setErrorEquipo('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
     if (nuevoMiembro.password !== passwordConfirmarCrear) {
       setErrorEquipo('Las contraseñas no coinciden.');
       return;
@@ -114,8 +122,12 @@ const EquipoPage = () => {
 
   const handleGuardarEdicion = async (e) => {
     e.preventDefault();
-    setGuardandoEdicion(true);
     setErrorEquipo('');
+    if (!formEdicion.nombre.trim()) {
+      setErrorEquipo('El nombre no puede estar vacío.');
+      return;
+    }
+    setGuardandoEdicion(true);
     try {
       await api.put(`/equipo/${editandoId}`, formEdicion);
       setMensaje({ tipo: 'ok', texto: 'Miembro del equipo actualizado.' });
@@ -140,6 +152,14 @@ const EquipoPage = () => {
     e.preventDefault();
     setErrorReset('');
 
+    if (!passwordNueva) {
+      setErrorReset('Ingresa la nueva contraseña.');
+      return;
+    }
+    if (passwordNueva.length < 6) {
+      setErrorReset('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
     if (passwordNueva !== passwordConfirmar) {
       setErrorReset('Las contraseñas no coinciden.');
       return;
@@ -236,7 +256,6 @@ const EquipoPage = () => {
                           <td className="py-3 px-6" colSpan={2}>
                             <input
                               type="text"
-                              required
                               autoFocus
                               value={formEdicion.nombre}
                               onChange={(e) => setFormEdicion({ ...formEdicion, nombre: e.target.value })}
@@ -399,7 +418,6 @@ const EquipoPage = () => {
                 <label className="text-slate-700 font-bold mb-1.5 block text-xs font-headline">Nombre completo</label>
                 <input
                   type="text"
-                  required
                   autoFocus
                   placeholder="ej. Pedro Alvarez"
                   value={nuevoMiembro.nombre}
@@ -412,7 +430,6 @@ const EquipoPage = () => {
                 <label className="text-slate-700 font-bold mb-1.5 block text-xs font-headline">Correo de acceso</label>
                 <input
                   type="email"
-                  required
                   placeholder="correo@ejemplo.com"
                   value={nuevoMiembro.correo}
                   onChange={(e) => setNuevoMiembro({ ...nuevoMiembro, correo: e.target.value })}
@@ -425,8 +442,6 @@ const EquipoPage = () => {
                 <div className="relative">
                   <input
                     type={verPasswordCrear ? 'text' : 'password'}
-                    required
-                    minLength={6}
                     autoComplete="new-password"
                     placeholder="••••••••"
                     value={nuevoMiembro.password}
@@ -449,8 +464,6 @@ const EquipoPage = () => {
                 <div className="relative">
                   <input
                     type={verPasswordCrear ? 'text' : 'password'}
-                    required
-                    minLength={6}
                     autoComplete="new-password"
                     placeholder="••••••••"
                     value={passwordConfirmarCrear}
@@ -584,8 +597,6 @@ const EquipoPage = () => {
                 <div className="relative">
                   <input
                     type={verPassword ? 'text' : 'password'}
-                    required
-                    minLength={6}
                     autoFocus
                     autoComplete="new-password"
                     placeholder="••••••••"
@@ -609,8 +620,6 @@ const EquipoPage = () => {
                 <div className="relative">
                   <input
                     type={verPassword ? 'text' : 'password'}
-                    required
-                    minLength={6}
                     autoComplete="new-password"
                     placeholder="••••••••"
                     value={passwordConfirmar}
