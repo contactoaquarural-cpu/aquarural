@@ -4,6 +4,7 @@ import api from '../../services/api.service';
 import { useConfigStore } from '../../store/config.store';
 import { useAuthStore } from '../../store/auth.store';
 import Dropdown from '../../components/Dropdown';
+import { periodoBogota, periodoActualBogota } from '../../utils/fecha.utils';
 
 const tieneMedidorReal = (s) => Boolean(s.numeroMedidor) && s.numeroMedidor !== 'S/N';
 
@@ -41,8 +42,8 @@ const LecturasPageContent = () => {
   const [error, setError] = useState('');
   const [mostrarModalConfirmacion, setMostrarModalConfirmacion] = useState(false);
 
-  const periodoActual = new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
-  const periodoActualISO = new Date().toISOString().slice(0, 7);
+  const periodoActual = new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric', timeZone: 'America/Bogota' });
+  const periodoActualISO = periodoActualBogota();
 
   useEffect(() => {
     cargarConfig();
@@ -162,13 +163,20 @@ const LecturasPageContent = () => {
   // sesión aún sin guardar — así el avance no se "resetea" a 0% al recargar
   // la página si el fontanero ya había guardado antes.
   const yaRegistradaEsteCiclo = (s) =>
-    Boolean(s.fechaUltimaLectura) && String(s.fechaUltimaLectura).slice(0, 7) === periodoActualISO;
+    Boolean(s.fechaUltimaLectura) && periodoBogota(s.fechaUltimaLectura) === periodoActualISO;
 
   const lecturasTomadasCount = asociadosConMedidor.filter(
     (s) => lecturasEditadas[s._id] !== undefined || yaRegistradaEsteCiclo(s)
   ).length;
   const porcentajeAvance =
     asociadosConMedidor.length > 0 ? Math.round((lecturasTomadasCount / asociadosConMedidor.length) * 100) : 0;
+
+  // A diferencia de lecturasTomadasCount (avance acumulado: incluye lo ya
+  // guardado en ciclos anteriores + lo editado ahora), esto es SOLO lo que
+  // handleGuardarLecturas realmente va a enviar en este clic — el modal de
+  // confirmación debe mostrar este número, no el acumulado, o dice "5
+  // predios" cuando en realidad solo se está guardando 1 lectura nueva.
+  const lecturasNuevasPendientes = Object.values(lecturasEditadas).filter((v) => v !== '').length;
 
   const colorAvance =
     porcentajeAvance >= 80
@@ -247,7 +255,7 @@ const LecturasPageContent = () => {
         <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5">
           <button
             onClick={() => setMostrarModalConfirmacion(true)}
-            disabled={guardando || tieneInconsistencias || lecturasTomadasCount === 0}
+            disabled={guardando || tieneInconsistencias || lecturasNuevasPendientes === 0}
             style={!tieneInconsistencias ? { color: '#ffffff' } : undefined}
             className={`font-extrabold font-headline text-xs px-6 py-3 rounded-2xl shadow-sm transition-all flex items-center gap-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed ${
               tieneInconsistencias
@@ -622,8 +630,8 @@ const LecturasPageContent = () => {
 
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3 text-xs font-headline">
               <div className="flex justify-between items-center text-slate-700">
-                <span>Lecturas a registrar:</span>
-                <span className="font-extrabold text-[#1D4ED8] font-mono text-sm">{lecturasTomadasCount} predios</span>
+                <span>Lecturas nuevas a registrar:</span>
+                <span className="font-extrabold text-[#1D4ED8] font-mono text-sm">{lecturasNuevasPendientes} predios</span>
               </div>
               <p className="text-[11px] text-slate-500">
                 Estos valores se guardarán como la lectura vigente de cada asociado, y servirán como base del próximo cálculo de consumo.

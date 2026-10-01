@@ -2,8 +2,13 @@ import React, { useState, useEffect } from 'react';
 import api from '../../services/api.service';
 import { useConfigStore } from '../../store/config.store';
 import Dropdown from '../../components/Dropdown';
+import { periodoActualBogota } from '../../utils/fecha.utils';
 
-const periodoActualISO = () => new Date().toISOString().slice(0, 7);
+// Antes era `new Date().toISOString().slice(0, 7)` — en Colombia (UTC-5),
+// cualquier hora desde las 19:00 ya cae en el mes siguiente en UTC, así que
+// el selector de período mostraba "mes actual" incorrecto después de esa
+// hora cada fin de mes. Ver web-admin/src/utils/fecha.utils.js.
+const periodoActualISO = periodoActualBogota;
 
 // Suma/resta meses a un período YYYY-MM sin depender de aritmética de
 // fechas con día fijo (evita el bug clásico de desbordar a otro mes por

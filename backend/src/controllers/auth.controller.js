@@ -112,7 +112,9 @@ const cambiarPassword = asyncHandler(async (req, res) => {
   if (!admin) return fail(res, 404, 'Usuario no encontrado.');
 
   const passwordValido = await bcrypt.compare(passwordActual, admin.password);
-  if (!passwordValido) return fail(res, 401, 'La contraseña actual no es correcta.');
+  // 403, no 401 — mismo motivo que verificarPassword: ya está autenticado,
+  // un 401 aquí dispara el logout automático del interceptor global de axios.
+  if (!passwordValido) return fail(res, 403, 'La contraseña actual no es correcta.');
 
   admin.password = await bcrypt.hash(passwordNuevo, 10);
   await admin.save();
@@ -130,7 +132,12 @@ const verificarPassword = asyncHandler(async (req, res) => {
   if (!admin) return fail(res, 404, 'Usuario no encontrado.');
 
   const passwordValido = await bcrypt.compare(password, admin.password);
-  if (!passwordValido) return fail(res, 401, 'La contraseña no es correcta.');
+  // 403, no 401 — ya está autenticado (verifyToken ya pasó), solo falla esta
+  // verificación puntual. Un 401 aquí dispara el interceptor global de axios
+  // que trata CUALQUIER 401 como "sesión expirada" y fuerza logout + redirige
+  // a /login, lo que hacía parecer que escribir la contraseña incorrecta
+  // "sacaba" al admin de la sesión en vez de mostrar el error real.
+  if (!passwordValido) return fail(res, 403, 'La contraseña no es correcta.');
 
   return ok(res, null, 'Contraseña verificada.');
 });

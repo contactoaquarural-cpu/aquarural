@@ -4,6 +4,7 @@ const Factura = require('../models/Factura');
 const LecturaHistorica = require('../models/LecturaHistorica');
 const AdminUser = require('../models/AdminUser');
 const { ok, fail, asyncHandler } = require('../utils/response');
+const { periodoActualBogota, periodoBogota } = require('../utils/fecha.utils');
 
 const puedeVerAsociado = (req, asociado) =>
   req.user.rol !== 'ASOCIADO' || req.user._id === asociado._id.toString();
@@ -83,7 +84,7 @@ const listar = asyncHandler(async (req, res) => {
   // que consultar Facturas por separado.
   let asociadosConFlag = asociados;
   if (incluirFacturadoPeriodo) {
-    const periodo = new Date().toISOString().slice(0, 7);
+    const periodo = periodoActualBogota();
     const facturas = await Factura.find({
       acueductoId: req.acueductoId,
       periodo,
@@ -234,7 +235,7 @@ const cargarExcel = asyncHandler(async (req, res) => {
 // en caso de reclamos, independientemente de si el mes llegó a facturarse.
 const registrarLecturasMasivas = asyncHandler(async (req, res) => {
   const { lecturas } = req.body;
-  const periodo = new Date().toISOString().slice(0, 7);
+  const periodo = periodoActualBogota();
 
   const resultado = { actualizados: 0, errores: [] };
 
@@ -387,14 +388,14 @@ const tieneMedidorReal = (asociado) => Boolean(asociado.numeroMedidor) && asocia
 // con medidor ya tienen lectura este mes, cuántos faltan, y el listado de
 // pendientes con su GPS (si lo tienen) para ubicarlos en el mapa.
 const estadisticasLecturas = asyncHandler(async (req, res) => {
-  const periodo = new Date().toISOString().slice(0, 7);
+  const periodo = periodoActualBogota();
   const asociados = await Asociado.find({
     acueductoId: req.acueductoId,
     estadoServicio: 'ACTIVO',
     ...(await filtroVeredaFontanero(req)),
   });
 
-  const enPeriodoVigente = (a) => a.fechaUltimaLectura && a.fechaUltimaLectura.toISOString().slice(0, 7) === periodo;
+  const enPeriodoVigente = (a) => a.fechaUltimaLectura && periodoBogota(a.fechaUltimaLectura) === periodo;
 
   const conMedidor = asociados.filter(tieneMedidorReal);
   const registradosEsteCiclo = conMedidor.filter(enPeriodoVigente);

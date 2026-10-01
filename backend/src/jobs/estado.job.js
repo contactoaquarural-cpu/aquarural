@@ -4,6 +4,7 @@ const Asociado = require('../models/Asociado');
 const Factura = require('../models/Factura');
 const { generarFacturacionMasiva, recalcularEstadoMoratorio } = require('../services/facturacion.service');
 const { crearNotificacion } = require('../services/notificaciones.service');
+const { periodoActualBogota } = require('../utils/fecha.utils');
 const logger = require('../utils/logger');
 
 const formatMonto = (valor) => `$${Math.round(valor || 0).toLocaleString('es-CO')} COP`;
@@ -117,7 +118,7 @@ const ejecutarJobEstado = async () => {
 // que aún no la tengan generada (mismo servicio que usa el botón manual).
 const ejecutarJobCrearFacturas = async () => {
   const acueductos = await Acueducto.find({ estado: 'ACTIVO' });
-  const periodo = new Date().toISOString().slice(0, 7);
+  const periodo = periodoActualBogota();
 
   for (const acueducto of acueductos) {
     try {

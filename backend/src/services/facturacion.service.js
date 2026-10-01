@@ -1,5 +1,6 @@
 const Asociado = require('../models/Asociado');
 const Factura = require('../models/Factura');
+const { periodoBogota } = require('../utils/fecha.utils');
 const logger = require('../utils/logger');
 
 const tieneMedidorReal = (asociado) => Boolean(asociado.numeroMedidor) && asociado.numeroMedidor !== 'S/N';
@@ -30,15 +31,30 @@ const calcularRecargoLicenciaPorAsociado = (acueducto, totalAsociadosActivos) =>
   return Math.round(costoMensualizado / totalAsociadosActivos);
 };
 
-// Comisión real que Wompi cobra por transacción exitosa: 2.65% + $700 COP,
-// más IVA (19%) sobre esa comisión — fórmula fija, no configurable. Se aplica
-// solo si el acueducto activó trasladarComisionWompiAsociados y solo al pagar
-// por Wompi (nunca en efectivo en oficina, que no pasa por la pasarela).
-// Redondeada al peso, igual que el resto de montos monetarios del sistema.
-const calcularComisionWompi = (montoFactura) => {
-  const comisionBase = montoFactura * 0.0265 + 700;
-  const iva = comisionBase * 0.19;
-  return Math.round(comisionBase + iva);
+// Wompi cobra su comisión (2.65% + $700 COP + IVA 19% sobre esa comisión)
+// SOBRE EL MONTO TOTAL que efectivamente se transa, no sobre el valor de la
+// factura — así que sumar la comisión calculada sobre la factura original
+// deja al acueducto recibiendo MENOS del neto esperado (verificado con un
+// pago real: factura $1.000 → se sumaron $865 → Wompi cobró su comisión
+// sobre los $1.865 cobrados, no sobre $1.000 → al acueducto llegaron $973,19,
+// no los $1.000 esperados). La fórmula correcta es la INVERSA: se despeja el
+// total T tal que, tras descontar la comisión de Wompi sobre T, quede
+// exactamente el monto neto deseado.
+//
+//   comisión(T) = (T × 0.0265 + 700) × 1.19
+//   neto = T - comisión(T) = T × (1 - 0.0265×1.19) - 700×1.19
+//   T = (neto + 700×1.19) / (1 - 0.0265×1.19)
+//
+// Verificado: factura $1.000 → T = $1.892,69 → Wompi cobra $892,69 →
+// neto real = $1.000,00 exactos.
+const FACTOR_COMISION = 0.0265;
+const CARGO_FIJO_COMISION = 700;
+const FACTOR_IVA = 1.19;
+
+const calcularComisionWompi = (montoNetoDeseado) => {
+  const totalACobrar =
+    (montoNetoDeseado + CARGO_FIJO_COMISION * FACTOR_IVA) / (1 - FACTOR_COMISION * FACTOR_IVA);
+  return Math.round(totalACobrar) - montoNetoDeseado;
 };
 
 // Calcula el desglose de una factura para un asociado, según el esquema de
@@ -79,7 +95,7 @@ const requiereLecturaVigente = (acueducto, asociado) =>
   acueducto.tipoTarifa === 'MEDIDOR' || (acueducto.tipoTarifa === 'HIBRIDO' && tieneMedidorReal(asociado));
 
 const tieneLecturaDelPeriodo = (asociado, periodo) =>
-  asociado.fechaUltimaLectura && asociado.fechaUltimaLectura.toISOString().slice(0, 7) === periodo;
+  asociado.fechaUltimaLectura && periodoBogota(asociado.fechaUltimaLectura) === periodo;
 
 const generarCodigoFactura = (acueducto, asociado, periodo) =>
   `AGUA-${periodo.replace('-', '')}-${asociado.matricula}`;

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../../services/api.service';
 import { useConfigStore } from '../../store/config.store';
 import Dropdown from '../../components/Dropdown';
+import { calcularComisionWompi } from '../../utils/wompi.utils';
 
 // Página enfocada solo en tarifas y modalidad de cobro del servicio de agua —
 // datos institucionales (solo lectura), información de contacto y cambio de
@@ -14,6 +15,14 @@ const ConfiguracionPage = () => {
   const [saving, setSaving] = useState(false);
   const [mensaje, setMensaje] = useState(null);
   const [totalAsociados, setTotalAsociados] = useState(0);
+
+  // Calculadora de "Cargo Fijo sugerido" — para el acueducto que quiere
+  // cubrir la comisión de Wompi subiendo su tarifa base en vez de mostrarla
+  // como línea aparte en la factura (a diferencia del toggle de abajo, que
+  // sí la muestra). Se calcula sobre la factura MÁS ALTA del acueducto para
+  // que ese colchón cubra el peor caso, no el promedio.
+  const [mostrarCalculadora, setMostrarCalculadora] = useState(false);
+  const [facturaMasAlta, setFacturaMasAlta] = useState('');
 
   const [form, setForm] = useState({
     tipoTarifa: 'HIBRIDO',
@@ -241,7 +250,24 @@ const ConfiguracionPage = () => {
                       className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-8 pr-4 py-2.5 text-[#1D4ED8] font-headline font-extrabold text-lg focus:outline-none focus:border-[#1D4ED8]"
                     />
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-1">Cargo de mantenimiento cobrado a <b>TODAS LAS VIVIENDAS</b> (Aplica para Tarifa Fija y Medidores).</p>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Cargo Fijo cobrado a <b>TODAS LAS VIVIENDAS</b> (Tarifa Fija, Medidores y{' '}
+                    {/* Calculadora de Cargo Fijo sugerido — alternativa al
+                        toggle de "Trasladar comisión de Wompi" de más abajo:
+                        en vez de mostrar la comisión como línea aparte en
+                        cada pago, el acueducto sube su tarifa base una sola
+                        vez para cubrirla de forma invisible en toda factura.
+                        Solo la palabra "Wompi" es el link, dentro del mismo
+                        paréntesis, para que el párrafo quede en una sola
+                        línea corta y no desplace los campos de abajo. */}
+                    <button
+                      type="button"
+                      onClick={() => setMostrarCalculadora(true)}
+                      className="text-[#1D4ED8] font-bold hover:underline cursor-pointer"
+                    >
+                      Wompi
+                    </button>).
+                  </p>
                 </div>
 
                 <div>
@@ -429,8 +455,8 @@ const ConfiguracionPage = () => {
                 <span className="material-symbols-outlined text-[#1D4ED8] text-xl shrink-0">calculate</span>
                 <p className="text-xs text-slate-700 leading-relaxed">
                   Ejemplo con una factura de <strong className="font-mono">$45.000 COP</strong>: la comisión de Wompi
-                  sería <strong className="text-[#1D4ED8] font-mono">≈ $2.252 COP</strong>, así que el suscriptor
-                  pagaría <strong className="text-[#1D4ED8] font-mono">≈ $47.252 COP</strong> en total por Wompi, y tu
+                  sería <strong className="text-[#1D4ED8] font-mono">≈ $2.325 COP</strong>, así que el suscriptor
+                  pagaría <strong className="text-[#1D4ED8] font-mono">≈ $47.325 COP</strong> en total por Wompi, y tu
                   acueducto recibiría los $45.000 completos de la factura.
                 </p>
               </div>
@@ -465,6 +491,93 @@ const ConfiguracionPage = () => {
           </button>
         </div>
       </form>
+
+      {/* MODAL CALCULADORA DE CARGO FIJO SUGERIDO */}
+      {mostrarCalculadora && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-xl">
+            <div className="flex justify-between items-center border-b border-slate-200 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#1D4ED8]">calculate</span>
+                <h3 className="text-base font-extrabold text-slate-800 font-headline">Calculadora de Cargo Fijo</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setMostrarCalculadora(false); setFacturaMasAlta(''); }}
+                className="text-slate-400 hover:text-slate-700"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Ingresa el valor de tu factura <b>más alta</b> (la que más consume) — el cálculo cubre ese peor caso,
+              así ninguna factura queda por debajo de lo que Wompi descuenta. El resultado reemplaza el Cargo Fijo
+              actual; el suscriptor nunca verá la comisión como línea aparte en su factura.
+            </p>
+
+            <div>
+              <label className="text-slate-700 font-bold mb-1.5 block text-xs font-headline">
+                Factura más alta ($ COP)
+              </label>
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                <input
+                  type="number"
+                  min="0"
+                  autoFocus
+                  value={facturaMasAlta}
+                  onChange={(e) => setFacturaMasAlta(e.target.value)}
+                  placeholder="ej. 45000"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-8 pr-4 py-2.5 text-slate-800 font-headline font-extrabold text-lg focus:outline-none focus:border-[#1D4ED8]"
+                />
+              </div>
+            </div>
+
+            {facturaMasAlta && Number(facturaMasAlta) > 0 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 space-y-2 text-xs font-body">
+                <p className="text-slate-500">Comisión a cubrir: <strong className="text-[#1D4ED8] font-mono">
+                  +${calcularComisionWompi(Number(facturaMasAlta)).toLocaleString()} COP
+                </strong></p>
+                <p className="text-slate-500">Cargo Fijo actual: <strong className="text-slate-700 font-mono">
+                  ${(form.cargoFijoMensual || 0).toLocaleString()} COP
+                </strong></p>
+                <div className="pt-2 border-t border-blue-200 flex justify-between items-center text-sm font-headline">
+                  <span className="text-slate-700 font-bold">Cargo Fijo sugerido:</span>
+                  <span className="text-[#1D4ED8] font-extrabold text-base font-mono">
+                    ${((form.cargoFijoMensual || 0) + calcularComisionWompi(Number(facturaMasAlta))).toLocaleString()} COP
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => { setMostrarCalculadora(false); setFacturaMasAlta(''); }}
+                className="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold font-headline py-3 rounded-2xl text-xs transition-all cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={!facturaMasAlta || Number(facturaMasAlta) <= 0}
+                onClick={() => {
+                  const comision = calcularComisionWompi(Number(facturaMasAlta));
+                  setForm({ ...form, cargoFijoMensual: (form.cargoFijoMensual || 0) + comision });
+                  setMostrarCalculadora(false);
+                  setFacturaMasAlta('');
+                }}
+                style={{ color: '#ffffff' }}
+                className="w-1/2 bg-[#1D4ED8] hover:bg-[#1E3A8A] font-extrabold font-headline py-3 rounded-2xl shadow-sm text-xs transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                <span className="material-symbols-outlined text-sm">check</span>
+                <span>Aplicar al Cargo Fijo</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
